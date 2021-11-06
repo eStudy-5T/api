@@ -9,19 +9,19 @@ import passport from 'passport'
 import session from 'express-session'
 
 // Database configuration
-import dbPostgres from '../src/utils/database/config'
+import dbPostgres from './utils/database/config'
 
 // APIs
-import authenticationAPIs from '../src/routes/auth.routes'
+import authenticationAPIs from './routes/auth.routes'
 
 // eslint-disable-next-line object-curly-spacing
-import { SESSION_CONFIG } from '../src/utils/constants/appConfig'
+import { SESSION_CONFIG } from './utils/constants/appConfig'
 
 // Test middleware
 // eslint-disable-next-line object-curly-spacing
-import { authVerifyToken } from './middlewares/auth.middleware'
+import { authVerifyToken } from './middlewares/authenticationCheck'
 // eslint-disable-next-line object-curly-spacing
-import { configHeader } from './middlewares/res.middleware'
+import { configHeader } from './middlewares/configHeader'
 
 const app = express()
 
