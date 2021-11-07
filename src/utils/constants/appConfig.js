@@ -5,4 +5,4 @@ export const SESSION_CONFIG = {
   cookie: {
     maxAge: 180 * 60 * 1000
   }
-}
+};

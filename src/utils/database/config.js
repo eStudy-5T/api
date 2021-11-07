@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize'
+import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize(
   process.env.DATABASE_NAME,
@@ -9,8 +9,8 @@ const sequelize = new Sequelize(
     dialect: 'postgres',
     logging: false
   }
-)
+);
 
-sequelize.sync()
+sequelize.sync();
 
-export default sequelize
+export default sequelize;
