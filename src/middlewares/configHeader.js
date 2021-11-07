@@ -3,4 +3,4 @@ const configHeader = (req, res, next) => {
   next()
 }
 
-export { configHeader }
+export {configHeader}

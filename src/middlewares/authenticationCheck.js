@@ -16,4 +16,4 @@ const authVerifyToken = (req, res, next) => {
   }
 }
 
-export { authVerifyToken }
+export {authVerifyToken}

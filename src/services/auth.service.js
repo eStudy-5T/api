@@ -8,4 +8,4 @@ const generateRefreshToken = (userData) => {
   return jwt.sign(userData, process.env.JWT_SECRET_KEY_REFRESH_TOKEN)
 }
 
-export { generateAccessToken, generateRefreshToken }
+export {generateAccessToken, generateRefreshToken}

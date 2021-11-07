@@ -14,17 +14,17 @@ import dbPostgres from './utils/database/config'
 // APIs
 import authenticationAPIs from './routes/auth.routes'
 
-import { SESSION_CONFIG } from './utils/constants/appConfig'
+import {SESSION_CONFIG} from './utils/constants/appConfig'
 
 // Test middleware
-import { authVerifyToken } from './middlewares/authenticationCheck'
-import { configHeader } from './middlewares/configHeader'
+import {authVerifyToken} from './middlewares/authenticationCheck'
+import {configHeader} from './middlewares/configHeader'
 
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(session(SESSION_CONFIG))

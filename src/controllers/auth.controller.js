@@ -13,8 +13,8 @@ const authLogin = async (req, res, next) => {
     } else {
       const accessToken = generateAccessToken(user.dataValues)
       const refreshToken = generateRefreshToken(user.dataValues)
-      const { id, username, email } = user.dataValues
-      const responseData = { id, username, email, accessToken, refreshToken }
+      const {id, username, email} = user.dataValues
+      const responseData = {id, username, email, accessToken, refreshToken}
       res.status(200).send(responseData)
     }
   })(req, res, next)
@@ -37,4 +37,4 @@ const authLogout = async (req, res) => {
   res.status(200).send('SUCCESS')
 }
 
-export default { authLogin, authSignup, authLogout }
+export default {authLogin, authSignup, authLogout}
