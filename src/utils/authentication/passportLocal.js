@@ -1,7 +1,5 @@
-/* eslint-disable object-curly-spacing */
 import passport from 'passport'
 import User from '../../models/user'
-// eslint-disable-next-line object-curly-spacing
 import { Strategy as LocalStrategy } from 'passport-local'
 
 passport.serializeUser(function (user, done) {
@@ -23,7 +21,6 @@ passport.use(
       passReqToCallback: true
     },
     function (req, email, password, done) {
-      // eslint-disable-next-line object-curly-spacing
       User.findOne({ where: { email: email } }).then((user, err) => {
         if (err) return done(err)
 
@@ -55,7 +52,6 @@ passport.use(
         if (err) return done(err)
 
         if (user)
-          // eslint-disable-next-line object-curly-spacing
           return done(null, false, { status: 400, message: 'Email is taken' })
 
         const userDataForSignUp = {

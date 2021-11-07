@@ -13,9 +13,7 @@ const authLogin = async (req, res, next) => {
     } else {
       const accessToken = generateAccessToken(user.dataValues)
       const refreshToken = generateRefreshToken(user.dataValues)
-      // eslint-disable-next-line object-curly-spacing
       const { id, username, email } = user.dataValues
-      // eslint-disable-next-line object-curly-spacing
       const responseData = { id, username, email, accessToken, refreshToken }
       res.status(200).send(responseData)
     }
@@ -34,11 +32,9 @@ const authSignup = async (req, res, next) => {
   })(req, res, next)
 }
 
-// eslint-disable-next-line no-unused-vars
-const authLogout = async (req, res, next) => {
+const authLogout = async (req, res) => {
   req.logout()
   res.status(200).send('SUCCESS')
 }
 
-// eslint-disable-next-line object-curly-spacing
 export default { authLogin, authSignup, authLogout }

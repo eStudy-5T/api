@@ -16,6 +16,6 @@
 	],
 	"rules": {
 		"prettier/prettier": "error",
-		"object-curly-spacing": [2, "never"]
+		"object-curly-spacing": 0
 	}
 }

@@ -14,20 +14,16 @@ import dbPostgres from './utils/database/config'
 // APIs
 import authenticationAPIs from './routes/auth.routes'
 
-// eslint-disable-next-line object-curly-spacing
 import { SESSION_CONFIG } from './utils/constants/appConfig'
 
 // Test middleware
-// eslint-disable-next-line object-curly-spacing
 import { authVerifyToken } from './middlewares/authenticationCheck'
-// eslint-disable-next-line object-curly-spacing
 import { configHeader } from './middlewares/configHeader'
 
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
-// eslint-disable-next-line object-curly-spacing
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))

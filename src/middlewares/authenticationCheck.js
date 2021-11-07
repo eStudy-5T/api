@@ -1,4 +1,3 @@
-/* eslint-disable object-curly-spacing */
 import jwt from 'jsonwebtoken'
 
 const authVerifyToken = (req, res, next) => {
