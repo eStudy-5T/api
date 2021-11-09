@@ -12,7 +12,6 @@
     "docs": "apidoc -c ./apidoc.json -i src/ -o doc/"
   },
   "dependencies": {
-    "api-doc": "^4.0.3",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",

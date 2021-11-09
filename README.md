@@ -27,7 +27,14 @@ Running API locally requires below parameters to be set explicitly:
 
 ## 3.3 Run HTTP API
 
-`yarn start`
+`yarn dev`
 
-# 4. API Documentation
-Update later
+## 3.4. API Documentation
+
+- Run `npm i api-doc -g` to install apidoc library
+- Run command `yarn docs` to generate api document at location `doc/index.html`
+
+## 3.5 Linting code and fix eslint
+
+- Run `npm i eslint -g` to install eslint
+- Run command `yarn lint` to check the rule or `yarn fix-lint` to fix all fixable errors/warnings
