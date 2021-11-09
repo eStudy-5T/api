@@ -1,6 +1,8 @@
 {
   "trailingComma": "none",
   "tabWidth": 2,
-  "semi": false,
-  "singleQuote": true
+  "semi": true,
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "prettier.eslintIntegration": true
 }

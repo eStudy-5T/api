@@ -1,21 +1,47 @@
-import 'dotenv/config'
-import cors from 'cors'
-import express from 'express'
+import 'dotenv/config';
+import '../src/utils/authentication/passportLocal';
+import cors from 'cors';
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import session from 'express-session';
 
-const app = express()
+// Database configuration
+import dbPostgres from './utils/database/config';
 
-const x = {
-  a: 1
-}
+// APIs
+import authenticationAPIs from './routes/auth.routes';
 
-app.use(cors())
+import {SESSION_CONFIG} from './utils/constants/appConfig';
 
-app.disable('x-powered-by')
+// Test middleware
+import {authVerifyToken} from './middlewares/authenticationCheck';
+import {configHeader} from './middlewares/configHeader';
 
-app.get('/', (req, res) => {
-  res.send('Hello World!', x)
-})
+const app = express();
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Listening on port: ${process.env.PORT}`)
-})
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session(SESSION_CONFIG));
+app.use(passport.initialize());
+app.use(passport.session());
+app.disable('x-powered-by');
+app.use(configHeader);
+
+app.use('/auth', authenticationAPIs);
+
+app.get('/', authVerifyToken, (req, res) => {
+  res.status(200).send('Hello World!');
+});
+
+dbPostgres.authenticate().then(() => {
+  console.log('Connected to db');
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Listening on port: ${process.env.PORT}`);
+  });
+});

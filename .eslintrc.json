@@ -15,7 +15,8 @@
 		"prettier"
 	],
 	"rules": {
-		"prettier/prettier": "error",
-		"object-curly-spacing": [2, "never"]
+		"prettier/prettier": 1,
+		"object-curly-spacing": 1,
+		"no-unused-vars": 1
 	}
 }
