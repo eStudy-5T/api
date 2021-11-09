@@ -4,5 +4,6 @@
   "semi": true,
   "singleQuote": true,
   "bracketSpacing": false,
-  "prettier.eslintIntegration": true
+  "prettier.eslintIntegration": true,
+  "endOfLine": "auto"
 }
