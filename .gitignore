@@ -2,6 +2,7 @@
 .idea
 .vscode
 node_modules/
+doc/
 npm-debug.log
 build
 .env
