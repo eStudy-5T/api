@@ -42,6 +42,6 @@ app.get('/', authVerifyToken, (req, res) => {
 dbPostgres.authenticate().then(() => {
   console.log('Connected to db');
   app.listen(process.env.PORT || 3000, () => {
-    console.log(`Listening on port: ${process.env.PORT}`);
+    console.log(`Listening on port: ${process.env.PORT || 3000}`);
   });
 });
