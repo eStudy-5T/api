@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const authVerifyToken = (req, res, next) => {
+export const authVerifyToken = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
   if (authorizationHeader) {
     const token = authorizationHeader.split(' ')[1];
@@ -15,5 +15,3 @@ const authVerifyToken = (req, res, next) => {
     res.status(401).send('You are not authenticated!');
   }
 };
-
-export {authVerifyToken};

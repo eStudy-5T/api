@@ -1,3 +1,5 @@
+export const API_PORT = process.env.PORT || 3000;
+
 export const SESSION_CONFIG = {
   secret: 'mysecretkey',
   resave: false,

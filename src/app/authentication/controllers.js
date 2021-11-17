@@ -1,8 +1,5 @@
 import passport from 'passport';
-import {
-  generateAccessToken,
-  generateRefreshToken
-} from '../services/auth.service';
+import {generateAccessToken, generateRefreshToken} from './services';
 
 /**
  * @api {post} /login Log In

@@ -7,9 +7,9 @@ module.exports = {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
-    dialect: 'postgres',
+    dialect: 'postgres'
   },
   production: {
     url: process.env.DATABASE_URL
   }
-}
+};
