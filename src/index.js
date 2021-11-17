@@ -9,7 +9,7 @@ import path from 'path';
 
 import {SESSION_CONFIG, API_PORT} from './constants';
 import router from './main/routes';
-// import '../src/utils/authentication/passportLocal';
+import '../src/utils/authentication/passportLocal';
 import dbPostgres from './utils/database/config';
 import {configHeader} from './utils';
 import {authVerifyToken} from './validators/auth';
