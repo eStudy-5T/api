@@ -1,24 +1,18 @@
-import 'dotenv/config';
-import '../src/utils/authentication/passportLocal';
-import cors from 'cors';
-import express from 'express';
-import path from 'path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import passport from 'passport';
+import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
 import session from 'express-session';
+import passport from 'passport';
+import path from 'path';
 
-// Database configuration
+import {SESSION_CONFIG, API_PORT} from './constants';
+import router from './main/routes';
+import '../src/utils/authentication/passportLocal';
 import dbPostgres from './utils/database/config';
-
-// APIs
-import authenticationAPIs from './routes/auth.routes';
-
-import {SESSION_CONFIG} from './utils/constants/appConfig';
-
-// Test middleware
-import {authVerifyToken} from './middlewares/authenticationCheck';
-import {configHeader} from './middlewares/configHeader';
+import {configHeader} from './utils';
+import {authVerifyToken} from './validators/auth';
 
 const app = express();
 
@@ -33,7 +27,7 @@ app.use(passport.session());
 app.disable('x-powered-by');
 app.use(configHeader);
 
-app.use('/auth', authenticationAPIs);
+app.use('/auth', router.authRouter);
 
 app.get('/', authVerifyToken, (req, res) => {
   res.status(200).send('Hello World!');
@@ -41,7 +35,7 @@ app.get('/', authVerifyToken, (req, res) => {
 
 dbPostgres.authenticate().then(() => {
   console.log('Connected to db');
-  app.listen(process.env.PORT || 3000, () => {
-    console.log(`Listening on port: ${process.env.PORT || 3000}`);
+  app.listen(API_PORT, () => {
+    console.log(`Listening on port: ${API_PORT}`);
   });
 });
