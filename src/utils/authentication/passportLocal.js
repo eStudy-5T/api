@@ -13,7 +13,7 @@ passport.deserializeUser(function (id, done) {
 });
 
 passport.use(
-  'classroom.login',
+  'meettutor.login',
   new LocalStrategy(
     {
       usernameField: 'email',
@@ -40,7 +40,7 @@ passport.use(
 );
 
 passport.use(
-  'classroom.signup',
+  'meettutor.signup',
   new LocalStrategy(
     {
       usernameField: 'email',
@@ -54,13 +54,13 @@ passport.use(
         if (user)
           return done(null, false, {status: 400, message: 'Email is taken'});
 
-        const userDataForSignUp = {
-          username: req.body.username,
+        const userData = {
+          fullName: req.body.fullName,
           email: email,
           password: password
         };
 
-        User.create(userDataForSignUp).then(function (newUser) {
+        User.create(userData).then(function (newUser) {
           if (!newUser) {
             return done(null, false);
           }
