@@ -1,5 +1,1 @@
-import {authVerifyToken} from './auth';
-
-export default {
-  authVerifyToken
-};
+// Data validators go here

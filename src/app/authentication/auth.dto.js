@@ -1,5 +1,4 @@
-import passport from 'passport';
-import {generateAccessToken, generateRefreshToken} from './services';
+// LOG IN
 
 /**
  * @api {post} /login Log In
@@ -29,21 +28,8 @@ import {generateAccessToken, generateRefreshToken} from './services';
  *    HTTP/1.1 500 Internal Server Error
  *    HTTP/1.1 400 Login information is not matched with any account
  */
-const authLogin = async (req, res, next) => {
-  passport.authenticate('classroom.login', function (err, user, info) {
-    if (err) res.status(500).send(err);
 
-    if (info) {
-      res.status(info.status).send(info.message);
-    } else {
-      const accessToken = generateAccessToken(user.dataValues);
-      const refreshToken = generateRefreshToken(user.dataValues);
-      const {id, username, email} = user.dataValues;
-      const responseData = {id, username, email, accessToken, refreshToken};
-      res.status(200).send(responseData);
-    }
-  })(req, res, next);
-};
+// SIGN UP
 
 /**
  * @api {post} /signup Sign up account
@@ -73,17 +59,8 @@ const authLogin = async (req, res, next) => {
  *    HTTP/1.1 500 Internal Server Error
  *    HTTP/1.1 400 Login information is not matched with any account
  */
-const authSignup = async (req, res, next) => {
-  passport.authenticate('classroom.signup', function (err, user, info) {
-    if (err) res.status(500).send(err);
 
-    if (info) {
-      res.status(info.status).send(info.message);
-    } else {
-      res.status(200).send(user.dataValues);
-    }
-  })(req, res, next);
-};
+// LOG OUT
 
 /**
  * @api {post} /logout Log out
@@ -96,9 +73,3 @@ const authSignup = async (req, res, next) => {
  * @apiErrorExample {json} List error
  *    HTTP/1.1 500 Internal Server Error
  */
-const authLogout = async (req, res) => {
-  req.logout();
-  res.status(200).send('SUCCESS');
-};
-
-export default {authLogin, authSignup, authLogout};
