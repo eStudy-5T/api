@@ -19,8 +19,13 @@ const authLogin = async (req, res, next) => {
       };
       res
         .status(200)
-        .cookie('login-token', accessToken, {
-          sameSite: 'strict'
+        .cookie('access_info', accessToken, {
+          sameSite: 'strict',
+          secure: true
+        })
+        .cookie('refresh_info', refreshToken, {
+          sameSite: 'strict',
+          secure: true
         })
         .send(responseData);
     }

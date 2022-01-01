@@ -32,6 +32,7 @@ app.use(passport.session());
 app.disable('x-powered-by');
 
 app.use('/auth', router.authRouter);
+app.use('/user', router.userRouter);
 
 dbPostgres.authenticate().then(() => {
   console.log('Connected to db');
