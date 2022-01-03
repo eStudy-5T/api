@@ -5,5 +5,4 @@ node_modules/
 doc/
 npm-debug.log
 build
-.env
 yarn-error.log

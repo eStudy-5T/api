@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../utils/database/config';
 import bcrypt from 'bcrypt';
 
-const User = sequelize.define('user', {
+const User = sequelize.define('User', {
   id: {
     primaryKey: true,
     type: Sequelize.UUID,
