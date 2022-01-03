@@ -1,16 +1,15 @@
-import Sequelize from 'sequelize';
+// For sequelize cli
+require('dotenv/config');
 
-const sequelize = new Sequelize(
-  process.env.DATABASE_NAME,
-  process.env.DATABASE_USER,
-  process.env.DATABASE_PASSWORD,
-  {
+module.exports = {
+  development: {
+    database: process.env.DATABASE_NAME,
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
-    dialect: 'postgres',
-    logging: false
+    dialect: 'postgres'
+  },
+  production: {
+    url: process.env.DATABASE_URL
   }
-);
-
-sequelize.sync();
-
-export default sequelize;
+};

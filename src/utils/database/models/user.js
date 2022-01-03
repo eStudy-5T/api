@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import sequelize from '../utils/database/config';
+import sequelize from '../sequelize';
 import bcrypt from 'bcrypt';
 
 const User = sequelize.define('User', {

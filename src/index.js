@@ -10,7 +10,7 @@ import path from 'path';
 
 import {SESSION_CONFIG, API_PORT} from './constants/appConfig';
 import router from './app/app.routes';
-import dbPostgres from './utils/database/config';
+import dbPostgres from './utils/database/sequelize';
 import {configHeader} from './utils';
 
 const app = express();

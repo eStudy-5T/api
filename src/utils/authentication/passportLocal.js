@@ -1,5 +1,5 @@
 import passport from 'passport';
-import User from '../../models/user';
+import User from '../database/models/user';
 import {Strategy as LocalStrategy} from 'passport-local';
 
 passport.serializeUser(function (user, done) {
