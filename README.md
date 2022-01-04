@@ -34,8 +34,6 @@ Running API locally requires below parameters to be set explicitly:
 - Run `npm i api-doc -g` to install apidoc library
 - Run command `yarn docs` to generate api document at location `doc/index.html`
 
-## 3.4. API Documentation
-
 ## 3.5 Migration Database
 
 - Install modules: `npm i sequelize sequelize-cli -g`
