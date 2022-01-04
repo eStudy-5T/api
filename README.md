@@ -36,15 +36,16 @@ Running API locally requires below parameters to be set explicitly:
 
 ## 3.5 Migration Database
 
-- Install modules: `npm i sequelize sequelize-cli -g`
-- Move to api repo.
-- Use node v16.x: `nvm use 16`
 - Create new database by running sql scripts in `src/utils/database/initializations` or create a Postgres db with below configs:
 ```
   Database name: lettutor
   Host: 127.0.0.1
   Port: 5432
 ```
+- Install modules: `npm i sequelize sequelize-cli -g`
+- Move to api repo.
+- Use node v16.x: `nvm use 16`
+
 - To migrate DB: `npx sequelize-cli db:migrate`
 - To undo the latest migration: `npx sequelize-cli db:migrate:undo`
 - To undo all migrations: `npx sequelize-cli db:migrate:undo:all`
