@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 import bcrypt from 'bcrypt';
 
-const User = sequelize.define('User', {
+const schema = {
   id: {
     primaryKey: true,
     type: Sequelize.UUID,
@@ -21,7 +21,13 @@ const User = sequelize.define('User', {
     type: Sequelize.STRING,
     allowNull: false
   }
-});
+};
+
+const options = {
+  paranoid: true
+};
+
+const User = sequelize.define('User', schema, options);
 
 User.beforeSave((user) => {
   if (user.changed('password')) {

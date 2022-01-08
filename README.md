@@ -34,7 +34,22 @@ Running API locally requires below parameters to be set explicitly:
 - Run `npm i api-doc -g` to install apidoc library
 - Run command `yarn docs` to generate api document at location `doc/index.html`
 
-## 3.5 Linting code and fix eslint
+## 3.5 Migration Database
 
-- Run `npm i eslint -g` to install eslint
-- Run command `yarn lint` to check the rule or `yarn fix-lint` to fix all fixable errors/warnings
+- Create new database by running sql scripts in `src/utils/database/initializations` or create a Postgres db with below configs:
+```
+  Database name: lettutor
+  Host: 127.0.0.1
+  Port: 5432
+```
+- Install modules: `npm i sequelize sequelize-cli -g`
+- Move to api repo.
+- Use node v16.x: `nvm use 16`
+
+- To migrate DB: `npx sequelize-cli db:migrate`
+- To undo the latest migration: `npx sequelize-cli db:migrate:undo`
+- To undo all migrations: `npx sequelize-cli db:migrate:undo:all`
+
+- To seed all data: `npx sequelize-cli db:seed:all`
+- To undo the latest seed: `npx sequelize-cli db:seed:undo`
+- To undo all seeds: `npx sequelize-cli db:seed:undo:all`
