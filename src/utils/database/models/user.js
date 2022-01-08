@@ -9,7 +9,7 @@ const schema = {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
-  fullName: {
+  username: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -20,6 +20,97 @@ const schema = {
   password: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  role: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Roles',
+      key: 'id'
+    }
+  },
+  firstName: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  lastName: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  dateOfBirth: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  nationality: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  avatar: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  mobilePhone: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  grade: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Grades',
+      key: 'id'
+    }
+  },
+  degree: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Degrees',
+      key: 'id'
+    }
+  },
+  identityNumber: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  subjects: {
+    type: Sequelize.JSONB,
+    allowNull: true
+  },
+  userToken: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  tokenExpired: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  resetPasswordToken: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  resetPasswordExpired: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  isActive: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
+  isVerified: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  isDisabled: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 };
 
