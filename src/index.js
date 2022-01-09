@@ -1,42 +1,94 @@
-import 'dotenv/config';
-import '../src/utils/authentication/passportLocal';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import express from 'express';
-import session from 'express-session';
-import passport from 'passport';
-import path from 'path';
+#!/usr/bin/env node
 
-import {SESSION_CONFIG, API_PORT} from './constants/appConfig';
-import router from './app/app.routes';
-import dbPostgres from './utils/database/sequelize';
-import {configHeader} from './utils';
+/**
+ * Config dotenv to read enviroment constiables from .env file
+ */
+var dotenv = require('dotenv');
+dotenv.config();
 
-const app = express();
+/**
+ * Module dependencies.
+ */
+import app from './app/app';
+var debug = require('debug')('api:server');
+var http = require('http');
 
-app.use(
-  cors({
-    credentials: true,
-    origin: ['http://localhost:8888']
-  })
-);
-app.use(configHeader);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(session(SESSION_CONFIG));
-app.use(passport.initialize());
-app.use(passport.session());
-app.disable('x-powered-by');
+/**
+ * Get port from environment and store in Express.
+ */
 
-app.use('/auth', router.authRouter);
-app.use('/user', router.userRouter);
+var port = normalizePort(process.env.PORT || '6789');
+app.set('port', port);
 
-dbPostgres.authenticate().then(() => {
-  console.log('Connected to db');
-  app.listen(API_PORT, () => {
-    console.log(`Listening on port: ${API_PORT}`);
-  });
-});
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  console.log(`API at http://localhost:${port}/`);
+  console.log(`Swagger at http://localhost:${port}/api-docs`);
+  console.log('==Donate== Momo: 0924562584 - BUI KHAC TRI');
+  debug('Listening on ' + bind);
+}

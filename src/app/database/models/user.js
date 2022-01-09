@@ -11,7 +11,7 @@ const schema = {
   },
   username: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   email: {
     type: Sequelize.STRING,
@@ -23,7 +23,7 @@ const schema = {
   },
   role: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'Roles',
       key: 'id'

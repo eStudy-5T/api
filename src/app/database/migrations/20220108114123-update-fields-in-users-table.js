@@ -11,7 +11,7 @@ module.exports = {
           'role',
           {
             type: Sequelize.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
               model: 'Roles',
               key: 'id'
@@ -138,6 +138,15 @@ module.exports = {
         queryInterface.addColumn(
           'Users',
           'resetPasswordToken',
+          {
+            type: Sequelize.STRING,
+            allowNull: true
+          },
+          {transaction}
+        ),
+        queryInterface.addColumn(
+          'Users',
+          'userToken',
           {
             type: Sequelize.STRING,
             allowNull: true

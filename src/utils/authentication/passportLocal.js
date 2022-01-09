@@ -1,5 +1,5 @@
 import passport from 'passport';
-import User from '../database/models/user';
+import User from '../../app/database/models/user';
 import {Strategy as LocalStrategy} from 'passport-local';
 
 passport.serializeUser(function (user, done) {
@@ -58,7 +58,8 @@ passport.use(
           return done(null, false, {status: 400, message: 'error.takenEmail'});
 
         const userData = {
-          fullName: req.body.fullName,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
           email: email,
           password: password
         };

@@ -12,7 +12,8 @@ const authLogin = async (req, res, next) => {
       const refreshToken = generateRefreshToken(user.dataValues);
       const responseData = {
         id: user.dataValues.id,
-        fullName: user.dataValues.fullName,
+        firstName: user.dataValues.firstName,
+        lastName: user.dataValues.lastName,
         email: user.dataValues.email,
         accessToken,
         refreshToken
@@ -41,7 +42,8 @@ const authSignup = async (req, res, next) => {
     } else {
       const responseData = {
         id: user.dataValues.id,
-        fullName: user.dataValues.fullName,
+        firstName: user.dataValues.firstName,
+        lastName: user.dataValues.lastName,
         email: user.dataValues.email
       };
 
