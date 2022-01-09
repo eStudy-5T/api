@@ -1,4 +1,4 @@
-import {authVerifyToken} from './middleware/auth';
+import {authVerifyToken} from './middlewares/auth';
 
 export default {
   authVerifyToken

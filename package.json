@@ -6,26 +6,34 @@
   "author": "tainguyent <taitnguyen@kobiton.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "[ -f .env ] && source .env; nodemon --exec sucrase-node ./src/index.js",
+    "dev": "[ -f .env ]; nodemon --exec sucrase-node ./src/index.js",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:seed:undo": "npx sequelize-cli db:seed:undo",
     "lint": "eslint --ext .js src/",
-    "fix-lint": "eslint --fix --ext .js src/",
-    "docs": "apidoc -c ./apidoc.json -i src/ -o doc/"
+    "fix-lint": "eslint --fix --ext .js src/"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "debug": "^4.3.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "express-validator": "^6.13.0",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.9.0"
+    "sequelize": "^6.9.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "eslint": "^8.1.0",
@@ -33,6 +41,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.14",
     "prettier": "^2.4.1",
+    "sequelize-cli": "^6.3.0",
     "sucrase": "^3.20.3"
   }
 }

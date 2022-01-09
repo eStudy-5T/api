@@ -1,0 +1,34 @@
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: email
+        password:
+          type: string
+          example: password
+      required:
+        - email
+        - password
+    Register:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: email
+        lastName:
+          type: string
+          example: email
+        email:
+          type: string
+          example: email
+        password:
+          type: string
+          example: password
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
