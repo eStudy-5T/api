@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import passport from 'passport';
 import User from '../../app/database/models/user';
 import {Strategy as LocalStrategy} from 'passport-local';
@@ -58,8 +59,8 @@ passport.use(
           return done(null, false, {status: 400, message: 'error.takenEmail'});
 
         const userData = {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
+          firstName: get(req, 'body.firstName'),
+          lastName: get(req, 'body.lastName'),
           email: email,
           password: password
         };

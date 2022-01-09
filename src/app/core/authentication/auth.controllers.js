@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import passport from 'passport';
 import {generateAccessToken, generateRefreshToken} from './auth.services';
 
@@ -11,10 +12,10 @@ const authLogin = async (req, res, next) => {
       const accessToken = generateAccessToken(user.dataValues);
       const refreshToken = generateRefreshToken(user.dataValues);
       const responseData = {
-        id: user.dataValues.id,
-        firstName: user.dataValues.firstName,
-        lastName: user.dataValues.lastName,
-        email: user.dataValues.email,
+        id: get(user, 'dataValues.id'),
+        firstName: get(user, 'dataValues.firstName'),
+        lastName: get(user, 'dataValues.lastName'),
+        email: get(user, 'dataValues.email'),
         accessToken,
         refreshToken
       };
@@ -41,10 +42,10 @@ const authSignup = async (req, res, next) => {
       res.status(info.status).send(info.message);
     } else {
       const responseData = {
-        id: user.dataValues.id,
-        firstName: user.dataValues.firstName,
-        lastName: user.dataValues.lastName,
-        email: user.dataValues.email
+        id: get(user, 'dataValues.id'),
+        firstName: get(user, 'dataValues.firstName'),
+        lastName: get(user, 'dataValues.lastName'),
+        email: get(user, 'dataValues.email')
       };
 
       res.status(200).send(responseData);
