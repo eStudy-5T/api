@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: '/'
+      url: '/api'
     }
   ],
   components: {
@@ -18,12 +18,18 @@ const swaggerDefinition = {
         type: 'apiKey',
         name: 'Authorization',
         in: 'header'
+      },
+      Bearer: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
       }
     }
   },
   security: [
     {
-      JWT: []
+      JWT: [],
+      Bearer: []
     }
   ]
 };

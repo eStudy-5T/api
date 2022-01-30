@@ -21,7 +21,7 @@ const authRouter = express.Router();
  *       400:
  *         description: Login failed
  */
-authRouter.post('/login', authController.authLogin);
+authRouter.post('/login', authController.authenticate);
 
 /**
  * @swagger
@@ -41,8 +41,8 @@ authRouter.post('/login', authController.authLogin);
  *       400:
  *         description: Register failed
  */
-authRouter.post('/signup', authController.authSignup);
+authRouter.post('/signup', authController.register);
 
-authRouter.post('/logout', authController.authLogout);
+authRouter.post('/logout', authController.logout);
 
 export default authRouter;

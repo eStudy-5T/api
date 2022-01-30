@@ -1,0 +1,35 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        email:
+          type: string
+          example: email
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Cena
+        dateOfBirth:
+          type: string
+          example: 5/10/1996
+        avatar:
+          type: string
+          example: http://gravatar.com
+        isActive:
+          type: boolean
+          example: true
+        isVerified:
+          type: boolean
+          example: true
+        isDisabled:
+          type: boolean
+          example: false
+      required:
+        - email
+        - password

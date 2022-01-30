@@ -5,10 +5,10 @@ components:
       properties:
         email:
           type: string
-          example: email
+          example: norman@osborn.com
         password:
           type: string
-          example: password
+          example: Asdf@1234
       required:
         - email
         - password

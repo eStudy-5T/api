@@ -30,7 +30,10 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => {
+  console.log(`API at http://localhost:${port}/api`);
+  console.log(`Swagger at http://localhost:${port}/api-docs`);
+});
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -87,8 +90,5 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  console.log(`API at http://localhost:${port}/`);
-  console.log(`Swagger at http://localhost:${port}/api-docs`);
-  console.log('==Donate== Momo: 0924562584 - BUI KHAC TRI');
   debug('Listening on ' + bind);
 }
