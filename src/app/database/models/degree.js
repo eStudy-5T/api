@@ -33,6 +33,6 @@ const options = {
   paranoid: true
 };
 
-const Degree = sequelize.define('Degree', schema, options);
+const Degree = sequelize.define('degree', schema, options);
 
 export default Degree;

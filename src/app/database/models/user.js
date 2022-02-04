@@ -2,6 +2,10 @@ import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 import bcrypt from 'bcrypt';
 
+import Role from './role';
+import Degree from './degree';
+import Grade from './grade';
+
 const schema = {
   id: {
     primaryKey: true,
@@ -21,11 +25,11 @@ const schema = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  role: {
+  roleId: {
     type: Sequelize.INTEGER,
     allowNull: true,
     references: {
-      model: 'Roles',
+      model: 'roles',
       key: 'id'
     }
   },
@@ -57,19 +61,19 @@ const schema = {
     type: Sequelize.STRING,
     allowNull: true
   },
-  grade: {
+  gradeId: {
     type: Sequelize.INTEGER,
     allowNull: true,
     references: {
-      model: 'Grades',
+      model: 'grades',
       key: 'id'
     }
   },
-  degree: {
+  degreeId: {
     type: Sequelize.INTEGER,
     allowNull: true,
     references: {
-      model: 'Degrees',
+      model: 'degrees',
       key: 'id'
     }
   },
@@ -118,7 +122,11 @@ const options = {
   paranoid: true
 };
 
-const User = sequelize.define('User', schema, options);
+const User = sequelize.define('user', schema, options);
+
+User.belongsTo(Role, {constraint: false});
+User.belongsTo(Grade, {constraint: false});
+User.belongsTo(Degree, {constraint: false});
 
 User.beforeSave((user) => {
   if (user.changed('password')) {

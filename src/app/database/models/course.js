@@ -1,15 +1,15 @@
 import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 
+import User from './user';
+import Grade from './grade';
+import CourseType from './course-type';
+
 const schema = {
   id: {
     primaryKey: true,
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
-    allowNull: false
-  },
-  dateCreated: {
-    type: Sequelize.DATE,
     allowNull: false
   },
   title: {
@@ -18,13 +18,13 @@ const schema = {
   },
   description: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
-  owner: {
+  ownerId: {
     type: Sequelize.UUID,
     allowNull: false,
     references: {
-      model: 'Users',
+      model: 'users',
       key: 'id'
     }
   },
@@ -46,15 +46,19 @@ const schema = {
     type: Sequelize.STRING,
     allowNull: true
   },
-  grade: {
+  gradeId: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: true,
+    references: {
+      model: 'grades',
+      key: 'id'
+    }
   },
-  type: {
+  typeId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: 'CourseTypes',
+      model: 'course-types',
       key: 'id'
     }
   }
@@ -64,6 +68,10 @@ const options = {
   paranoid: true
 };
 
-const Course = sequelize.define('Course', schema, options);
+const Course = sequelize.define('course', schema, options);
+
+Course.belongsTo(User, {as: 'owner', constraint: false});
+Course.belongsTo(Grade, {constaint: false});
+Course.belongsTo(CourseType, {as: 'type', constaint: false});
 
 export default Course;

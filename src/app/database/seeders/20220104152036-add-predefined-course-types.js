@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface) => {
-    return queryInterface.bulkInsert('CourseTypes', [
+    return queryInterface.bulkInsert('course-types', [
       {
         description: 'Short term course',
         createdAt: new Date(),
@@ -16,6 +16,6 @@ module.exports = {
     ]);
   },
   down: (queryInterface) => {
-    return queryInterface.bulkDelete('CourseTypes', null, {});
+    return queryInterface.bulkDelete('course-types', null, {});
   }
 };

@@ -4,7 +4,7 @@ import sequelize from '../sequelize';
 const schema = {
   id: {
     primaryKey: true,
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   name: {
@@ -21,6 +21,6 @@ const options = {
   paranoid: true
 };
 
-const Subject = sequelize.define('Subject', schema, options);
+const Subject = sequelize.define('subject', schema, options);
 
 export default Subject;
