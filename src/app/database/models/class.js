@@ -1,6 +1,8 @@
 import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 
+import Course from './course';
+
 const schema = {
   id: {
     primaryKey: true,
@@ -12,7 +14,7 @@ const schema = {
     type: Sequelize.UUID,
     allowNull: false,
     references: {
-      model: 'Courses',
+      model: 'courses',
       key: 'id'
     }
   },
@@ -65,6 +67,9 @@ const options = {
   paranoid: true
 };
 
-const Class = sequelize.define('Class', schema, options);
+const Class = sequelize.define('class', schema, options);
+
+Class.belongsTo(Course, {constraint: false});
+Course.hasMany(Class, {constraint: false});
 
 export default Class;

@@ -4,7 +4,7 @@ import sequelize from '../sequelize';
 const schema = {
   id: {
     primaryKey: true,
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   name: {
@@ -21,6 +21,6 @@ const options = {
   paranoid: true
 };
 
-const Role = sequelize.define('Role', schema, options);
+const Role = sequelize.define('role', schema, options);
 
 export default Role;

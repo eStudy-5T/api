@@ -4,23 +4,23 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.removeColumn('Users', 'fullName', {transaction});
+      await queryInterface.removeColumn('users', 'fullName', {transaction});
       await Promise.all([
         queryInterface.addColumn(
-          'Users',
-          'role',
+          'users',
+          'roleId',
           {
             type: Sequelize.INTEGER,
             allowNull: true,
             references: {
-              model: 'Roles',
+              model: 'roles',
               key: 'id'
             }
           },
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'username',
           {
             type: Sequelize.STRING,
@@ -29,7 +29,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'firstName',
           {
             type: Sequelize.STRING,
@@ -38,7 +38,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'lastName',
           {
             type: Sequelize.STRING,
@@ -47,7 +47,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'nationality',
           {
             type: Sequelize.STRING,
@@ -56,7 +56,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'avatar',
           {
             type: Sequelize.STRING,
@@ -65,7 +65,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'description',
           {
             type: Sequelize.STRING,
@@ -74,7 +74,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'mobilePhone',
           {
             type: Sequelize.STRING,
@@ -83,7 +83,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'dateOfBirth',
           {
             type: Sequelize.DATE,
@@ -92,33 +92,33 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
-          'grade',
+          'users',
+          'gradeId',
           {
             type: Sequelize.INTEGER,
             allowNull: true,
             references: {
-              model: 'Grades',
+              model: 'grades',
               key: 'id'
             }
           },
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
-          'degree',
+          'users',
+          'degreeId',
           {
             type: Sequelize.INTEGER,
             allowNull: true,
             references: {
-              model: 'Degrees',
+              model: 'degrees',
               key: 'id'
             }
           },
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'identityNumber',
           {
             type: Sequelize.STRING,
@@ -127,7 +127,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'subjects',
           {
             type: Sequelize.JSONB,
@@ -136,7 +136,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'resetPasswordToken',
           {
             type: Sequelize.STRING,
@@ -145,7 +145,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'userToken',
           {
             type: Sequelize.STRING,
@@ -154,7 +154,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'tokenExpired',
           {
             type: Sequelize.DATE,
@@ -163,7 +163,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'resetPasswordExpired',
           {
             type: Sequelize.DATE,
@@ -172,7 +172,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'isActive',
           {
             type: Sequelize.BOOLEAN,
@@ -181,7 +181,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'isVerified',
           {
             type: Sequelize.BOOLEAN,
@@ -190,7 +190,7 @@ module.exports = {
           {transaction}
         ),
         queryInterface.addColumn(
-          'Users',
+          'users',
           'isDisabled',
           {
             type: Sequelize.BOOLEAN,
@@ -210,7 +210,7 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.addColumn(
-        'Users',
+        'users',
         'fullName',
         {
           type: Sequelize.STRING,
@@ -219,30 +219,30 @@ module.exports = {
         {transaction}
       );
       await Promise.all([
-        queryInterface.removeColumn('Users', 'role', {transaction}),
-        queryInterface.removeColumn('Users', 'username', {transaction}),
-        queryInterface.removeColumn('Users', 'firstName', {transaction}),
-        queryInterface.removeColumn('Users', 'lastName', {transaction}),
-        queryInterface.removeColumn('Users', 'nationality', {transaction}),
-        queryInterface.removeColumn('Users', 'avatar', {transaction}),
-        queryInterface.removeColumn('Users', 'description', {transaction}),
-        queryInterface.removeColumn('Users', 'mobilePhone', {transaction}),
-        queryInterface.removeColumn('Users', 'userToken', {transaction}),
-        queryInterface.removeColumn('Users', 'resetPasswordToken', {
+        queryInterface.removeColumn('users', 'roleId', {transaction}),
+        queryInterface.removeColumn('users', 'username', {transaction}),
+        queryInterface.removeColumn('users', 'firstName', {transaction}),
+        queryInterface.removeColumn('users', 'lastName', {transaction}),
+        queryInterface.removeColumn('users', 'nationality', {transaction}),
+        queryInterface.removeColumn('users', 'avatar', {transaction}),
+        queryInterface.removeColumn('users', 'description', {transaction}),
+        queryInterface.removeColumn('users', 'mobilePhone', {transaction}),
+        queryInterface.removeColumn('users', 'userToken', {transaction}),
+        queryInterface.removeColumn('users', 'resetPasswordToken', {
           transaction
         }),
-        queryInterface.removeColumn('Users', 'dateOfBirth', {transaction}),
-        queryInterface.removeColumn('Users', 'tokenExpired', {transaction}),
-        queryInterface.removeColumn('Users', 'resetPasswordExpired', {
+        queryInterface.removeColumn('users', 'dateOfBirth', {transaction}),
+        queryInterface.removeColumn('users', 'tokenExpired', {transaction}),
+        queryInterface.removeColumn('users', 'resetPasswordExpired', {
           transaction
         }),
-        queryInterface.removeColumn('Users', 'isActive', {transaction}),
-        queryInterface.removeColumn('Users', 'isVerified', {transaction}),
-        queryInterface.removeColumn('Users', 'isDisabled', {transaction}),
-        queryInterface.removeColumn('Users', 'grade', {transaction}),
-        queryInterface.removeColumn('Users', 'degree', {transaction}),
-        queryInterface.removeColumn('Users', 'identityNumber', {transaction}),
-        queryInterface.removeColumn('Users', 'subjects', {transaction})
+        queryInterface.removeColumn('users', 'isActive', {transaction}),
+        queryInterface.removeColumn('users', 'isVerified', {transaction}),
+        queryInterface.removeColumn('users', 'isDisabled', {transaction}),
+        queryInterface.removeColumn('users', 'gradeId', {transaction}),
+        queryInterface.removeColumn('users', 'degreeId', {transaction}),
+        queryInterface.removeColumn('users', 'identityNumber', {transaction}),
+        queryInterface.removeColumn('users', 'subjects', {transaction})
       ]);
       await transaction.commit();
     } catch (err) {
