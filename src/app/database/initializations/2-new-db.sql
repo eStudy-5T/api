@@ -1,5 +1,4 @@
-
-CREATE DATABASE lettutor
+CREATE DATABASE letmeet
   WITH
   OWNER = cfcadmin
 ENCODING = 'UTF8'

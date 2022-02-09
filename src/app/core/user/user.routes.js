@@ -16,6 +16,6 @@ const userRouter = express.Router();
  *       404:
  *         description: User not found
  */
-userRouter.get('/get_user_info_details', userController.getUserDetails);
+userRouter.get('/get-user-info-details', userController.getUserDetails);
 
 export default userRouter;
