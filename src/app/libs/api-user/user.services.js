@@ -1,4 +1,4 @@
-import userRepository from '../../database/repositories/user.repositories';
+import userRepository from '../../core/database/repositories/user.repositories';
 
 const userService = {
   getUserDetails: (userId) => {

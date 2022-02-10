@@ -1,5 +1,5 @@
-import authRouter from './core/authentication/auth.routes';
-import userRouter from './core/user/user.routes';
+import authRouter from './libs/api-auth/auth.routes';
+import userRouter from './libs/api-user/user.routes';
 
 export default {
   authRouter,

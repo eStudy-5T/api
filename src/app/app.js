@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import '../utils/auth-strategy/passportLocal';
+import './utils/auth-strategy/passport-local';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -10,9 +10,9 @@ import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 
 import router from './app.routes';
-import middleware from './middlewares';
-import dbPostgres from './database/sequelize';
-import {SESSION_CONFIG} from './constants/appConfig';
+import middleware from './core/middlewares';
+import dbPostgres from './core/database/sequelize';
+import {SESSION_CONFIG} from './core/constants/appConfig';
 import {swaggerSpec} from './swagger';
 
 const app = express();

@@ -1,12 +1,12 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "./src/index.js",
+  "main": "./src/server.js",
   "repository": "https://github.com/eStudy-5T/api.git",
   "author": "tainguyent <taitnguyen@kobiton.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "[ -f .env ]; nodemon --exec sucrase-node ./src/index.js",
+    "dev": "[ -f .env ]; nodemon --exec sucrase-node ./src/server.js",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:seed": "npx sequelize-cli db:seed:all",

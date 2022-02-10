@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import passport from 'passport';
-import User from '../../app/database/models/user';
+import User from '../../core/database/models/user';
 import {Strategy as LocalStrategy} from 'passport-local';
 
 passport.serializeUser(function (user, done) {
