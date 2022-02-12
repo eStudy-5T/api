@@ -1,0 +1,52 @@
+components:
+  schemas:
+    IncompleteCourse:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Lập trình Android
+        type:
+          type: integer
+          example: 1
+          enum: [1, 2]
+          description: |
+            * `1` - Short term course
+            * `2` - Long term course
+      required:
+        - title
+        - type
+    Course:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Lập trình Android
+        description:
+          type: string
+          example: Khóa học này sẽ hướng dẫn bạn chi tiết về lập trình Android.
+        rating:
+          type: number
+          example: 4.3
+        price:
+          type: integer
+          example: 399000
+        outline:
+          type: string
+          example: >-
+            <p>Phần 1: Giới thiệu về lập trình Android và cài đặt công cụ</p>
+            <p>Phần 2: Làm quen với Android Studio</p>
+        isOpened:
+          type: boolean
+          example: false
+        grade:
+          type: integer
+          example: 11
+      required:
+        - title
+        - description
+        - rating
+        - price
+        - outline
+        - isOpened
+        - grade

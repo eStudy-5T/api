@@ -36,7 +36,7 @@ const swaggerDefinition = {
 
 const options = {
   definition: swaggerDefinition,
-  apis: [`${__dirname}/core/*/*.js`, `${__dirname}/api-docs/*.yaml`],
+  apis: [`${__dirname}/libs/*/*.js`, `${__dirname}/api-docs/*.yaml`],
   basePath: '/'
 };
 
