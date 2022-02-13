@@ -1,5 +1,5 @@
 import courseService from './course.service.js';
-import apiHandler from '../../utils/helper/api-handler';
+import helper from '../../utils/helper';
 
 const getCourses = async (req, res) => {
   const {q, offset, limit, type} = req.query;
@@ -33,7 +33,7 @@ const getCourses = async (req, res) => {
 
     res.status(200).send(courses);
   } catch (err) {
-    apiHandler.handleErrorResponse(res, err);
+    helper.apiHandler.handleErrorResponse(res, err);
   }
 };
 
@@ -48,7 +48,7 @@ const getSpecificCourse = async (req, res) => {
 
     res.status(200).send(course);
   } catch (err) {
-    apiHandler.handleErrorResponse(res, err);
+    helper.apiHandler.handleErrorResponse(res, err);
   }
 };
 
@@ -65,7 +65,7 @@ const createCourse = async (req, res) => {
 
     res.status(201).send(createdCourse);
   } catch (err) {
-    apiHandler.handleErrorResponse(res, err);
+    helper.apiHandler.handleErrorResponse(res, err);
   }
 };
 
@@ -80,12 +80,17 @@ const updateCourse = async (req, res) => {
     price,
     outline,
     isOpened,
-    grade
+    gradeId: grade
   };
 
   try {
-    const course = await courseService.getSpecificCourse(courseId);
-    if (!course) {
+    const courses = await courseService.getCourses({
+      where: {
+        id: courseId,
+        ownerId: req.user.id
+      }
+    });
+    if (!courses.length) {
       return res.status(404).send('Course not found');
     }
 
@@ -96,7 +101,7 @@ const updateCourse = async (req, res) => {
 
     res.status(200).send(updatedCourse);
   } catch (err) {
-    apiHandler.handleErrorResponse(res, err);
+    helper.apiHandler.handleErrorResponse(res, err);
   }
 };
 
@@ -104,8 +109,13 @@ const deleteCourse = async (req, res) => {
   const {courseId} = req.params;
 
   try {
-    const course = await courseService.getSpecificCourse(courseId);
-    if (!course) {
+    const courses = await courseService.getCourses({
+      where: {
+        id: courseId,
+        ownerId: req.user.id
+      }
+    });
+    if (!courses.length) {
       return res.status(404).send('Course not found');
     }
 
@@ -113,7 +123,7 @@ const deleteCourse = async (req, res) => {
 
     res.status(204).end();
   } catch (err) {
-    apiHandler.handleErrorResponse(res, err);
+    helper.apiHandler.handleErrorResponse(res, err);
   }
 };
 

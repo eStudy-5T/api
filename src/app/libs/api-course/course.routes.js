@@ -1,5 +1,6 @@
 import express from 'express';
 import courseController from './course.controller';
+import validator from '../../utils/validators';
 
 const courseRouter = express.Router();
 
@@ -80,10 +81,16 @@ courseRouter.get('/:courseId', courseController.getSpecificCourse);
  *     responses:
  *       201:
  *         description: Return newly created course
+ *       400:
+ *         description: Validation error
  *       404:
  *         description: Course not found
  */
-courseRouter.post('/', courseController.createCourse);
+courseRouter.post(
+  '/',
+  validator.courseValidator.incompleteCourseValidator,
+  courseController.createCourse
+);
 
 /**
  * @swagger
@@ -107,10 +114,16 @@ courseRouter.post('/', courseController.createCourse);
  *     responses:
  *       201:
  *         description: Return updated course
+ *       400:
+ *         description: Validation error
  *       404:
  *         description: Course not found
  */
-courseRouter.put('/:courseId', courseController.updateCourse);
+courseRouter.put(
+  '/:courseId',
+  validator.courseValidator.completeCourseValidator,
+  courseController.updateCourse
+);
 
 /**
  * @swagger
