@@ -214,7 +214,7 @@ module.exports = {
         'fullName',
         {
           type: Sequelize.STRING,
-          allowNull: false
+          allowNull: true
         },
         {transaction}
       );
