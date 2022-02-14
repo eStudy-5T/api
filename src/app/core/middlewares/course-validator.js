@@ -2,7 +2,7 @@ import Joi from 'joi';
 import courseService from '../../libs/api-course/course.service';
 import CourseType from '../../core/database/models/course-type';
 import Grade from '../../core/database/models/grade';
-import appHelper from '../helper';
+import appHelper from '../../utils/helper';
 
 const titleValidationSchema = Joi.object({
   title: Joi.string().required().min(10).max(100)
@@ -86,36 +86,35 @@ const courseValidationSchema = Joi.object({
   .concat(titleValidationSchema)
   .unknown();
 
-const incompleteCourseValidator = (req, res, next) => {
-  incompleteCourseValidationSchema
-    .validateAsync({
-      ...req.body,
-      ownerId: req.user.id
-    })
-    .then(() => {
-      next();
-    })
-    .catch((err) => {
-      appHelper.apiHandler.handleValidationErrorResponse(res, err);
-    });
+const courseValidator = {
+  incompleteCourseValidator: (req, res, next) => {
+    incompleteCourseValidationSchema
+      .validateAsync({
+        ...req.body,
+        ownerId: req.user.id
+      })
+      .then(() => {
+        next();
+      })
+      .catch((err) => {
+        appHelper.apiHandler.handleValidationErrorResponse(res, err);
+      });
+  },
+
+  completeCourseValidator: (req, res, next) => {
+    courseValidationSchema
+      .validateAsync({
+        ...req.body,
+        ownerId: req.user.id,
+        id: req.params.courseId
+      })
+      .then(() => {
+        next();
+      })
+      .catch((err) => {
+        appHelper.apiHandler.handleValidationErrorResponse(res, err);
+      });
+  }
 };
 
-const completeCourseValidator = (req, res, next) => {
-  courseValidationSchema
-    .validateAsync({
-      ...req.body,
-      ownerId: req.user.id,
-      id: req.params.courseId
-    })
-    .then(() => {
-      next();
-    })
-    .catch((err) => {
-      appHelper.apiHandler.handleValidationErrorResponse(res, err);
-    });
-};
-
-export default {
-  incompleteCourseValidator,
-  completeCourseValidator
-};
+export default courseValidator;
