@@ -1,6 +1,6 @@
 import express from 'express';
 import courseController from './course.controller';
-import validator from '../../utils/validators';
+import mw from '../../core/middlewares';
 
 const courseRouter = express.Router();
 
@@ -88,7 +88,7 @@ courseRouter.get('/:courseId', courseController.getSpecificCourse);
  */
 courseRouter.post(
   '/',
-  validator.courseValidator.incompleteCourseValidator,
+  mw.courseValidator.incompleteCourseValidator,
   courseController.createCourse
 );
 
@@ -121,7 +121,7 @@ courseRouter.post(
  */
 courseRouter.put(
   '/:courseId',
-  validator.courseValidator.completeCourseValidator,
+  mw.courseValidator.completeCourseValidator,
   courseController.updateCourse
 );
 
