@@ -136,6 +136,32 @@ const courseController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  getClasses: (req, res) => {
+    const {courseId} = req.params;
+
+    courseService
+      .getClasses(courseId)
+      .then((classes) => {
+        res.status(200).send(classes);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  createClass: (req, res) => {
+    const {courseId} = req.params;
+
+    courseService
+      .createClass(courseId, req.body)
+      .then((createdClass) => {
+        res.status(201).send(createdClass);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 

@@ -25,7 +25,8 @@ const schema = {
   },
   sessionCompletedCount: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   link: {
     type: Sequelize.STRING,
@@ -41,7 +42,8 @@ const schema = {
   },
   schedule: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true,
+    defaultValue: ''
   },
   timezone: {
     type: Sequelize.STRING,
@@ -55,7 +57,8 @@ const schema = {
   },
   remainingSlots: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   },
   duration: {
     type: Sequelize.INTEGER,

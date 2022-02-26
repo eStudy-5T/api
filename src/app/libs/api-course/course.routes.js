@@ -147,4 +147,8 @@ courseRouter.put(
  */
 courseRouter.delete('/:courseId', courseController.deleteCourse);
 
+courseRouter.get('/:courseId/classes', courseController.getClasses);
+
+courseRouter.post('/:courseId/classes', courseController.createClass);
+
 export default courseRouter;
