@@ -61,7 +61,7 @@ const incompleteCourseValidationSchema = Joi.object({
   .unknown();
 
 const courseValidationSchema = Joi.object({
-  description: Joi.string().min(10).max(255),
+  description: Joi.string().allow('').max(255),
   rating: Joi.number().min(0).max(5),
   price: Joi.number().min(0),
   outline: Joi.string().min(0).max(255),
