@@ -54,6 +54,7 @@ app.use('/api/auth', router.authRouter);
 app.use('/api', middleware.verifyRequest);
 app.use('/api/user', router.userRouter);
 app.use('/api/courses', router.courseRouter);
+app.use('/api/classes', router.classRouter);
 
 dbPostgres.authenticate().then((err) => {
   if (err) {
