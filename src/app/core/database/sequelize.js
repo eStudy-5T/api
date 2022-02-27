@@ -1,17 +1,48 @@
 import Sequelize from 'sequelize';
+import 'dotenv/config';
 
-const sequelize =
-  process.env === 'production'
-    ? new Sequelize(process.env.DATABASE_URL)
-    : new Sequelize(
-        process.env.DATABASE_NAME,
-        process.env.DATABASE_USER,
-        process.env.DATABASE_PASSWORD,
-        {
-          host: process.env.DATABASE_HOST,
-          dialect: 'postgres',
-          logging: false
+const name = process.env.DATABASE_NAME;
+const user = process.env.DATABASE_USER;
+const password = process.env.DATABASE_PASSWORD;
+const host = process.env.DATABASE_HOST;
+const dialect = 'postgres';
+const logging = false;
+const env = process.env.ENV;
+
+console.log({
+  name,
+  user,
+  password,
+  env,
+  hihi: {
+    host,
+    dialect,
+    logging,
+    dialectOptions:
+      env === 'production'
+        ? {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false
+            }
+          }
+        : null
+  }
+});
+
+const sequelize = new Sequelize(name, user, password, {
+  host,
+  dialect,
+  logging,
+  dialectOptions:
+    env === 'production'
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
         }
-      );
+      : null
+});
 
 export default sequelize;
