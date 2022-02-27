@@ -9,27 +9,6 @@ const dialect = 'postgres';
 const logging = false;
 const env = process.env.ENV;
 
-console.log({
-  name,
-  user,
-  password,
-  env,
-  hihi: {
-    host,
-    dialect,
-    logging,
-    dialectOptions:
-      env === 'production'
-        ? {
-            ssl: {
-              require: true,
-              rejectUnauthorized: false
-            }
-          }
-        : null
-  }
-});
-
 const sequelize = new Sequelize(name, user, password, {
   host,
   dialect,

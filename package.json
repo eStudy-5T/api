@@ -6,7 +6,11 @@
   "author": "tainguyent <taitnguyen@kobiton.com>",
   "license": "MIT",
   "scripts": {
-    "start": "[ -f .env ]; node ./src/server.js",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./src -s",
+    "build": "npm run clean && npm run build-babel",
+    "start": "[ -f .env ]; npm run build && node ./build/server.js",
+    "hihi": "[ -f .env ]; node --experimental-modules ./src/server.js",
     "dev": "[ -f .env ]; nodemon --exec sucrase-node ./src/server.js",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
@@ -39,6 +43,9 @@
     "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -46,5 +53,8 @@
     "prettier": "^2.4.1",
     "sequelize-cli": "^6.3.0",
     "sucrase": "^3.20.3"
+  },
+  "engines": {
+    "node": "16.13.0"
   }
 }
