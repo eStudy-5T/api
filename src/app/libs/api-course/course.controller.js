@@ -1,4 +1,5 @@
 import courseService from './course.service.js';
+import classService from '../api-class/class.service';
 import helper from '../../utils/helper';
 
 const courseController = {
@@ -59,36 +60,71 @@ const courseController = {
       });
   },
 
-  createCourse: (req, res) => {
-    const {title, type} = req.body;
-    const courseData = {
+  createCourse: async (req, res) => {
+    const {
       title,
-      ownerId: req.user.id,
-      typeId: type || 1
-    };
-
-    courseService
-      .createCourse(courseData)
-      .then((createdCourse) => {
-        res.status(201).send(createdCourse);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
-
-  updateCourse: (req, res) => {
-    const {courseId} = req.params;
-    const {title, description, rating, price, outline, isOpened, grade} =
-      req.body;
-    const courseData = {
-      title,
+      type,
       description,
       rating,
       price,
       outline,
       isOpened,
-      gradeId: grade
+      grade,
+      tags,
+      classes
+    } = req.body;
+    const courseData = {
+      title,
+      ownerId: req.user.id,
+      typeId: type,
+      description,
+      rating,
+      price,
+      outline,
+      isOpened,
+      gradeId: grade,
+      tags
+    };
+
+    console.log('how', req.user.id);
+
+    try {
+      const createdCourse = await courseService.createCourse(courseData);
+      if (classes?.length) {
+        await classService.createMultipleClasses(
+          classes.map((c) => ({...c, courseId: createdCourse.id}))
+        );
+      }
+
+      res.status(201).send(createdCourse);
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
+  },
+
+  updateCourse: (req, res) => {
+    const {courseId} = req.params;
+    const {
+      title,
+      type,
+      description,
+      rating,
+      price,
+      outline,
+      isOpened,
+      grade,
+      tags
+    } = req.body;
+    const courseData = {
+      title,
+      typeId: type,
+      description,
+      rating,
+      price,
+      outline,
+      isOpened,
+      gradeId: grade,
+      tags
     };
 
     courseService
@@ -141,7 +177,7 @@ const courseController = {
   getClasses: (req, res) => {
     const {courseId} = req.params;
 
-    courseService
+    classService
       .getClasses(courseId)
       .then((classes) => {
         res.status(200).send(classes);
@@ -154,7 +190,7 @@ const courseController = {
   createClass: (req, res) => {
     const {courseId} = req.params;
 
-    courseService
+    classService
       .createClass(courseId, req.body)
       .then((createdClass) => {
         res.status(201).send(createdClass);

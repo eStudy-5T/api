@@ -1,11 +1,8 @@
 components:
   schemas:
-    IncompleteCourse:
+    Course:
       type: object
       properties:
-        title:
-          type: string
-          example: Lập trình Android
         type:
           type: integer
           example: 1
@@ -13,12 +10,6 @@ components:
           description: |
             * `1` - Short term course
             * `2` - Long term course
-      required:
-        - title
-        - type
-    Course:
-      type: object
-      properties:
         title:
           type: string
           example: Lập trình Android
@@ -42,7 +33,13 @@ components:
         grade:
           type: integer
           example: 11
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['Programming', 'Beginner']
       required:
+        - type
         - title
         - description
         - rating
@@ -50,3 +47,13 @@ components:
         - outline
         - isOpened
         - grade
+    CourseWithClasses:
+      allOf:
+        - $ref: '#/components/schemas/Course'
+        - type: object
+          properties:
+            classes:
+              type: array
+              items:
+                type: object
+                # $ref: 'class.yaml#/components/schemas/Class'

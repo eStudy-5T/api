@@ -1,11 +1,57 @@
 import Class from '../../core/database/models/class';
 
 const classService = {
+  getClasses: (id) => {
+    return new Promise((resolve, reject) => {
+      Class.findAll({
+        where: {
+          courseId: id
+        }
+      })
+        .then((classes) => {
+          resolve(classes);
+        })
+        .catch((err) => {
+          console.error('Get classes of a course:', err);
+          reject('Getting classes of a course fail');
+        });
+    });
+  },
+
+  createClass: (id, data) => {
+    return new Promise((resolve, reject) => {
+      Class.create({
+        courseId: id,
+        ...data
+      })
+        .then((createdClass) => {
+          resolve(createdClass);
+        })
+        .catch((err) => {
+          console.error('Create class:', err);
+          reject('Creating class fail');
+        });
+    });
+  },
+
+  createMultipleClasses: (classesData) => {
+    return new Promise((resolve, reject) => {
+      Class.bulkCreate(classesData)
+        .then((createClasses) => {
+          resolve(createClasses);
+        })
+        .catch((err) => {
+          console.error('Create multiple classes:', err);
+          reject('Creating multiple classes fail');
+        });
+    });
+  },
+
   getSpecificClass: (options) => {
     return new Promise((resolve, reject) => {
       Class.findOne(options)
-        .then((clazz) => {
-          resolve(clazz);
+        .then((createdClass) => {
+          resolve(createdClass);
         })
         .catch((err) => {
           console.error(err);
