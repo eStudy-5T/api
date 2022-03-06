@@ -36,8 +36,7 @@ const titleValidationSchema = Joi.object({
   })
   .unknown();
 
-const incompleteCourseValidationSchema = Joi.object({
-  title: Joi.string().required().min(10).max(100),
+const courseValidationSchema = Joi.object({
   type: Joi.number()
     .required()
     .external((value) => {
@@ -55,12 +54,7 @@ const incompleteCourseValidationSchema = Joi.object({
             reject(new Error('Internal server error'));
           });
       });
-    })
-})
-  .concat(titleValidationSchema)
-  .unknown();
-
-const courseValidationSchema = Joi.object({
+    }),
   description: Joi.string().allow('').max(255),
   rating: Joi.number().min(0).max(5),
   price: Joi.number().min(0),
@@ -86,35 +80,19 @@ const courseValidationSchema = Joi.object({
   .concat(titleValidationSchema)
   .unknown();
 
-const courseValidator = {
-  incompleteCourseValidator: (req, res, next) => {
-    incompleteCourseValidationSchema
-      .validateAsync({
-        ...req.body,
-        ownerId: req.user.id
-      })
-      .then(() => {
-        next();
-      })
-      .catch((err) => {
-        appHelper.apiHandler.handleValidationErrorResponse(res, err);
-      });
-  },
-
-  completeCourseValidator: (req, res, next) => {
-    courseValidationSchema
-      .validateAsync({
-        ...req.body,
-        ownerId: req.user.id,
-        id: req.params.courseId
-      })
-      .then(() => {
-        next();
-      })
-      .catch((err) => {
-        appHelper.apiHandler.handleValidationErrorResponse(res, err);
-      });
-  }
+const courseValidator = (req, res, next) => {
+  courseValidationSchema
+    .validateAsync({
+      ...req.body,
+      ownerId: req.user.id,
+      id: req.params.courseId
+    })
+    .then(() => {
+      next();
+    })
+    .catch((err) => {
+      appHelper.apiHandler.handleValidationErrorResponse(res, err);
+    });
 };
 
 export default courseValidator;

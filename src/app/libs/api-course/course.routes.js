@@ -71,13 +71,13 @@ courseRouter.get('/:courseId', courseController.getSpecificCourse);
  * /courses:
  *   post:
  *     tags: ["Course"]
- *     summary: Initiate a course
- *     description: Initiate a course
+ *     summary: Create a course
+ *     description: Create a course
  *     requestBody:
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/IncompleteCourse'
+ *             $ref: '#/components/schemas/CourseWithClasses'
  *     responses:
  *       201:
  *         description: Return newly created course
@@ -86,11 +86,7 @@ courseRouter.get('/:courseId', courseController.getSpecificCourse);
  *       404:
  *         description: Course not found
  */
-courseRouter.post(
-  '/',
-  mw.courseValidator.incompleteCourseValidator,
-  courseController.createCourse
-);
+courseRouter.post('/', mw.courseValidator, courseController.createCourse);
 
 /**
  * @swagger
@@ -121,7 +117,7 @@ courseRouter.post(
  */
 courseRouter.put(
   '/:courseId',
-  mw.courseValidator.completeCourseValidator,
+  mw.courseValidator,
   courseController.updateCourse
 );
 

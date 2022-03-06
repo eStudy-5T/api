@@ -11,7 +11,7 @@
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:seed:undo": "npx sequelize-cli db:seed:undo",
-    "db:renew": "npx sequelize db:migrate:undo:all && npx sequelize db:seed:undo:all && yarn db:migrate && yarn db:seed",
+    "db:renew": "npx sequelize db:seed:undo:all && npx sequelize db:migrate:undo:all && yarn db:migrate && yarn db:seed",
     "lint": "eslint --ext .js src/",
     "fix-lint": "eslint --fix --ext .js src/"
   },

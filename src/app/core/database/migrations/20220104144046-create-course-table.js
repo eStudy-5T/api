@@ -41,11 +41,12 @@ module.exports = {
       },
       isOpened: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: false,
+        defaultValue: false
       },
       gradeId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'grades',
           key: 'id'
@@ -58,6 +59,10 @@ module.exports = {
           model: 'course-types',
           key: 'id'
         }
+      },
+      tags: {
+        type: Sequelize.JSONB,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

@@ -44,11 +44,12 @@ const schema = {
   },
   isOpened: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false,
+    defaultValue: false
   },
   gradeId: {
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     references: {
       model: 'grades',
       key: 'id'
@@ -61,6 +62,10 @@ const schema = {
       model: 'course-types',
       key: 'id'
     }
+  },
+  tags: {
+    type: Sequelize.JSONB,
+    allowNull: true
   }
 };
 
