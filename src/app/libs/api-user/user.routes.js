@@ -18,4 +18,19 @@ const userRouter = express.Router();
  */
 userRouter.get('/get-user-info-details', userController.getUserDetails);
 
+/**
+ * @swagger
+ * /user/upload_avatar:
+ *   post:
+ *    tags: ["User Info"]
+ *    summary: Upload Avatar
+ *    description: Upload Avatar
+ *    responses:
+ *       200:
+ *         description: Upload avatar success
+ *       404:
+ *         description: Upload avatar failed
+ */
+userRouter.post('/upload-avatar', userController.uploadAvatar);
+
 export default userRouter;

@@ -26,6 +26,11 @@ const userController = {
         console.log(err);
         res.send(err.message);
       });
+  },
+
+  uploadAvatar: (req, res) => {
+    const file = req.file;
+    res.send(file);
   }
 };
 
