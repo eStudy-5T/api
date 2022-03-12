@@ -1,4 +1,4 @@
-import userService from './user.services';
+import userService from './user.service';
 
 const userController = {
   getUserDetails: (req, res) => {

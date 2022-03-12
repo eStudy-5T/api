@@ -1,4 +1,4 @@
-import authenticationService from './auth.services';
+import authenticationService from './auth.service';
 
 const authController = {
   authenticate: (req, res, next) => {
