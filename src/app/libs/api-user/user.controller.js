@@ -1,4 +1,4 @@
-import userService from './user.services';
+import userService from './user.service';
 
 const userController = {
   getUserDetails: (req, res) => {
@@ -26,6 +26,11 @@ const userController = {
         console.log(err);
         res.send(err.message);
       });
+  },
+
+  uploadAvatar: (req, res) => {
+    const file = req.file;
+    res.send(file);
   }
 };
 
