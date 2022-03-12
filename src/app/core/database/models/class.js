@@ -41,9 +41,9 @@ const schema = {
     allowNull: false
   },
   schedule: {
-    type: Sequelize.STRING,
+    type: Sequelize.JSON,
     allowNull: true,
-    defaultValue: ''
+    defaultValue: []
   },
   timezone: {
     type: Sequelize.STRING,

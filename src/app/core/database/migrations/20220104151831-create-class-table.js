@@ -39,8 +39,9 @@ module.exports = {
         allowNull: false
       },
       schedule: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.JSON,
+        allowNull: true,
+        defaultValue: []
       },
       timezone: {
         type: Sequelize.STRING,

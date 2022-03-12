@@ -17,7 +17,7 @@ const schema = {
     allowNull: false
   },
   description: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true
   },
   ownerId: {
