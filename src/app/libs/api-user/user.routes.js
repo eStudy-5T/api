@@ -5,18 +5,18 @@ const userRouter = express.Router();
 
 /**
  * @swagger
- * /user/get_user_info_details:
+ * /user/:userId:
  *   get:
  *     tags: ["User Info"]
  *     summary: Get user info details
- *     description: Get user info details when reload page
+ *     description: Get user info details
  *     responses:
  *       200:
  *         description: Return user info
  *       404:
  *         description: User not found
  */
-userRouter.get('/get-user-info-details', userController.getUserDetails);
+userRouter.get('/:userId', userController.getCurrentUser);
 
 /**
  * @swagger
