@@ -13,10 +13,6 @@ const schema = {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
-  username: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
   email: {
     type: Sequelize.STRING,
     allowNull: false
@@ -27,11 +23,12 @@ const schema = {
   },
   roleId: {
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
     references: {
       model: 'roles',
       key: 'id'
-    }
+    },
+    defaultValue: 1
   },
   firstName: {
     type: Sequelize.STRING,
@@ -101,17 +98,20 @@ const schema = {
     type: Sequelize.DATE,
     allowNull: true
   },
-  isActive: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-    defaultValue: true
-  },
+  // Tài khoản có được xác thực (qua email)
   isVerified: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
   },
+  // Tài khoản có bị khoá
   isDisabled: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  // Tài khoản có được xác thực trở thành người dạy
+  isVerifiedToTeach: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false

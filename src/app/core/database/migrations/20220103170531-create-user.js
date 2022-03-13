@@ -9,10 +9,6 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false
       },
-      username: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
       email: {
         type: Sequelize.STRING,
         allowNull: false
@@ -23,11 +19,12 @@ module.exports = {
       },
       roleId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'roles',
           key: 'id'
-        }
+        },
+        defaultValue: 1
       },
       firstName: {
         type: Sequelize.STRING,
@@ -97,17 +94,17 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true
       },
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-      },
       isVerified: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
       },
       isDisabled: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      isVerifiedToTeach: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
