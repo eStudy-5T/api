@@ -1,25 +1,14 @@
 import userService from './user.service';
 
 const userController = {
-  getUserDetails: (req, res) => {
+  getCurrentUser: (req, res) => {
+    const {userId} = req.params;
+
     userService
-      .getUserDetails(req.user.id)
+      .getCurrentUser(userId)
       .then((userInfo) => {
         if (userInfo) {
-          const resData = {
-            username: userInfo.username,
-            email: userInfo.email,
-            firstName: userInfo.firstName,
-            lastName: userInfo.lastName,
-            dateOfBirth: userInfo.dateOfBirth,
-            avatar: userInfo.avatar,
-            isActive: userInfo.isActive,
-            isVerified: userInfo.isVerified,
-            isDisabled: userInfo.isDisabled
-          };
-          res.json(resData);
-        } else {
-          res.send('User not found');
+          res.json(userInfo);
         }
       })
       .catch((err) => {
@@ -29,8 +18,15 @@ const userController = {
   },
 
   uploadAvatar: (req, res) => {
-    const file = req.file;
-    res.send(file);
+    userService
+      .uploadAvatar(req.user.id, req.files.uploadFile)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err.message);
+      });
   }
 };
 

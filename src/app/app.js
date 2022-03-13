@@ -7,6 +7,7 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import logger from 'morgan';
+import fileUpload from 'express-fileupload';
 import swaggerUi from 'swagger-ui-express';
 
 import router from './app.routes';
@@ -20,13 +21,13 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: ['http://localhost:8888']
+    origin: process.env.APP_HOST
   })
 );
 
 app.use((req, res, next) => {
   res.setHeader('Last-Modified', new Date().toUTCString());
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8888');
+  res.header('Access-Control-Allow-Origin', process.env.APP_HOST);
   res.header('Access-Control-Allow-Credentials', true);
   res.header(
     'Access-Control-Allow-Headers',
@@ -37,9 +38,10 @@ app.use((req, res, next) => {
 });
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(session(SESSION_CONFIG));
 app.use(passport.initialize());
 app.use(passport.session());

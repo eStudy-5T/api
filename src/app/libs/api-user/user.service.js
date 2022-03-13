@@ -1,16 +1,44 @@
-import userRepository from '../../core/database/repositories/user.repositories';
+import awsUploadService from '../../core/aws/aws.service';
+import User from '../../core/database/models/user';
 
 const userService = {
-  getUserDetails: (userId) => {
+  getCurrentUser: (userId) => {
     return new Promise((resolve, reject) => {
-      userRepository
-        .getUserById(userId)
+      User.findByPk(userId, {raw: true})
         .then((user) => {
-          return resolve(user);
+          if (!user) {
+            reject('User not found');
+          } else {
+            const data = {
+              userId: user.id,
+              email: user.email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              dateOfBirth: user.dateOfBirth,
+              avatar: user.avatar,
+              isActive: user.isActive,
+              isVerified: user.isVerified,
+              isDisabled: user.isDisabled
+            };
+            return resolve(data);
+          }
         })
         .catch((err) => {
           console.log(err);
           return reject(err);
+        });
+    });
+  },
+
+  uploadAvatar: (userId, avatar) => {
+    return new Promise((resolve, reject) => {
+      awsUploadService
+        .uploadFile(avatar)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((err) => {
+          reject(err);
         });
     });
   }

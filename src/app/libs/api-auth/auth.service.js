@@ -21,10 +21,15 @@ const authenticationService = {
           const accessToken = generateAccessToken(user.dataValues);
           const refreshToken = generateRefreshToken(user.dataValues);
           const loginInfo = {
-            id: get(user, 'dataValues.id'),
+            userId: get(user, 'dataValues.id'),
             firstName: get(user, 'dataValues.firstName'),
             lastName: get(user, 'dataValues.lastName'),
             email: get(user, 'dataValues.email'),
+            ateOfBirth: get(user, 'dataValues.dateOfBirth'),
+            avatar: get(user, 'dataValues.avatar'),
+            isActive: get(user, 'dataValues.isActive'),
+            isVerified: get(user, 'dataValues.isVerified'),
+            isDisabled: get(user, 'dataValues.isDisabled'),
             accessToken,
             refreshToken
           };
