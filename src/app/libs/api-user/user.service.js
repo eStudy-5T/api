@@ -32,8 +32,10 @@ const userService = {
 
   uploadAvatar: (userId, avatar) => {
     return new Promise((resolve, reject) => {
+      const relativePath = `user/${userId}`;
+
       awsUploadService
-        .uploadFile(avatar)
+        .uploadFile(avatar, relativePath)
         .then((result) => {
           resolve(result);
         })
