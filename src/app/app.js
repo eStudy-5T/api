@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import './utils/auth-strategy/passport-local';
+import './core/auth-strategy/passport-local';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -13,7 +13,7 @@ import swaggerUi from 'swagger-ui-express';
 import router from './app.routes';
 import middleware from './core/middlewares';
 import dbPostgres from './core/database/sequelize';
-import {SESSION_CONFIG} from './core/constants/appConfig';
+import config from './core/constants/app.config';
 import {swaggerSpec} from './swagger';
 
 const app = express();
@@ -42,7 +42,7 @@ app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(fileUpload());
-app.use(session(SESSION_CONFIG));
+app.use(session(config.session));
 app.use(passport.initialize());
 app.use(passport.session());
 app.disable('x-powered-by');
