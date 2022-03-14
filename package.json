@@ -16,6 +16,7 @@
     "fix-lint": "eslint --fix --ext .js src/"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.6.2",
     "aws-sdk": "^2.1092.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",

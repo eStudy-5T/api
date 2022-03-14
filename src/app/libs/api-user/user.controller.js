@@ -22,6 +22,9 @@ const userController = {
       .uploadAvatar(req.user.id, req.files.uploadFile)
       .then((result) => {
         console.log(result);
+        res.json({
+          avatar: result.Location
+        });
       })
       .catch((err) => {
         console.log(err);

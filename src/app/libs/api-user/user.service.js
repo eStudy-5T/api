@@ -1,4 +1,4 @@
-import awsUploadService from '../../core/aws/aws.service';
+import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
 
 const userService = {
