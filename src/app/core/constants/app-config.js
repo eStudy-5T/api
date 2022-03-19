@@ -1,7 +1,7 @@
 const config = {
   port: process.env.PORT || 3000,
   session: {
-    secret: 'mysecretkey',
+    secret: process.env.APP_SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -16,8 +16,16 @@ const config = {
     },
     bucketName: process.env.AWS_BUCKET_NAME
   },
+  mail: {
+    senderEmail: process.env.SENDER_EMAIL,
+    senderName: process.env.SENDER_NAME
+  },
   sendGrid: {
     apiKey: process.env.SENDGRID_API_KEY
+  },
+  jwt: {
+    secretAccessKey: process.env.JWT_SECRET_KEY_TOKEN,
+    secretRefreshKey: process.env.JWT_SECRET_KEY_REFRESH_TOKEN
   }
 };
 

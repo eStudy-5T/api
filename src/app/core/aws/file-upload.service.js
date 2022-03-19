@@ -1,5 +1,5 @@
 import S3 from 'aws-sdk/clients/s3';
-import config from '../constants/app.config';
+import config from '../constants/app-config';
 
 const s3 = new S3(config.aws.private);
 

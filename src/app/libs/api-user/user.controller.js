@@ -9,6 +9,7 @@ const USER_PASSWORD_REGEX = new RegExp(
 const validatePassword = (password, regExp) => {
   return regExp.test(password);
 };
+import helper from '../../utils/helper';
 
 const userController = {
   getCurrentUser: (req, res) => {
@@ -23,7 +24,7 @@ const userController = {
       })
       .catch((err) => {
         console.log(err);
-        res.send(err.message);
+        helper.apiHandler.handleErrorResponse(res, err);
       });
   },
 
@@ -38,7 +39,7 @@ const userController = {
       })
       .catch((err) => {
         console.log(err);
-        res.send(err.message);
+        helper.apiHandler.handleErrorResponse(res, err);
       });
   },
 

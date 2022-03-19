@@ -1,4 +1,5 @@
 import authenticationService from './auth.service';
+import helper from '../../utils/helper';
 
 const authController = {
   authenticate: (req, res, next) => {
@@ -17,8 +18,7 @@ const authController = {
           .json(loginInfo);
       })
       .catch((err) => {
-        console.log(err);
-        res.status(err.status).send(err.message);
+        helper.apiHandler.handleErrorResponse(res, err);
       });
   },
 
@@ -29,18 +29,8 @@ const authController = {
         res.json(result);
       })
       .catch((err) => {
-        console.log(err);
-        res.status(err.status).send(err.message);
+        helper.apiHandler.handleErrorResponse(res, err);
       });
-  },
-
-  logout: (req, res) => {
-    req.logout();
-    res
-      .status(200)
-      .clearCookie('access_token')
-      .clearCookie('refresh_token')
-      .send('success');
   }
 };
 

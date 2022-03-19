@@ -1,13 +1,21 @@
-import jwt from 'jsonwebtoken';
+import User from '../../core/database/models/user';
 import get from 'lodash/get';
 import passport from 'passport';
+import tokenService from './token.service';
+import emailService from '../../core/mailer/mail.service';
+import mailTemplateName from '../../core/constants/mail-template';
 
-const generateAccessToken = (userData) => {
-  return jwt.sign(userData, process.env.JWT_SECRET_KEY_TOKEN);
-};
+const setupVerifyAccountLink = async (userId) => {
+  try {
+    const userToken = await tokenService.generateCryptoToken();
+    const tokenExpired = Date.now() + 3600000;
+    await User.update({userToken, tokenExpired}, {where: {id: userId}});
+    const verifyLink = `${process.env.APP_HOST}/verify/${userToken}`;
 
-const generateRefreshToken = (userData) => {
-  return jwt.sign(userData, process.env.JWT_SECRET_KEY_REFRESH_TOKEN);
+    return verifyLink;
+  } catch (err) {
+    throw new Error(err);
+  }
 };
 
 const authenticationService = {
@@ -18,8 +26,9 @@ const authenticationService = {
         if (info) {
           return reject(info);
         } else {
-          const accessToken = generateAccessToken(user.dataValues);
-          const refreshToken = generateRefreshToken(user.dataValues);
+          const userData = user.dataValues;
+          const accessToken = tokenService.generateAccessToken(userData);
+          const refreshToken = tokenService.generateRefreshToken(userData);
           const loginInfo = {
             userId: get(user, 'dataValues.id'),
             firstName: get(user, 'dataValues.firstName'),
@@ -41,7 +50,7 @@ const authenticationService = {
 
   register: (req, res, next) => {
     return new Promise((resolve, reject) => {
-      passport.authenticate('meettutor.signup', function (err, user, info) {
+      passport.authenticate('meettutor.signup', async (err, user, info) => {
         if (err) return reject(err);
         if (info) {
           return reject(info);
@@ -52,6 +61,21 @@ const authenticationService = {
             lastName: get(user, 'dataValues.lastName'),
             email: get(user, 'dataValues.email')
           };
+
+          const verifyLink = await setupVerifyAccountLink(userInfo.id);
+
+          const mailData = {
+            userName: `${userInfo.firstName} ${userInfo.lastName}`,
+            verifyLink
+          };
+
+          await emailService.sendMail(
+            userInfo.email,
+            mailTemplateName.confirmAccount.subject,
+            mailTemplateName.confirmAccount.path,
+            mailData
+          );
+
           return resolve(userInfo);
         }
       })(req, res, next);
