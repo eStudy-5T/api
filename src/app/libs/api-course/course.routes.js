@@ -112,6 +112,8 @@ courseRouter.post('/', mw.courseValidator, courseController.createCourse);
  *         description: Return updated course
  *       400:
  *         description: Validation error
+ *       403:
+ *         description: User does not own the course
  *       404:
  *         description: Course not found
  */
@@ -138,13 +140,89 @@ courseRouter.put(
  *     responses:
  *       204:
  *         description: Delete completed
+ *       403:
+ *         description: User does not own the course
  *       404:
  *         description: Course not found
  */
 courseRouter.delete('/:courseId', courseController.deleteCourse);
 
+/**
+ * @swagger
+ * /courses/{courseId}/classes:
+ *   get:
+ *     tags: ["Course"]
+ *     summary: Get classes of a course
+ *     description: Get classes of a course
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The id of the course
+ *     responses:
+ *       200:
+ *         description: Return classes of the specified course
+ *       404:
+ *         description: Course not found
+ */
 courseRouter.get('/:courseId/classes', courseController.getClasses);
 
+/**
+ * @swagger
+ * /courses/{courseId}/classes:
+ *   post:
+ *     tags: ["Course"]
+ *     summary: Create a class for a course
+ *     description: Create a class for a course
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The id of the course
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Class'
+ *     responses:
+ *       201:
+ *         description: Return created class
+ *       403:
+ *         description: User does not own the course
+ *       404:
+ *         description: Course not found
+ */
 courseRouter.post('/:courseId/classes', courseController.createClass);
+
+/**
+ * @swagger
+ * /courses/{courseId}/enrollments:
+ *   get:
+ *     tags: ["Course"]
+ *     summary: Get enrollment of students of a course
+ *     description: Get enrollment of students of a course
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The id of the course
+ *     responses:
+ *       200:
+ *         description: Return enrollments group by class id of a course
+ *       403:
+ *         description: User does not own the course
+ *       404:
+ *         description: Course not found
+ */
+courseRouter.get(
+  '/:courseId/enrollments',
+  courseController.getCourseEnrollments
+);
 
 export default courseRouter;

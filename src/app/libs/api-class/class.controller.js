@@ -54,6 +54,47 @@ const classController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  getClassEnrollments: (req, res) => {
+    const {classId} = req.params;
+
+    classService
+      .checkClassValidity(req.user.id, classId)
+      .then((error) => {
+        if (error) throw error;
+
+        return classService.getClassById(classId);
+      })
+      .then((clazz) => {
+        return classService.getClassEnrollments(clazz.courseId, classId);
+      })
+      .then((enrollments) => {
+        res.status(200).send(enrollments);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  enrollStudent: (req, res) => {
+    const {classId} = req.params;
+
+    classService
+      .getClassById(classId)
+      .then((clazz) => {
+        if (!clazz) {
+          return res.sendStatus(404);
+        }
+
+        return classService.enrollStudent(req.user.id, clazz.courseId, classId);
+      })
+      .then((enrollment) => {
+        res.status(201).send(enrollment);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 

@@ -1,6 +1,7 @@
 import courseService from './course.service.js';
 import classService from '../api-class/class.service';
 import helper from '../../utils/helper';
+import _ from 'lodash';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -101,8 +102,15 @@ const courseController = {
   getClasses: (req, res) => {
     const {courseId} = req.params;
 
-    classService
-      .getClassesByCourseId(courseId)
+    courseService
+      .getCourseById(courseId)
+      .then((course) => {
+        if (!course) {
+          return res.sendStatus(404);
+        }
+
+        return classService.getClassesByCourseId(courseId);
+      })
       .then((classes) => {
         res.status(200).send(classes);
       })
@@ -114,10 +122,43 @@ const courseController = {
   createClass: (req, res) => {
     const {courseId} = req.params;
 
-    classService
-      .createClass(courseId, req.body)
+    courseService
+      .checkCourseValidity(req.user.id, courseId)
+      .then((error) => {
+        if (error) throw error;
+
+        return classService.createClass(courseId, req.body);
+      })
       .then((createdClass) => {
         res.status(201).send(createdClass);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  getCourseEnrollments: (req, res) => {
+    const {courseId} = req.params;
+
+    courseService
+      .checkCourseValidity(req.user.id, courseId)
+      .then((error) => {
+        if (error) throw error;
+
+        return classService.getClassesByCourseId(courseId);
+      })
+      .then((classes) => {
+        return classService.getClassEnrollments(
+          courseId,
+          classes.map((c) => c.id)
+        );
+      })
+      .then((enrollments) => {
+        const enrollmentsGroupByClass = _(enrollments)
+          .groupBy((e) => e.classId)
+          .map((value, key) => ({classId: key, users: value}))
+          .value();
+        res.status(200).send(enrollmentsGroupByClass);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
