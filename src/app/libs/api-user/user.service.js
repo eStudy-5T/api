@@ -1,3 +1,4 @@
+import { isError } from 'lodash';
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
 
@@ -15,7 +16,8 @@ const userService = {
           avatar: user.avatar,
           isActive: user.isActive,
           isVerified: user.isVerified,
-          isDisabled: user.isDisabled
+          isDisabled: user.isDisabled,
+          createdAt: user.createdAt
         };
 
         return data;
@@ -37,6 +39,34 @@ const userService = {
       return result;
     } catch (err) {
       throw new Error(err.message);
+    }
+  },
+
+  checkUserValidity: async (userId) => {
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return {code: 404, message: 'User not found'};
+      }
+    } catch (err) {
+      console.error(err);
+      throw 'Checking class validity fail';
+    }
+  },
+
+  update: async (userId, data) => {
+    try {
+      const result = await User.update(data, {
+        where: {
+          id: userId
+        },
+        returning: true
+      });
+
+      return result[1];
+    } catch (err) {
+      console.error(err);
+      throw 'Updating user fail';
     }
   }
 };
