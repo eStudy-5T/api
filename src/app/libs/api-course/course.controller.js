@@ -4,33 +4,14 @@ import helper from '../../utils/helper';
 
 const courseController = {
   getCourses: (req, res) => {
-    const {q, offset, limit, type} = req.query;
-    const pagination = {
-      offset: offset || 0,
-      limit: limit || 15
-    };
+    const {type} = req.query;
 
-    const options = {...pagination, order: [['updatedAt', 'DESC']]};
-
-    let coursesPromise;
-    switch (type) {
-      case undefined:
-      case null:
-        coursesPromise = courseService.getCourses(options, q);
-        break;
-
-      case 'teacher':
-        options.where = {
-          ownerId: req.user.id
-        };
-        coursesPromise = courseService.getCourses(options);
-        break;
-
-      default:
-        return res.status(400).send('Unknown type query');
+    if (![undefined, 'teacher', 'student'].includes(type)) {
+      return res.status(400).send('Unknown type query');
     }
 
-    coursesPromise
+    courseService
+      .getCourses(req.user.id, req.query)
       .then((courses) => {
         res.status(200).send(courses);
       })
@@ -43,11 +24,7 @@ const courseController = {
     const {courseId} = req.params;
 
     courseService
-      .getSpecificCourse({
-        where: {
-          id: courseId
-        }
-      })
+      .getCourseById(courseId)
       .then((course) => {
         if (!course) {
           return res.status(404).send('Course not found');
@@ -60,84 +37,38 @@ const courseController = {
       });
   },
 
-  createCourse: async (req, res) => {
-    const {
-      title,
-      type,
-      description,
-      rating,
-      price,
-      outline,
-      isOpened,
-      grade,
-      tags,
-      classes
-    } = req.body;
+  createCourse: (req, res) => {
+    const {type, grade, classes} = req.body;
     const courseData = {
-      title,
+      ...req.body,
       ownerId: req.user.id,
       typeId: type,
-      description,
-      rating,
-      price,
-      outline,
-      isOpened,
-      gradeId: grade,
-      tags
+      gradeId: grade
     };
 
-    console.log('how', req.user.id);
-
-    try {
-      const createdCourse = await courseService.createCourse(courseData);
-      if (classes?.length) {
-        await classService.createMultipleClasses(
-          classes.map((c) => ({...c, courseId: createdCourse.id}))
-        );
-      }
-
-      res.status(201).send(createdCourse);
-    } catch (err) {
-      helper.apiHandler.handleErrorResponse(res, err);
-    }
+    courseService
+      .createCourse(courseData, classes)
+      .then((createdCourse) => {
+        res.status(201).send(createdCourse);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   },
 
   updateCourse: (req, res) => {
     const {courseId} = req.params;
-    const {
-      title,
-      type,
-      description,
-      rating,
-      price,
-      outline,
-      isOpened,
-      grade,
-      tags
-    } = req.body;
+    const {type, grade} = req.body;
     const courseData = {
-      title,
+      ...req.body,
       typeId: type,
-      description,
-      rating,
-      price,
-      outline,
-      isOpened,
-      gradeId: grade,
-      tags
+      gradeId: grade
     };
 
     courseService
-      .getSpecificCourse({
-        where: {
-          id: courseId,
-          ownerId: req.user.id
-        }
-      })
-      .then((course) => {
-        if (!course) {
-          return res.status(404).send('Course not found');
-        }
+      .checkCourseValidity(req.user.id, courseId)
+      .then((error) => {
+        if (error) throw error;
 
         return courseService.updateCourse(courseId, courseData);
       })
@@ -153,16 +84,9 @@ const courseController = {
     const {courseId} = req.params;
 
     courseService
-      .getSpecificCourse({
-        where: {
-          id: courseId,
-          ownerId: req.user.id
-        }
-      })
-      .then((course) => {
-        if (!course) {
-          return res.status(404).send('Course not found');
-        }
+      .checkCourseValidity(req.user.id, courseId)
+      .then((error) => {
+        if (error) throw error;
 
         return courseService.deleteCourse(courseId);
       })
@@ -178,7 +102,7 @@ const courseController = {
     const {courseId} = req.params;
 
     classService
-      .getClasses(courseId)
+      .getClassesByCourseId(courseId)
       .then((classes) => {
         res.status(200).send(classes);
       })

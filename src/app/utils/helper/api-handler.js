@@ -2,11 +2,19 @@ import _ from 'lodash';
 
 const handleErrorResponse = (res, err) => {
   if (_.isString(err)) {
-    res.status(500).send(err);
-  } else {
-    console.error(err);
-    res.status(500).end();
+    return res.status(500).send(err);
   }
+
+  if (err.code) {
+    if (!err.message) {
+      return res.sendStatus(err.code);
+    }
+
+    return res.status(err.code).send(err.message);
+  }
+
+  console.error(err);
+  res.status(500).end();
 };
 
 const handleValidationErrorResponse = (res, err) => {

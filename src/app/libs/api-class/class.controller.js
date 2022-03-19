@@ -1,5 +1,4 @@
 import classService from './class.service';
-import courseService from '../api-course/course.service';
 import helper from '../../utils/helper';
 
 const classController = {
@@ -7,11 +6,7 @@ const classController = {
     const {classId} = req.params;
 
     classService
-      .getSpecificClass({
-        where: {
-          id: classId
-        }
-      })
+      .getClassById(classId)
       .then((clazz) => {
         if (!clazz) {
           return res.status(404).send('Class not found');
@@ -26,54 +21,12 @@ const classController = {
 
   updateClass: (req, res) => {
     const {classId} = req.params;
-    const {
-      maxSlots,
-      sessionCompletedCount,
-      link,
-      startDate,
-      endDate,
-      schedule,
-      timezone,
-      isAvailableToJoin,
-      remainingSlots,
-      duration
-    } = req.body;
-
-    const classData = {
-      maxSlots,
-      sessionCompletedCount,
-      link,
-      startDate,
-      endDate,
-      schedule,
-      timezone,
-      isAvailableToJoin,
-      remainingSlots,
-      duration
-    };
+    const classData = req.body;
 
     classService
-      .getSpecificClass({
-        where: {
-          id: classId
-        }
-      })
-      .then((clazz) => {
-        if (!clazz) {
-          return res.status(404).send('Class not found');
-        }
-
-        return courseService.getSpecificCourse({
-          where: {
-            id: clazz.courseId,
-            ownerId: req.user.id
-          }
-        });
-      })
-      .then((course) => {
-        if (!course) {
-          return res.sendStatus(403);
-        }
+      .checkClassValidity(req.user.id, classId)
+      .then((error) => {
+        if (error) throw error;
 
         return classService.updateClass(classId, classData);
       })
@@ -89,27 +42,9 @@ const classController = {
     const {classId} = req.params;
 
     classService
-      .getSpecificClass({
-        where: {
-          id: classId
-        }
-      })
-      .then((clazz) => {
-        if (!clazz) {
-          return res.status(404).send('Class not found');
-        }
-
-        return courseService.getSpecificCourse({
-          where: {
-            id: clazz.courseId,
-            ownerId: req.user.id
-          }
-        });
-      })
-      .then((course) => {
-        if (!course) {
-          return res.sendStatus(403);
-        }
+      .checkClassValidity(req.user.id, classId)
+      .then((error) => {
+        if (error) throw error;
 
         return classService.deleteClass(classId);
       })
