@@ -69,7 +69,22 @@ components:
           format: date
           example: 2022-04-01
         schedule:
-          type: string
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: number
+                example: 1
+              weekDay:
+                type: string
+                example: mon
+              startTime:
+                type: string
+                example: 07:00
+              endTime:
+                type: string
+                example: 09:00
         timezone:
           type: string
           example: Asia/Hanoi

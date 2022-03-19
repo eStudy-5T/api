@@ -72,15 +72,14 @@ const courseService = {
 
   checkCourseValidity: async (ownerId, courseId) => {
     try {
-      const course = await Course.findOne({
-        where: {
-          id: courseId,
-          ownerId
-        }
-      });
+      const course = await Course.findByPk(courseId);
 
       if (!course) {
-        return {code: 404, message: 'Course not found'};
+        return {code: 404};
+      }
+
+      if (course.ownerId !== ownerId) {
+        return {code: 403};
       }
 
       return null;

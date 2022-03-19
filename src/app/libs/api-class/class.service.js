@@ -1,5 +1,7 @@
 import Class from '../../core/database/models/class';
 import Course from '../../core/database/models/course';
+import Enrollment from '../../core/database/models/enrollment';
+import User from '../../core/database/models/user';
 
 const classService = {
   getClassesByCourseId: async (courseId) => {
@@ -86,6 +88,46 @@ const classService = {
     } catch (err) {
       console.error(err);
       throw 'Deleting class fail';
+    }
+  },
+
+  getClassEnrollments: async (courseId, classIds) => {
+    try {
+      return await Enrollment.findAll({
+        where: {
+          courseId,
+          classId: classIds
+        },
+        include: {
+          model: User,
+          required: true,
+          attributes: [
+            'id',
+            'email',
+            'firstName',
+            'lastName',
+            'avatar',
+            'dateOfBirth',
+            'nationality'
+          ]
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Getting enrollments fail';
+    }
+  },
+
+  enrollStudent: async (userId, courseId, classId) => {
+    try {
+      return await Enrollment.create({
+        userId,
+        courseId,
+        classId
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Enroll a student fail';
     }
   }
 };
