@@ -13,7 +13,7 @@ import swaggerUi from 'swagger-ui-express';
 import router from './app.routes';
 import middleware from './core/middlewares';
 import dbPostgres from './core/database/sequelize';
-import config from './core/constants/app.config';
+import config from './core/constants/app-config';
 import {swaggerSpec} from './swagger';
 
 const app = express();
@@ -37,6 +37,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({extended: true}));
