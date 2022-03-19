@@ -23,7 +23,6 @@ const userController = {
         }
       })
       .catch((err) => {
-        console.log(err);
         helper.apiHandler.handleErrorResponse(res, err);
       });
   },
@@ -38,7 +37,7 @@ const userController = {
         avatar: get(result, 'Location')
       });
     } catch (err) {
-      res.send(err.message);
+      helper.apiHandler.handleErrorResponse(res, err);
     }
   },
 

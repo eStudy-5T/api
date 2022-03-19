@@ -38,14 +38,14 @@ const classService = {
 
   checkClassValidity: async (userId, classId) => {
     try {
-      const clazz = await Class.findByPk(classId);
-      if (!clazz) {
+      const classData = await Class.findByPk(classId);
+      if (!classData) {
         return {code: 404, message: 'Class not found'};
       }
 
       const course = await Course.findOne({
         where: {
-          id: clazz.courseId,
+          id: classData.courseId,
           ownerId: userId
         }
       });
