@@ -28,19 +28,18 @@ const userController = {
       });
   },
 
-  uploadAvatar: (req, res) => {
-    userService
-      .uploadAvatar(req.user.id, req.files.uploadFile)
-      .then((result) => {
-        console.log(result);
-        res.json({
-          avatar: result.Location
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        helper.apiHandler.handleErrorResponse(res, err);
+  uploadAvatar: async (req, res) => {
+    try {
+      const result = await userService.uploadAvatar(
+        req.user.id,
+        req.files.uploadFile
+      );
+      return res.json({
+        avatar: get(result, 'Location')
       });
+    } catch (err) {
+      res.send(err.message);
+    }
   },
 
   changePassword: async (req, res) => {
