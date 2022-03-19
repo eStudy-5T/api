@@ -31,10 +31,12 @@ const userService = {
       const relativePath = `user/${userId}`;
       const result = await awsUploadService.uploadFile(avatar, relativePath);
 
+      const user = await User.findOne({where: {id: userId}});
+      await user.update({avatar: String(avatar.name).toLowerCase()});
+
       return result;
     } catch (err) {
-      console.log(err);
-      throw new Error(err);
+      throw new Error(err.message);
     }
   }
 };
