@@ -1,98 +1,92 @@
 import Class from '../../core/database/models/class';
+import Course from '../../core/database/models/course';
 
 const classService = {
-  getClasses: (id) => {
-    return new Promise((resolve, reject) => {
-      Class.findAll({
+  getClassesByCourseId: async (courseId) => {
+    try {
+      return await Class.findAll({
         where: {
-          courseId: id
+          courseId
         }
-      })
-        .then((classes) => {
-          resolve(classes);
-        })
-        .catch((err) => {
-          console.error('Get classes of a course:', err);
-          reject('Getting classes of a course fail');
-        });
-    });
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Getting classes of a course fail';
+    }
   },
 
-  createClass: (id, data) => {
-    return new Promise((resolve, reject) => {
-      Class.create({
-        courseId: id,
-        ...data
-      })
-        .then((createdClass) => {
-          resolve(createdClass);
-        })
-        .catch((err) => {
-          console.error('Create class:', err);
-          reject('Creating class fail');
-        });
-    });
+  createClass: async (courseId, classData) => {
+    try {
+      return await Class.create({
+        courseId,
+        ...classData
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Creating class fail';
+    }
   },
 
-  createMultipleClasses: (classesData) => {
-    return new Promise((resolve, reject) => {
-      Class.bulkCreate(classesData)
-        .then((createClasses) => {
-          resolve(createClasses);
-        })
-        .catch((err) => {
-          console.error('Create multiple classes:', err);
-          reject('Creating multiple classes fail');
-        });
-    });
+  getClassById: async (classId) => {
+    try {
+      return await Class.findByPk(classId);
+    } catch (err) {
+      console.error(err);
+      throw 'Getting class fail';
+    }
   },
 
-  getSpecificClass: (options) => {
-    return new Promise((resolve, reject) => {
-      Class.findOne(options)
-        .then((createdClass) => {
-          resolve(createdClass);
-        })
-        .catch((err) => {
-          console.error(err);
-          reject('Getting class fail');
-        });
-    });
-  },
+  checkClassValidity: async (userId, classId) => {
+    try {
+      const clazz = await Class.findByPk(classId);
+      if (!clazz) {
+        return {code: 404, message: 'Class not found'};
+      }
 
-  updateClass: (id, data) => {
-    return new Promise((resolve, reject) => {
-      Class.update(data, {
+      const course = await Course.findOne({
         where: {
-          id
+          id: clazz.courseId,
+          ownerId: userId
+        }
+      });
+      if (!course) {
+        return {code: 403};
+      }
+
+      return null;
+    } catch (err) {
+      console.error(err);
+      throw 'Checking class validity fail';
+    }
+  },
+
+  updateClass: async (classId, classData) => {
+    try {
+      const result = await Class.update(classData, {
+        where: {
+          id: classId
         },
         returning: true
-      })
-        .then((result) => {
-          resolve(result[1]);
-        })
-        .catch((err) => {
-          console.error('Update class:', err);
-          reject('Updating class fail');
-        });
-    });
+      });
+
+      return result[1];
+    } catch (err) {
+      console.error(err);
+      throw 'Updating class fail';
+    }
   },
 
-  deleteClass: (id) => {
-    return new Promise((resolve, reject) => {
-      Class.destroy({
+  deleteClass: async (classId) => {
+    try {
+      return await Class.destroy({
         where: {
-          id
+          id: classId
         }
-      })
-        .then(() => {
-          resolve();
-        })
-        .catch((err) => {
-          console.error('Delete class:', err);
-          reject('Deleting class fail');
-        });
-    });
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Deleting class fail';
+    }
   }
 };
 

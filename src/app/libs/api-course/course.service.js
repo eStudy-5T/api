@@ -1,10 +1,13 @@
 import {Op} from 'sequelize';
 import Course from '../../core/database/models/course';
+import Class from '../../core/database/models/class';
 
 const courseService = {
-  getCourses: (options, searchPhrase = null) => {
-    const whereSearchPhrase = searchPhrase
-      ? {
+  getCourses: async (userId, options) => {
+    const {q: searchPhrase, offset, limit, type} = options || {};
+    const whereSearchPhrase = !searchPhrase
+      ? {}
+      : {
           [Op.or]: [
             {
               title: {
@@ -17,87 +20,103 @@ const courseService = {
               }
             }
           ]
-        }
-      : {};
+        };
 
-    options.where = {
-      ...(options.where || {}),
-      ...whereSearchPhrase
-    };
+    let where = whereSearchPhrase;
+    switch (type) {
+      case 'teacher':
+        where = {
+          ...where,
+          ownerId: userId
+        };
+    }
 
-    return new Promise((resolve, reject) => {
-      Course.findAll({
-        ...options
-      })
-        .then((courses) => {
-          resolve(courses);
-        })
-        .catch((err) => {
-          console.error('Get courses:', err);
-          reject('Getting courses fail');
-        });
-    });
+    try {
+      return await Course.findAll({
+        offset: offset || 0,
+        limit: limit || 20,
+        where,
+        sort: [['updatedAt', 'DESC']]
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Getting courses fail';
+    }
   },
 
-  getSpecificCourse: (options) => {
-    return new Promise((resolve, reject) => {
-      Course.findOne(options)
-        .then((course) => {
-          resolve(course);
-        })
-        .catch((err) => {
-          console.error(err);
-          reject('Getting course fail');
-        });
-    });
+  getCourseById: async (courseId) => {
+    try {
+      return await Course.findByPk(courseId);
+    } catch (err) {
+      console.error(err);
+      throw 'Getting course fail';
+    }
   },
 
-  createCourse: (data) => {
-    return new Promise((resolve, reject) => {
-      Course.create(data)
-        .then((createdCourse) => {
-          resolve(createdCourse);
-        })
-        .catch((err) => {
-          console.error('Create course:', err);
-          reject('Creating course fail');
-        });
-    });
+  createCourse: async (courseData, classes) => {
+    try {
+      const createdCourse = await Course.create(courseData);
+
+      if (classes?.length) {
+        await Class.bulkCreate(
+          classes.map((c) => ({...c, courseId: createdCourse.id}))
+        );
+      }
+
+      return createdCourse;
+    } catch (err) {
+      console.error(err);
+      throw 'Creating course fail';
+    }
   },
 
-  updateCourse: (id, data) => {
-    return new Promise((resolve, reject) => {
-      Course.update(data, {
+  checkCourseValidity: async (ownerId, courseId) => {
+    try {
+      const course = await Course.findOne({
         where: {
-          id
+          id: courseId,
+          ownerId
+        }
+      });
+
+      if (!course) {
+        return {code: 404, message: 'Course not found'};
+      }
+
+      return null;
+    } catch (err) {
+      console.error(err);
+      throw 'Check course validity fail';
+    }
+  },
+
+  updateCourse: async (courseId, courseData) => {
+    try {
+      const result = await Course.update(courseData, {
+        where: {
+          id: courseId
         },
         returning: true
-      })
-        .then((result) => {
-          resolve(result[1]);
-        })
-        .catch((err) => {
-          console.error('Update course:', err);
-          reject('Updating course fail');
-        });
-    });
+      });
+
+      return result[1];
+    } catch (err) {
+      console.error(err);
+      throw 'Updating course fail';
+    }
   },
 
-  deleteCourse: (id) => {
-    return new Promise((resolve, reject) => {
-      Course.destroy({
+  deleteCourse: async (courseId) => {
+    try {
+      return await Course.destroy({
         where: {
-          id
+          id: courseId
         }
-      })
-        .then(() => {
-          resolve();
-        })
-        .catch((err) => {
-          console.error('Delete course:', err);
-          reject('Deleting course fail');
-        });
-    });
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Deleting course fail';
+    }
   }
 };
 
