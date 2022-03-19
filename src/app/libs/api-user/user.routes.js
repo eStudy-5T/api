@@ -35,4 +35,6 @@ userRouter.post('/upload-avatar', userController.uploadAvatar);
 
 userRouter.put('/:userId/change-password', userController.changePassword);
 
+userRouter.put('/:userId', userController.update);
+
 export default userRouter;

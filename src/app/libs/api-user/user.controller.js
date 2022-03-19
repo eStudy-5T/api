@@ -108,6 +108,25 @@ const userController = {
     } catch (err) {
       res.status(500).send(err.message);
     }
+  },
+
+  update: (req, res) => {
+    const {userId} = req.params;
+    const data = req.body;
+    
+    userService
+      .checkUserValidity(userId)
+      .then((error) => {
+        if (error) throw error;
+
+        return userService.update(userId, data);
+      })
+      .then((updatedUser) => {
+        res.status(200).send(updatedUser);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 
