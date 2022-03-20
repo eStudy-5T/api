@@ -21,7 +21,7 @@ components:
         avatar:
           type: string
           example: http://gravatar.com
-        isActive:
+        isVerifiedToTeach:
           type: boolean
           example: true
         isVerified:

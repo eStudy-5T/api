@@ -1,4 +1,3 @@
-import { isError } from 'lodash';
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
 
@@ -14,7 +13,7 @@ const userService = {
           lastName: user.lastName,
           dateOfBirth: user.dateOfBirth,
           avatar: user.avatar,
-          isActive: user.isActive,
+          isVerifiedToTeach: user.isVerifiedToTeach,
           isVerified: user.isVerified,
           isDisabled: user.isDisabled,
           createdAt: user.createdAt
