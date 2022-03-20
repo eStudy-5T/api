@@ -34,11 +34,12 @@ const authenticationService = {
             firstName: get(user, 'dataValues.firstName'),
             lastName: get(user, 'dataValues.lastName'),
             email: get(user, 'dataValues.email'),
-            ateOfBirth: get(user, 'dataValues.dateOfBirth'),
+            dateOfBirth: get(user, 'dataValues.dateOfBirth'),
             avatar: get(user, 'dataValues.avatar'),
-            isActive: get(user, 'dataValues.isActive'),
+            isVerifiedToTeach: get(user, 'dataValues.isVerifiedToTeach'),
             isVerified: get(user, 'dataValues.isVerified'),
             isDisabled: get(user, 'dataValues.isDisabled'),
+            createdAt: get(user, 'dataValues.createdAt'),
             accessToken,
             refreshToken
           };
