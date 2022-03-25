@@ -112,7 +112,7 @@ const userController = {
   update: (req, res) => {
     const {userId} = req.params;
     const data = req.body;
-    
+
     userService
       .checkUserValidity(userId)
       .then((error) => {
