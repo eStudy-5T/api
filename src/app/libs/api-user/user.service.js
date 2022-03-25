@@ -1,5 +1,6 @@
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
+import get from 'lodash/get';
 
 const userService = {
   getCurrentUser: async (userId) => {
@@ -31,9 +32,9 @@ const userService = {
     try {
       const relativePath = `user/${userId}`;
       const result = await awsUploadService.uploadFile(avatar, relativePath);
-
+      const avatarLink = get(result, 'Location');
       const user = await User.findOne({where: {id: userId}});
-      await user.update({avatar: String(avatar.name).toLowerCase()});
+      await user.update({avatar: avatarLink});
 
       return result;
     } catch (err) {
