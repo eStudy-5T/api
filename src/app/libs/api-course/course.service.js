@@ -32,12 +32,17 @@ const courseService = {
     }
 
     try {
-      return await Course.findAll({
+      const numberOfCourses = await Course.count({where});
+      const courses = await Course.findAll({
         offset: offset || 0,
         limit: limit || 20,
         where,
         sort: [['updatedAt', 'DESC']]
       });
+      return {
+        courses: courses,
+        count: numberOfCourses
+      };
     } catch (err) {
       console.error(err);
       throw 'Getting courses fail';
