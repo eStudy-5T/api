@@ -11,10 +11,12 @@ const courseController = {
       return res.status(400).send('Unknown type query');
     }
 
-    courseService
-      .getCourses(req.user.id, req.query)
-      .then((data) => {
-        res.status(200).send(data);
+    Promise.all([
+      courseService.getCourses(req.user.id, req.query),
+      courseService.getCourseCount(req.user.id, req.query)
+    ])
+      .then(([courses, count]) => {
+        res.status(200).send({courses, count});
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
