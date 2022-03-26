@@ -13,8 +13,8 @@ const courseController = {
 
     courseService
       .getCourses(req.user.id, req.query)
-      .then((courses) => {
-        res.status(200).send(courses);
+      .then((data) => {
+        res.status(200).send(data);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
