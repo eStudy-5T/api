@@ -10,16 +10,13 @@ const titleValidationSchema = Joi.object({
   .external((object) => {
     return new Promise((resolve, reject) => {
       courseService
-        .getCourses({
-          where: {
-            ownerId: object.ownerId
-          }
+        .getCourses(object.ownerId, {
+          type: 'teacher'
         })
         .then((courses) => {
           const sameTitleCourse = courses?.find(
             (c) => c.title.toLowerCase() === object.title.toLowerCase()
           );
-          console.log();
           if (sameTitleCourse && sameTitleCourse.id !== object.id) {
             return reject(
               new Error('The course with the same "title" already exists.')
