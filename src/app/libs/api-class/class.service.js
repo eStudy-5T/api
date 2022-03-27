@@ -13,7 +13,7 @@ const classService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Getting classes of a course fail';
+      throw 'error.getClassFail';
     }
   },
 
@@ -25,7 +25,7 @@ const classService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Creating class fail';
+      throw 'error.createClassFail';
     }
   },
 
@@ -34,7 +34,7 @@ const classService = {
       return await Class.findByPk(classId);
     } catch (err) {
       console.error(err);
-      throw 'Getting class fail';
+      throw 'error.getClassFail';
     }
   },
 
@@ -58,7 +58,7 @@ const classService = {
       return null;
     } catch (err) {
       console.error(err);
-      throw 'Checking class validity fail';
+      throw '';
     }
   },
 
@@ -74,7 +74,7 @@ const classService = {
       return result[1];
     } catch (err) {
       console.error(err);
-      throw 'Updating class fail';
+      throw 'error.updateClassFail';
     }
   },
 
@@ -87,7 +87,7 @@ const classService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Deleting class fail';
+      throw 'error.deleteClassFail';
     }
   },
 
@@ -114,7 +114,7 @@ const classService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Getting enrollments fail';
+      throw 'error.getEnrollmentFail';
     }
   },
 
@@ -127,7 +127,7 @@ const classService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Enroll a student fail';
+      throw 'error.enrollFail';
     }
   }
 };

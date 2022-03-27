@@ -12,6 +12,6 @@ export const verifyRequest = (req, res, next) => {
       next();
     });
   } else {
-    res.status(401).send('You are not authenticated!');
+    res.status(401).send('error.unauthorized');
   }
 };

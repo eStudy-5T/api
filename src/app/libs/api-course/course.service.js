@@ -47,7 +47,7 @@ const courseService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Getting courses fail';
+      throw 'error.getCourseFail';
     }
   },
 
@@ -59,7 +59,7 @@ const courseService = {
       return await Course.count({where});
     } catch (err) {
       console.error(err);
-      throw 'Getting course count fail';
+      throw '';
     }
   },
 
@@ -68,7 +68,7 @@ const courseService = {
       return await Course.findByPk(courseId);
     } catch (err) {
       console.error(err);
-      throw 'Getting course fail';
+      throw 'error.getCourseFail';
     }
   },
 
@@ -85,7 +85,7 @@ const courseService = {
       return createdCourse;
     } catch (err) {
       console.error(err);
-      throw 'Creating course fail';
+      throw 'error.createCourseFail';
     }
   },
 
@@ -104,7 +104,7 @@ const courseService = {
       return null;
     } catch (err) {
       console.error(err);
-      throw 'Check course validity fail';
+      throw '';
     }
   },
 
@@ -120,7 +120,7 @@ const courseService = {
       return result[1];
     } catch (err) {
       console.error(err);
-      throw 'Updating course fail';
+      throw 'error.updateCourseFail';
     }
   },
 
@@ -133,7 +133,7 @@ const courseService = {
       });
     } catch (err) {
       console.error(err);
-      throw 'Deleting course fail';
+      throw 'error.deleteCourseFail';
     }
   }
 };

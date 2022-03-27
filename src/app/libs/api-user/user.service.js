@@ -50,7 +50,7 @@ const userService = {
       }
     } catch (err) {
       console.error(err);
-      throw 'Checking class validity fail';
+      throw '';
     }
   },
 
@@ -66,7 +66,7 @@ const userService = {
       return result[1];
     } catch (err) {
       console.error(err);
-      throw 'Updating user fail';
+      throw 'error.updateUserFail';
     }
   }
 };
