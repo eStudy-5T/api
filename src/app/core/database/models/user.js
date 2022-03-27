@@ -115,6 +115,12 @@ const schema = {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  // Tài khoản có được xác thực trở thành người dạy
+  description: {
+    type: Sequelize.STRING,
+    allowNull: true,
+    defaultValue: ""
   }
 };
 

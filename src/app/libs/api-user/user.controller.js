@@ -10,6 +10,8 @@ const validatePassword = (password, regExp) => {
   return regExp.test(password);
 };
 import helper from '../../utils/helper';
+import WorkingExperience from '../../core/database/models/working-experience';
+import Certificate from '../../core/database/models/certificate';
 
 const userController = {
   getCurrentUser: (req, res) => {
@@ -126,7 +128,83 @@ const userController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  }
+  },
+
+  getWorkingExperienceList: (req, res) => {
+    const {userId} = req.params;
+    userService
+      .checkUserValidity(userId)
+      .then((error) => {
+        if (error) throw error;
+
+        return userService.getWorkingExperienceList(userId);
+      })
+      .then((workingExperienceList) => {
+        res.status(200).send(workingExperienceList);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  saveWorkingExperienceList: (req, res) => {
+    const {userId} = req.params
+    const workingExperienceListToUpdate = req.body.workingExperienceListToUpdate
+    const workingExperienceListToCreate = req.body.workingExperienceListToCreate
+    const workingExperienceIdsToDelete = req.body.workingExperienceIdsToDelete
+    
+    userService
+      .saveWorkingExperienceList(workingExperienceListToUpdate, workingExperienceListToCreate, workingExperienceIdsToDelete)
+      .then(async () => {
+        const result = await WorkingExperience.findAll({
+          where: {
+            userId
+          }
+        })
+        res.status(201).send(result);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  getCertificates: (req, res) => {
+    const {userId} = req.params;
+    userService
+      .checkUserValidity(userId)
+      .then((error) => {
+        if (error) throw error;
+
+        return userService.getCertificates(userId);
+      })
+      .then((certificates) => {
+        res.status(200).send(certificates);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  saveCertificates: (req, res) => {
+    const {userId} = req.params
+    const certificatesToUpdate = req.body.certificatesToUpdate
+    const certificatesToCreate = req.body.certificatesToCreate
+    const certificateIdsToDelete = req.body.certificateIdsToDelete
+    
+    userService
+      .saveCertificates(certificatesToUpdate, certificatesToCreate, certificateIdsToDelete)
+      .then(async () => {
+        const result = await Certificate.findAll({
+          where: {
+            userId
+          }
+        })
+        res.status(201).send(result);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
 };
 
 export default userController;

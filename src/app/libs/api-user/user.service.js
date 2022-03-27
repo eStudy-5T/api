@@ -1,6 +1,8 @@
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
 import get from 'lodash/get';
+import WorkingExperience from '../../core/database/models/working-experience';
+import Certificate from '../../core/database/models/certificate';
 
 const userService = {
   getCurrentUser: async (userId) => {
@@ -68,7 +70,91 @@ const userService = {
       console.error(err);
       throw 'Updating user fail';
     }
-  }
+  },
+
+  getWorkingExperienceList: async (userId) => {
+    try {
+      const workingExperience = await WorkingExperience.findAll({
+        where: {
+          userId
+        }
+      });
+
+      return workingExperience;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  },
+
+  saveWorkingExperienceList: async (
+    workingExperienceListToUpdate,
+    workingExperienceListToCreate,
+    workingExperienceIdsToDelete
+  ) => {
+    try {
+      workingExperienceListToUpdate.map(async (we) => {
+        await WorkingExperience.update(we, {
+          where: {
+            id: we.id
+          }
+        });
+      });
+  
+      await WorkingExperience.bulkCreate(workingExperienceListToCreate);
+  
+      await WorkingExperience.destroy({
+        where: {
+          id: workingExperienceIdsToDelete
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Save working experience fail';
+    }
+  },
+
+  getCertificates: async (userId) => {
+    try {
+      const certificates = await Certificate.findAll({
+        where: {
+          userId
+        }
+      });
+
+      return certificates;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  },
+
+  saveCertificates: async (
+    certificatesToUpdate,
+    certificatesToCreate,
+    certificateIdsToDelete
+  ) => {
+    try {
+      // certificatesToUpdate.map(async (c) => {
+      //   await Certificate.update(c, {
+      //     where: {
+      //       id: c.id
+      //     }
+      //   });
+      // });
+  
+      await Certificate.bulkCreate(certificatesToCreate);
+  
+      await Certificate.destroy({
+        where: {
+          id: certificateIdsToDelete
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'Save working experience fail';
+    }
+  },
 };
 
 export default userService;

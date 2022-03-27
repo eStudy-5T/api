@@ -109,6 +109,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: ""
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
