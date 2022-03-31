@@ -135,13 +135,13 @@ const userService = {
     certificateIdsToDelete
   ) => {
     try {
-      // certificatesToUpdate.map(async (c) => {
-      //   await Certificate.update(c, {
-      //     where: {
-      //       id: c.id
-      //     }
-      //   });
-      // });
+      certificatesToUpdate.map(async (c) => {
+        await Certificate.update(c, {
+          where: {
+            id: c.id
+          }
+        });
+      });
   
       await Certificate.bulkCreate(certificatesToCreate);
   
