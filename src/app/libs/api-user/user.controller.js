@@ -53,13 +53,15 @@ const userController = {
 
     // Check if passwords is filled
     if (!currentPassword || !newPassword || !confirmPassword) {
-      return res.status(400).json({
-        message: `Missing required values: [${
-          (!currentPassword ? 'currentPassword ' : '') +
-          (!newPassword ? 'newPassword ' : '') +
-          (!confirmPassword ? 'confirmPassword' : '')
-        }]`
-      });
+      return res
+        .status(400)
+        .json(
+          `Missing required values: [${
+            (!currentPassword ? 'currentPassword ' : '') +
+            (!newPassword ? 'newPassword ' : '') +
+            (!confirmPassword ? 'confirmPassword' : '')
+          }]`
+        );
     }
 
     // Check pattern for passwords
@@ -71,31 +73,31 @@ const userController = {
         !validatePassword(newPassword, USER_PASSWORD_REGEX),
         !validatePassword(confirmPassword, USER_PASSWORD_REGEX)
       );
-      return res.status(400).json({
-        message: `Fields not match standard: [${
-          (!validatePassword(newPassword, USER_PASSWORD_REGEX)
-            ? 'newPassword '
-            : '') +
-          (!validatePassword(confirmPassword, USER_PASSWORD_REGEX)
-            ? 'confirmPassword'
-            : '')
-        }]`
-      });
+      return res
+        .status(400)
+        .json(
+          `Fields not match standard: [${
+            (!validatePassword(newPassword, USER_PASSWORD_REGEX)
+              ? 'newPassword '
+              : '') +
+            (!validatePassword(confirmPassword, USER_PASSWORD_REGEX)
+              ? 'confirmPassword'
+              : '')
+          }]`
+        );
     }
 
     // Check newPassword and confirmPassword
     if (newPassword !== confirmPassword) {
       return res
         .status(400)
-        .json({message: 'confirmPassword is not match with newPassword'});
+        .json(`confirmPassword is not match with newPassword`);
     }
 
     // Check currentPassword is match with DB
     const user = await User.findOne({where: {id: userId}});
     if (isNil(user) || !user.comparePassword(currentPassword)) {
-      return res.status(400).json({
-        message: 'currentPassword is not correct'
-      });
+      return res.status(400).json(`currentPassword is not correct`);
     }
 
     try {
@@ -148,19 +150,25 @@ const userController = {
   },
 
   saveWorkingExperienceList: (req, res) => {
-    const {userId} = req.params
-    const workingExperienceListToUpdate = req.body.workingExperienceListToUpdate
-    const workingExperienceListToCreate = req.body.workingExperienceListToCreate
-    const workingExperienceIdsToDelete = req.body.workingExperienceIdsToDelete
-    
+    const {userId} = req.params;
+    const workingExperienceListToUpdate =
+      req.body.workingExperienceListToUpdate;
+    const workingExperienceListToCreate =
+      req.body.workingExperienceListToCreate;
+    const workingExperienceIdsToDelete = req.body.workingExperienceIdsToDelete;
+
     userService
-      .saveWorkingExperienceList(workingExperienceListToUpdate, workingExperienceListToCreate, workingExperienceIdsToDelete)
+      .saveWorkingExperienceList(
+        workingExperienceListToUpdate,
+        workingExperienceListToCreate,
+        workingExperienceIdsToDelete
+      )
       .then(async () => {
         const result = await WorkingExperience.findAll({
           where: {
             userId
           }
-        })
+        });
         res.status(201).send(result);
       })
       .catch((err) => {
@@ -186,25 +194,29 @@ const userController = {
   },
 
   saveCertificates: (req, res) => {
-    const {userId} = req.params
-    const certificatesToUpdate = req.body.certificatesToUpdate
-    const certificatesToCreate = req.body.certificatesToCreate
-    const certificateIdsToDelete = req.body.certificateIdsToDelete
-    
+    const {userId} = req.params;
+    const certificatesToUpdate = req.body.certificatesToUpdate;
+    const certificatesToCreate = req.body.certificatesToCreate;
+    const certificateIdsToDelete = req.body.certificateIdsToDelete;
+
     userService
-      .saveCertificates(certificatesToUpdate, certificatesToCreate, certificateIdsToDelete)
+      .saveCertificates(
+        certificatesToUpdate,
+        certificatesToCreate,
+        certificateIdsToDelete
+      )
       .then(async () => {
         const result = await Certificate.findAll({
           where: {
             userId
           }
-        })
+        });
         res.status(201).send(result);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  },
+  }
 };
 
 export default userController;
