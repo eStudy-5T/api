@@ -52,7 +52,8 @@ const schema = {
   },
   description: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: true,
+    defaultValue: ''
   },
   mobilePhone: {
     type: Sequelize.STRING,
@@ -115,12 +116,6 @@ const schema = {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
-  },
-  // Tài khoản có được xác thực trở thành người dạy
-  description: {
-    type: Sequelize.STRING,
-    allowNull: true,
-    defaultValue: ""
   }
 };
 
