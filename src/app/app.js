@@ -65,6 +65,14 @@ app.use('/api/user', router.userRouter);
 app.use('/api/courses', router.courseRouter);
 app.use('/api/classes', router.classRouter);
 
+app.use((err, req, res, next) => {
+  if (err.code !== 'EBADCSRFTOKEN') {
+    return next(err);
+  }
+
+  res.status(403).send('error.csrfTokenInvalid');
+});
+
 dbPostgres.authenticate().then((err) => {
   if (err) {
     console.log('Unable to connect to PostgreSQL.');
