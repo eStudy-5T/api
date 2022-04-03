@@ -16,20 +16,14 @@ const swaggerDefinition = {
     securitySchemes: {
       JWT: {
         type: 'apiKey',
-        name: 'Authorization',
-        in: 'header'
-      },
-      Bearer: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT'
+        name: 'Access Token',
+        in: 'cookie'
       }
     }
   },
   security: [
     {
-      JWT: [],
-      Bearer: []
+      JWT: []
     }
   ]
 };

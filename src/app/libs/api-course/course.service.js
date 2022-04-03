@@ -94,11 +94,11 @@ const courseService = {
       const course = await Course.findByPk(courseId);
 
       if (!course) {
-        return {code: 404};
+        return {status: 404};
       }
 
       if (course.ownerId !== ownerId) {
-        return {code: 403};
+        return {status: 403};
       }
 
       return null;

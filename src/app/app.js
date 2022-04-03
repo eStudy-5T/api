@@ -9,6 +9,7 @@ import passport from 'passport';
 import logger from 'morgan';
 import fileUpload from 'express-fileupload';
 import swaggerUi from 'swagger-ui-express';
+import csurf from 'csurf';
 
 import router from './app.routes';
 import middleware from './core/middlewares';
@@ -47,6 +48,11 @@ app.use(session(config.session));
 app.use(passport.initialize());
 app.use(passport.session());
 app.disable('x-powered-by');
+app.use(
+  csurf({
+    cookie: {httpOnly: true, secure: true, sameSite: 'strict'}
+  })
+);
 
 // Define route
 // Not authorized route

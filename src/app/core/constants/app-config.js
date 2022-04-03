@@ -25,7 +25,12 @@ const config = {
   },
   jwt: {
     secretAccessKey: process.env.JWT_SECRET_KEY_TOKEN,
-    secretRefreshKey: process.env.JWT_SECRET_KEY_REFRESH_TOKEN
+    secretRefreshKey: process.env.JWT_SECRET_KEY_REFRESH_TOKEN,
+    accessTokenExpiration: '30m',
+    refreshTokenExpiration: '1d'
+  },
+  cookie: {
+    expiration: 86400000 // 1 day
   }
 };
 

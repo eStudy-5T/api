@@ -43,4 +43,10 @@ authRouter.post('/login', authController.authenticate);
  */
 authRouter.post('/signup', authController.register);
 
+authRouter.get('/logout', authController.logout);
+
+authRouter.get('/get-csrf', authController.getCSRFToken);
+
+authRouter.get('/refresh-token', authController.refreshToken);
+
 export default authRouter;
