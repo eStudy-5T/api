@@ -48,7 +48,8 @@ module.exports = {
       },
       description: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        defaultValue: "",
       },
       mobilePhone: {
         type: Sequelize.STRING,

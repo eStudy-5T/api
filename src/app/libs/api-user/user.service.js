@@ -14,6 +14,7 @@ const userService = {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          description: user.description,
           dateOfBirth: user.dateOfBirth,
           avatar: user.avatar,
           isVerifiedToTeach: user.isVerifiedToTeach,
