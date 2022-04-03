@@ -5,12 +5,12 @@ const handleErrorResponse = (res, err) => {
     return res.status(500).send(err);
   }
 
-  if (err.code) {
+  if (err.status) {
     if (!err.message) {
-      return res.sendStatus(err.code);
+      return res.sendStatus(err.status);
     }
 
-    return res.status(err.code).send(err.message);
+    return res.status(err.status).send(err.message);
   }
 
   console.error(err);

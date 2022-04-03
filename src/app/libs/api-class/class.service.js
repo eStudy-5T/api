@@ -42,7 +42,7 @@ const classService = {
     try {
       const classData = await Class.findByPk(classId);
       if (!classData) {
-        return {code: 404, message: 'Class not found'};
+        return {status: 404, message: 'Class not found'};
       }
 
       const course = await Course.findOne({
@@ -52,7 +52,7 @@ const classService = {
         }
       });
       if (!course) {
-        return {code: 403};
+        return {status: 403};
       }
 
       return null;

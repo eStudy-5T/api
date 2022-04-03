@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
+import config from '../constants/app-config';
 
 export const verifyRequest = (req, res, next) => {
-  const bearerToken = req.headers.authorization;
-  if (bearerToken) {
-    const token = bearerToken.split(' ')[1];
-    jwt.verify(token, process.env.JWT_SECRET_KEY_TOKEN, (err, user) => {
+  const accessToken = req.cookies['access_token'];
+  if (accessToken) {
+    jwt.verify(accessToken, config.jwt.secretAccessKey, (err, user) => {
       if (err) {
-        return res.status(403).send('Token is not valid!');
+        return res.status(401).send('error.accessTokenExpired');
       }
       req.user = user;
       next();

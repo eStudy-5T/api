@@ -49,7 +49,7 @@ const userService = {
     try {
       const user = await User.findByPk(userId);
       if (!user) {
-        return {code: 404, message: 'User not found'};
+        return {status: 404, message: 'User not found'};
       }
     } catch (err) {
       console.error(err);
@@ -101,9 +101,9 @@ const userService = {
           }
         });
       });
-  
+
       await WorkingExperience.bulkCreate(workingExperienceListToCreate);
-  
+
       await WorkingExperience.destroy({
         where: {
           id: workingExperienceIdsToDelete
@@ -143,9 +143,9 @@ const userService = {
           }
         });
       });
-  
+
       await Certificate.bulkCreate(certificatesToCreate);
-  
+
       await Certificate.destroy({
         where: {
           id: certificateIdsToDelete
@@ -155,7 +155,7 @@ const userService = {
       console.error(err);
       throw 'Save working experience fail';
     }
-  },
+  }
 };
 
 export default userService;
