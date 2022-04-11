@@ -10,7 +10,7 @@ const setupVerifyAccountLink = async (userId) => {
     const userToken = await tokenService.generateCryptoToken();
     const tokenExpired = Date.now() + 3600000;
     await User.update({userToken, tokenExpired}, {where: {id: userId}});
-    const verifyLink = `${process.env.APP_HOST}/verify/${userToken}`;
+    const verifyLink = `${process.env.APP_PORTAL_HOST_V2}/verify/${userToken}`;
 
     return verifyLink;
   } catch (err) {

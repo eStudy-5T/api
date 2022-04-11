@@ -22,13 +22,13 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: process.env.APP_HOST
+    origin: process.env.APP_PORTAL_HOST_V2
   })
 );
 
 app.use((req, res, next) => {
   res.setHeader('Last-Modified', new Date().toUTCString());
-  res.header('Access-Control-Allow-Origin', process.env.APP_HOST);
+  res.header('Access-Control-Allow-Origin', process.env.APP_PORTAL_HOST_V2);
   res.header('Access-Control-Allow-Credentials', true);
   res.header(
     'Access-Control-Allow-Headers',
