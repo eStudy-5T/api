@@ -1,6 +1,7 @@
 import {Op} from 'sequelize';
 import Course from '../../core/database/models/course';
 import Class from '../../core/database/models/class';
+import User from '../../core/database/models/user';
 
 const constructWhere = (userId, options) => {
   const {searchPhrase, type} = options || {};
@@ -43,7 +44,14 @@ const courseService = {
         offset: offset || 0,
         limit: limit || 20,
         where,
-        sort: [['updatedAt', 'DESC']]
+        sort: [['updatedAt', 'DESC']],
+        include: [
+          {
+            model: User,
+            as: 'owner',
+            attributes: ['firstName', 'lastName', 'avatar']
+          }
+        ]
       });
     } catch (err) {
       console.error(err);
