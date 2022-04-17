@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
 const handleErrorResponse = (res, err) => {
-  if (_.isString(err)) {
+  if (_.isString(err) && err.length <= 100) {
     return res.status(500).send(err);
   }
 
-  if (err.status) {
+  if (err?.status) {
     if (!err.message) {
       return res.sendStatus(err.status);
     }

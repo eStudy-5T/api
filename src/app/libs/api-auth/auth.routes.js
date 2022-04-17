@@ -1,5 +1,6 @@
 import express from 'express';
 import authController from './auth.controller';
+import {verifyRequest} from '../../core/middlewares/verify-request';
 
 const authRouter = express.Router();
 
@@ -48,5 +49,13 @@ authRouter.get('/logout', authController.logout);
 authRouter.get('/get-csrf', authController.getCSRFToken);
 
 authRouter.get('/refresh-token', authController.refreshToken);
+
+authRouter.put(
+  '/resend-verify-email',
+  verifyRequest,
+  authController.resendVerifyEmail
+);
+
+authRouter.put('/verify-account', verifyRequest, authController.verifyAccount);
 
 export default authRouter;

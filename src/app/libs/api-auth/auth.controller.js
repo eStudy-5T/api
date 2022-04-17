@@ -1,5 +1,6 @@
 import authenticationService from './auth.service';
 import tokenService from './token.service';
+import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import config from '../../core/constants/app-config';
 
@@ -97,6 +98,40 @@ const authController = {
             maxAge: config.cookie.expiration
           })
           .end();
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  resendVerifyEmail: (req, res) => {
+    let userInfo;
+    userService
+      .getCurrentUser(req.user.id)
+      .then((user) => {
+        userInfo = user;
+        return authenticationService.setupVerifyAccountLink(req.user.id);
+      })
+      .then((verifyLink) => {
+        return authenticationService.sendVerifyAccountEmail(
+          userInfo,
+          verifyLink
+        );
+      })
+      .then(() => {
+        res.status(201).end();
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  verifyAccount: (req, res) => {
+    const {verifyToken} = req.body;
+    authenticationService
+      .verifyAccount(verifyToken, req.user.id)
+      .then(() => {
+        res.status(204).end();
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
