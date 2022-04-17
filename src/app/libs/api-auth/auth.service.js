@@ -4,21 +4,40 @@ import passport from 'passport';
 import tokenService from './token.service';
 import emailService from '../../core/mailer/mail.service';
 import mailTemplateName from '../../core/constants/mail-template';
-
-const setupVerifyAccountLink = async (userId) => {
-  try {
-    const userToken = await tokenService.generateCryptoToken();
-    const tokenExpired = Date.now() + 3600000;
-    await User.update({userToken, tokenExpired}, {where: {id: userId}});
-    const verifyLink = `${process.env.APP_PORTAL_HOST_V2}/verify/${userToken}`;
-
-    return verifyLink;
-  } catch (err) {
-    throw new Error(err);
-  }
-};
+import userService from '../api-user/user.service';
 
 const authenticationService = {
+  setupVerifyAccountLink: async (userId) => {
+    try {
+      const userToken = await tokenService.generateCryptoToken();
+      const tokenExpired = Date.now() + 15 * 60 * 1000; // 15 minutes
+      await User.update({userToken, tokenExpired}, {where: {id: userId}});
+      const verifyLink = `${process.env.APP_PORTAL_HOST_V2}/verify/${userToken}`;
+
+      return verifyLink;
+    } catch (err) {
+      throw new Error(err);
+    }
+  },
+
+  sendVerifyAccountEmail: async (userInfo, verifyLink) => {
+    try {
+      const mailData = {
+        userName: `${userInfo.firstName} ${userInfo.lastName}`,
+        verifyLink
+      };
+
+      return await emailService.sendMail(
+        userInfo.email,
+        mailTemplateName.confirmAccount.subject,
+        mailTemplateName.confirmAccount.path,
+        mailData
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
+  },
+
   login: (req, res, next) => {
     return new Promise((resolve, reject) => {
       passport.authenticate('meettutor.login', function (err, user, info) {
@@ -64,24 +83,42 @@ const authenticationService = {
             email: get(user, 'dataValues.email')
           };
 
-          const verifyLink = await setupVerifyAccountLink(userInfo.id);
+          const verifyLink = await authenticationService.setupVerifyAccountLink(
+            userInfo.id
+          );
 
-          const mailData = {
-            userName: `${userInfo.firstName} ${userInfo.lastName}`,
+          await authenticationService.sendVerifyAccountEmail(
+            userInfo,
             verifyLink
-          };
-
-          await emailService.sendMail(
-            userInfo.email,
-            mailTemplateName.confirmAccount.subject,
-            mailTemplateName.confirmAccount.path,
-            mailData
           );
 
           return resolve(userInfo);
         }
       })(req, res, next);
     });
+  },
+
+  verifyAccount: async (verifyToken, userId) => {
+    const userInfo = await User.findByPk(userId);
+    const tokenExpired = new Date(userInfo.tokenExpired);
+
+    if (
+      verifyToken === userInfo.userToken &&
+      Date.now() <= tokenExpired.getTime()
+    ) {
+      return await User.update(
+        {
+          userToken: null,
+          tokenExpired: null,
+          isVerified: true
+        },
+        {
+          where: {id: userInfo.id}
+        }
+      );
+    }
+
+    return Promise.reject();
   }
 };
 

@@ -36,7 +36,7 @@ const emailService = {
     return sgMail
       .send(msg)
       .then(() => {
-        console.log('Mail sent');
+        console.log(`${templateName} mail sent`);
       })
       .catch((error) => {
         console.error(error);
