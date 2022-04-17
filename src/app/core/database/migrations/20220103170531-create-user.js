@@ -49,7 +49,7 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
         allowNull: true,
-        defaultValue: "",
+        defaultValue: ''
       },
       mobilePhone: {
         type: Sequelize.STRING,
@@ -109,11 +109,6 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
-      },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: ""
       },
       createdAt: {
         allowNull: false,

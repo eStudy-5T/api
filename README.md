@@ -54,3 +54,13 @@ Running API locally requires below parameters to be set explicitly:
 - To seed all data: `npx sequelize-cli db:seed:all`
 - To undo the latest seed: `npx sequelize-cli db:seed:undo`
 - To undo all seeds: `npx sequelize-cli db:seed:undo:all`
+
+- To create a migration file:
+```
+  yarn sequelize --config ./src/app/core/database/config.js --migrations-path ./src/app/core/database/migrations --name [name] migration:create
+```
+
+- To create a seed file:
+```
+  yarn sequelize --config ./src/app/core/database/config.js --seeders-path ./src/app/core/database/seeders --name [name] seed:create
+```
