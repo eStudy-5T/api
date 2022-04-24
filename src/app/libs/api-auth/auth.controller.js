@@ -3,6 +3,7 @@ import tokenService from './token.service';
 import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import config from '../../core/constants/app-config';
+import validators from '../../utils/validators';
 
 const authController = {
   authenticate: (req, res, next) => {
@@ -130,6 +131,35 @@ const authController = {
     const {verifyToken} = req.body;
     authenticationService
       .verifyAccount(verifyToken, req.user.id)
+      .then(() => {
+        res.status(204).end();
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  forgotPassword: (req, res) => {
+    const {email} = req.body;
+    authenticationService
+      .forgotPassword(email)
+      .then(() => {
+        res.status(204).end();
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  resetPassword: (req, res) => {
+    const {email, resetPasswordToken, newPassword} = req.body;
+
+    if (!validators.validatePassword(newPassword)) {
+      return res.status(400).send('error.invalidPassword');
+    }
+
+    authenticationService
+      .resetPassword(email, resetPasswordToken, newPassword)
       .then(() => {
         res.status(204).end();
       })

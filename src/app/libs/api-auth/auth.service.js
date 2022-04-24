@@ -4,7 +4,6 @@ import passport from 'passport';
 import tokenService from './token.service';
 import emailService from '../../core/mailer/mail.service';
 import mailTemplateName from '../../core/constants/mail-template';
-import userService from '../api-user/user.service';
 
 const authenticationService = {
   setupVerifyAccountLink: async (userId) => {
@@ -23,7 +22,7 @@ const authenticationService = {
   sendVerifyAccountEmail: async (userInfo, verifyLink) => {
     try {
       const mailData = {
-        userName: `${userInfo.firstName} ${userInfo.lastName}`,
+        fullName: `${userInfo.firstName} ${userInfo.lastName}`,
         verifyLink
       };
 
@@ -99,26 +98,80 @@ const authenticationService = {
   },
 
   verifyAccount: async (verifyToken, userId) => {
-    const userInfo = await User.findByPk(userId);
-    const tokenExpired = new Date(userInfo.tokenExpired);
+    try {
+      const userInfo = await User.findByPk(userId);
+      const tokenExpired = new Date(userInfo.tokenExpired);
 
-    if (
-      verifyToken === userInfo.userToken &&
-      Date.now() <= tokenExpired.getTime()
-    ) {
-      return await User.update(
-        {
-          userToken: null,
-          tokenExpired: null,
-          isVerified: true
-        },
-        {
-          where: {id: userInfo.id}
-        }
-      );
+      if (
+        verifyToken === userInfo.userToken &&
+        Date.now() <= tokenExpired.getTime()
+      ) {
+        return await User.update(
+          {
+            userToken: null,
+            tokenExpired: null,
+            isVerified: true
+          },
+          {
+            where: {id: userInfo.id}
+          }
+        );
+      }
+
+      throw new Error();
+    } catch (err) {
+      throw new Error(err);
+    }
+  },
+
+  forgotPassword: async (email) => {
+    const userInfo = await User.findOne({
+      where: {email}
+    });
+
+    if (!userInfo) {
+      throw {status: 400, message: 'error.userNotFound'};
     }
 
-    return Promise.reject();
+    const resetPasswordToken = await tokenService.generateCryptoToken();
+    const resetPasswordExpired = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await User.update(
+      {resetPasswordToken, resetPasswordExpired},
+      {where: {email}}
+    );
+    const resetPasswordLink = `${process.env.APP_PORTAL_HOST_V2}/reset-password?email=${email}&token=${resetPasswordToken}`;
+
+    const mailData = {
+      fullName: `${userInfo.firstName} ${userInfo.lastName}`,
+      resetPasswordLink
+    };
+
+    return await emailService.sendMail(
+      userInfo.email,
+      mailTemplateName.forgotPassword.subject,
+      mailTemplateName.forgotPassword.path,
+      mailData
+    );
+  },
+
+  resetPassword: async (email, resetPasswordToken, newPassword) => {
+    const user = await User.findOne({where: {email}});
+    const tokenExpired = new Date(user.resetPasswordExpired);
+    if (
+      resetPasswordToken === user.resetPasswordToken &&
+      Date.now() <= tokenExpired.getTime()
+    ) {
+      return await user.update({
+        password: newPassword,
+        resetPasswordToken: null,
+        resetPasswordExpired: null
+      });
+    }
+
+    throw {
+      status: 400,
+      message: 'error.invalidResetPasswordToken'
+    };
   }
 };
 

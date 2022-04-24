@@ -37,9 +37,15 @@ userRouter.put('/:userId/change-password', userController.changePassword);
 
 userRouter.put('/:userId', userController.update);
 
-userRouter.get('/:userId/get-working-experience-list', userController.getWorkingExperienceList);
+userRouter.get(
+  '/:userId/get-working-experience-list',
+  userController.getWorkingExperienceList
+);
 
-userRouter.post('/:userId/save-working-experience-list', userController.saveWorkingExperienceList);
+userRouter.post(
+  '/:userId/save-working-experience-list',
+  userController.saveWorkingExperienceList
+);
 
 userRouter.get('/:userId/get-certificates', userController.getCertificates);
 

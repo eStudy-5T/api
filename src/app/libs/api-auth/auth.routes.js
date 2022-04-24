@@ -58,4 +58,8 @@ authRouter.put(
 
 authRouter.put('/verify-account', verifyRequest, authController.verifyAccount);
 
+authRouter.put('/forgot-password', authController.forgotPassword);
+
+authRouter.put('/reset-password', authController.resetPassword);
+
 export default authRouter;
