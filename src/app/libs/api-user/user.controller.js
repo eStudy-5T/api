@@ -2,13 +2,8 @@ import userService from './user.service';
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
 import User from '../../core/database/models/user';
+import validators from '../../utils/validators';
 
-const USER_PASSWORD_REGEX = new RegExp(
-  '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-);
-const validatePassword = (password, regExp) => {
-  return regExp.test(password);
-};
 import helper from '../../utils/helper';
 import WorkingExperience from '../../core/database/models/working-experience';
 import Certificate from '../../core/database/models/certificate';
@@ -66,21 +61,21 @@ const userController = {
 
     // Check pattern for passwords
     if (
-      !validatePassword(newPassword, USER_PASSWORD_REGEX) ||
-      !validatePassword(confirmPassword, USER_PASSWORD_REGEX)
+      !validators.validatePassword(newPassword) ||
+      !validators.validatePassword(confirmPassword)
     ) {
       console.log(
-        !validatePassword(newPassword, USER_PASSWORD_REGEX),
-        !validatePassword(confirmPassword, USER_PASSWORD_REGEX)
+        !validators.validatePassword(newPassword),
+        !validators.validatePassword(confirmPassword)
       );
       return res
         .status(400)
         .json(
           `Fields not match standard: [${
-            (!validatePassword(newPassword, USER_PASSWORD_REGEX)
+            (!validators.validatePassword(newPassword)
               ? 'newPassword '
               : '') +
-            (!validatePassword(confirmPassword, USER_PASSWORD_REGEX)
+            (!validators.validatePassword(confirmPassword)
               ? 'confirmPassword'
               : '')
           }]`

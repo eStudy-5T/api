@@ -131,11 +131,7 @@ User.belongsTo(Degree, {constraint: false});
 
 User.beforeSave((user) => {
   if (user.changed('password')) {
-    user.password = bcrypt.hashSync(
-      user.password,
-      bcrypt.genSaltSync(12),
-      null
-    );
+    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(12));
   }
 });
 
