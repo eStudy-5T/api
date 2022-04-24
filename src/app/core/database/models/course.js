@@ -4,6 +4,7 @@ import sequelize from '../sequelize';
 import User from './user';
 import Grade from './grade';
 import CourseType from './course-type';
+import Category from './category';
 
 const schema = {
   id: {
@@ -78,5 +79,6 @@ const Course = sequelize.define('course', schema, options);
 Course.belongsTo(User, {as: 'owner', constraint: false});
 Course.belongsTo(Grade, {constaint: false});
 Course.belongsTo(CourseType, {as: 'type', constaint: false});
+Course.belongsTo(Category, {as: 'category', constaint: false});
 
 export default Course;
