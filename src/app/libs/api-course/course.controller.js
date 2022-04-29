@@ -12,7 +12,7 @@ const courseController = {
     }
     Promise.all([
       courseService.getCourses(req.user.id, {...req.query}),
-      courseService.getCourseCount(req.user.id, req.query)
+      courseService.getCourseCount(req.user.id, {...req.query})
     ])
       .then(([courses, count]) => {
         res.status(200).send({courses, count});

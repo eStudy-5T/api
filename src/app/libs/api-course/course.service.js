@@ -9,23 +9,14 @@ const constructWhere = async (userId, options) => {
   const {type, searchText, categoryFilter, gradeFilter, rangePrice} =
     options || {};
   const whereSearchPhrase = !searchText
-    ? {
-        // [Op.and]: [],
-        // [Op.or]: []
-      }
+    ? {}
     : {
-        // [Op.and]: [],
         [Op.or]: [
           {
             title: {
               [Op.iLike]: `%${searchText}%`
             }
           }
-          // {
-          //   description: {
-          //     [Op.iLike]: `%${searchText}%`
-          //   }
-          // }
         ]
       };
 
@@ -131,8 +122,6 @@ const courseService = {
       rangePrice
     });
 
-    console.log([constructSort(sortBy)]);
-
     try {
       return await Course.findAll({
         offset: offset || 0,
@@ -159,8 +148,25 @@ const courseService = {
   },
 
   getCourseCount: async (userId, options) => {
-    const {q: searchPhrase, type} = options || {};
-    const where = constructWhere(userId, {searchPhrase, type});
+    const {
+      q: searchPhrase,
+      type,
+      searchText = '',
+      sortBy = 'sortby-none',
+      categoryFilter = 'category-all',
+      gradeFilter = 'grade-all',
+      rangePrice = -1
+    } = options || {};
+
+    const where = await constructWhere(userId, {
+      searchPhrase,
+      type,
+      searchText,
+      sortBy,
+      categoryFilter,
+      gradeFilter,
+      rangePrice
+    });
 
     try {
       return await Course.count({where});

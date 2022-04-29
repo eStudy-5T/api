@@ -39,6 +39,11 @@ const schema = {
     allowNull: false,
     defaultValue: 0
   },
+  oldPrice: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    defaultValue: 0
+  },
   outline: {
     type: Sequelize.STRING,
     allowNull: true
@@ -67,6 +72,18 @@ const schema = {
   tags: {
     type: Sequelize.JSONB,
     allowNull: true
+  },
+  createdAt: {
+    type: Sequelize.DATE,
+    allowNull: false
+  },
+  categoryId: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'categories',
+      key: 'id'
+    }
   }
 };
 
