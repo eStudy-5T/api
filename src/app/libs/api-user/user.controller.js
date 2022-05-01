@@ -72,9 +72,7 @@ const userController = {
         .status(400)
         .json(
           `Fields not match standard: [${
-            (!validators.validatePassword(newPassword)
-              ? 'newPassword '
-              : '') +
+            (!validators.validatePassword(newPassword) ? 'newPassword ' : '') +
             (!validators.validatePassword(confirmPassword)
               ? 'confirmPassword'
               : '')
@@ -91,6 +89,10 @@ const userController = {
 
     // Check currentPassword is match with DB
     const user = await User.findOne({where: {id: userId}});
+    if (user && user.socialId) {
+      return res.status(400).send('error.');
+    }
+
     if (isNil(user) || !user.comparePassword(currentPassword)) {
       return res.status(400).json(`currentPassword is not correct`);
     }

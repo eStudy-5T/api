@@ -4,6 +4,7 @@ import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import config from '../../core/constants/app-config';
 import validators from '../../utils/validators';
+import passport from 'passport';
 
 const authController = {
   authenticate: (req, res, next) => {
@@ -44,6 +45,7 @@ const authController = {
 
   logout: (req, res) => {
     req.logout();
+    req.session.destroy();
     res
       .clearCookie('access_token', {
         sameSite: 'strict',
@@ -162,6 +164,87 @@ const authController = {
       .resetPassword(email, resetPasswordToken, newPassword)
       .then(() => {
         res.status(204).end();
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  authGoogle: (req, res, next) => {
+    passport.authenticate('google', {scope: ['profile', 'email']})(
+      req,
+      res,
+      next
+    );
+  },
+
+  authGoogleCallback: (req, res, next) => {
+    authenticationService
+      .googleCallback(req, res, next)
+      .then((userInfo) => {
+        const url = new URL(`${config.portalHost}`);
+        url.searchParams.append('userId', userInfo.userId);
+
+        res
+          .cookie('access_token', userInfo.accessToken, {
+            sameSite: 'strict',
+            secure: true,
+            httpOnly: true,
+            maxAge: config.cookie.expiration
+          })
+          .cookie('refresh_token', userInfo.refreshToken, {
+            path: '/api/auth/refresh-token',
+            sameSite: 'strict',
+            secure: true,
+            httpOnly: true,
+            maxAge: config.cookie.expiration
+          })
+          .cookie('csrf_token', req.csrfToken(), {
+            sameSite: 'strict',
+            secure: true,
+            maxAge: config.cookie.expiration
+          })
+          .redirect(url);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  authFacebook: (req, res, next) => {
+    passport.authenticate('facebook', {
+      authType: 'reauthenticate',
+      scope: ['public_profile', 'email']
+    })(req, res, next);
+  },
+
+  authFacebookCallback: (req, res, next) => {
+    authenticationService
+      .facebookCallback(req, res, next)
+      .then((userInfo) => {
+        const url = new URL(`${config.portalHost}`);
+        url.searchParams.append('userId', userInfo.userId);
+
+        res
+          .cookie('access_token', userInfo.accessToken, {
+            sameSite: 'strict',
+            secure: true,
+            httpOnly: true,
+            maxAge: config.cookie.expiration
+          })
+          .cookie('refresh_token', userInfo.refreshToken, {
+            path: '/api/auth/refresh-token',
+            sameSite: 'strict',
+            secure: true,
+            httpOnly: true,
+            maxAge: config.cookie.expiration
+          })
+          .cookie('csrf_token', req.csrfToken(), {
+            sameSite: 'strict',
+            secure: true,
+            maxAge: config.cookie.expiration
+          })
+          .redirect(url);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);

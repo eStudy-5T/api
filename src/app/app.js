@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import './core/auth-strategy/passport-local';
+import './core/auth-strategy/passport-google';
+import './core/auth-strategy/passport-facebook';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';

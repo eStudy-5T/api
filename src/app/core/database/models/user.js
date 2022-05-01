@@ -13,13 +13,16 @@ const schema = {
     defaultValue: Sequelize.UUIDV4,
     allowNull: false
   },
+  socialId: {
+    type: Sequelize.STRING,
+    unique: true
+  },
   email: {
     type: Sequelize.STRING,
     allowNull: false
   },
   password: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING
   },
   roleId: {
     type: Sequelize.INTEGER,
