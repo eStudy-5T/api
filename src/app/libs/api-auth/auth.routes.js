@@ -62,4 +62,12 @@ authRouter.put('/forgot-password', authController.forgotPassword);
 
 authRouter.put('/reset-password', authController.resetPassword);
 
+authRouter.get('/google', authController.authGoogle);
+
+authRouter.get('/google/callback', authController.authGoogleCallback);
+
+authRouter.get('/facebook', authController.authFacebook);
+
+authRouter.get('/facebook/callback', authController.authFacebookCallback);
+
 export default authRouter;

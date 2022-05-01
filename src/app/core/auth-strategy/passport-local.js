@@ -25,13 +25,13 @@ passport.use(
       User.findOne({where: {email: email}}).then((user, err) => {
         if (err) return done(err);
 
-        if (!user)
+        if (!user || !user.password)
           return done(null, false, {
             status: 400,
             message: 'error.userNotFound'
           });
 
-        if (!user.comparePassword(password))
+        if (!user.comparePassword(password) || !password)
           return done(null, false, {
             status: 400,
             message: 'error.incorrectPassword'
