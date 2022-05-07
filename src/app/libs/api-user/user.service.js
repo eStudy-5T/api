@@ -156,15 +156,6 @@ const userService = {
       console.error(err);
       throw 'Save working experience fail';
     }
-  },
-
-  enrolCourse: async (courseId, userId) => {
-    try {
-      return await Enrollment.create({courseId, userId});
-    } catch (err) {
-      console.error(err);
-      throw 'error.enrolCourseFail';
-    }
   }
 };
 

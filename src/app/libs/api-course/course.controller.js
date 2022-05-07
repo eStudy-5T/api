@@ -155,15 +155,28 @@ const courseController = {
         );
       })
       .then((enrollments) => {
-        const enrollmentsGroupByClass = _(enrollments)
-          .groupBy((e) => e.classId)
-          .map((value, key) => ({classId: key, users: value}))
-          .value();
+        const enrollmentsGroupByClass = _(enrollments).value();
         res.status(200).send(enrollmentsGroupByClass);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  enroll: async (req, res) => {
+    const courseId = _.get(req, 'body.courseId');
+    const ownerId = _.get(req, 'body.ownerId');
+    const userId = _.get(req, 'user.id');
+
+    try {
+      const error = await courseService.checkCourseValidity(ownerId, courseId);
+      if (error) throw error;
+
+      const enrollment = await courseService.enroll(courseId, userId);
+      res.status(200).send(enrollment);
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
   }
 };
 

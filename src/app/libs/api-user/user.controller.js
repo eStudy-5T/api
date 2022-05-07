@@ -1,5 +1,4 @@
 import userService from './user.service';
-import courseService from '../api-course/course.service';
 
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
@@ -215,25 +214,7 @@ const userController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  },
-
-  enrolCourse: (req, res) => {
-    const courseId = req.body.courseId
-    const ownerId = req.body.ownerId
-    const userId = req.body.userId
-
-    courseService
-      .checkCourseValidity(ownerId, courseId)
-      .then(async (error) => {
-        if (error) throw error;
-
-        const enrollment = await userService.enrolCourse(courseId, userId)
-        res.status(201).send(enrollment)
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
+  }
 };
 
 export default userController;

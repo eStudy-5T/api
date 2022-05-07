@@ -225,4 +225,6 @@ courseRouter.get(
   courseController.getCourseEnrollments
 );
 
+courseRouter.post('/enroll', courseController.enroll);
+
 export default courseRouter;
