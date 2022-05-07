@@ -7,11 +7,15 @@
   "license": "MIT",
   "scripts": {
     "dev": "[ -f .env ]; nodemon --exec sucrase-node ./src/server.js",
+    "dev:prod": "[ -f .env ]; nodemon --exec sucrase-node ./src/server.js production",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:seed:undo": "npx sequelize-cli db:seed:undo",
     "db:renew": "npx sequelize db:seed:undo:all && npx sequelize db:migrate:undo:all && yarn db:migrate && yarn db:seed",
+    "db:migrate:prod": "npx sequelize-cli db:migrate --env production",
+    "db:seed:prod": "npx sequelize-cli db:seed:all --env production",
+    "db:renew:prod": "npx sequelize db:seed:undo:all && npx sequelize db:migrate:undo:all && yarn db:migrate && yarn db:seed --env production",
     "lint": "eslint --ext .js src/",
     "fix-lint": "eslint --fix --ext .js src/"
   },
