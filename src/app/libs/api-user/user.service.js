@@ -3,6 +3,7 @@ import User from '../../core/database/models/user';
 import get from 'lodash/get';
 import WorkingExperience from '../../core/database/models/working-experience';
 import Certificate from '../../core/database/models/certificate';
+import Enrollment from '../../core/database/models/enrollment';
 
 const userService = {
   getCurrentUser: async (userId) => {
@@ -154,6 +155,15 @@ const userService = {
     } catch (err) {
       console.error(err);
       throw 'Save working experience fail';
+    }
+  },
+
+  enrolCourse: async (courseId, userId) => {
+    try {
+      return await Enrollment.create({courseId, userId});
+    } catch (err) {
+      console.error(err);
+      throw 'error.enrolCourseFail';
     }
   }
 };
