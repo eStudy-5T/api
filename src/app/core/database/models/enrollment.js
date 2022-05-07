@@ -3,7 +3,6 @@ import sequelize from '../sequelize';
 
 import User from './user';
 import Course from './course';
-import Class from './class';
 
 const schema = {
   userId: {
@@ -23,15 +22,6 @@ const schema = {
       model: 'courses',
       key: 'id'
     }
-  },
-  classId: {
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'classes',
-      key: 'id'
-    }
   }
 };
 
@@ -43,6 +33,5 @@ const Enrollment = sequelize.define('enrollment', schema, options);
 
 Enrollment.belongsTo(User, {constraint: false});
 Enrollment.belongsTo(Course, {constraint: false});
-Enrollment.belongsTo(Class, {constraint: false});
 
 export default Enrollment;

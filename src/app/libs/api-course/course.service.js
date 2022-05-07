@@ -4,6 +4,7 @@ import Class from '../../core/database/models/class';
 import User from '../../core/database/models/user';
 import Category from '../../core/database/models/category';
 import Grade from '../../core/database/models/grade';
+import Enrollment from '../../core/database/models/enrollment';
 
 const constructWhere = async (userId, options) => {
   const {type, searchText, categoryFilter, gradeFilter, rangePrice} =
@@ -207,7 +208,7 @@ const courseService = {
       const course = await Course.findByPk(courseId);
 
       if (!course) {
-        return {status: 404};
+        return {status: 404, message: `Cannot find course with id ${courseId}`};
       }
 
       if (course.ownerId !== ownerId) {
@@ -247,6 +248,15 @@ const courseService = {
     } catch (err) {
       console.error(err);
       throw 'error.deleteCourseFail';
+    }
+  },
+
+  enroll: async (courseId, userId) => {
+    try {
+      return Enrollment.create({courseId, userId});
+    } catch (err) {
+      console.error(err);
+      throw 'error.enrollCourseFail';
     }
   }
 };
