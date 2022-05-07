@@ -42,7 +42,7 @@ const courseRouter = express.Router();
  *       400:
  *         description: Unknown 'type' query
  */
-courseRouter.get('/', courseController.getCourses);
+courseRouter.get('/', mw.decideToVerify, courseController.getCourses);
 
 /**
  * @swagger
@@ -64,7 +64,11 @@ courseRouter.get('/', courseController.getCourses);
  *       404:
  *         description: Course not found
  */
-courseRouter.get('/:courseId', courseController.getSpecificCourse);
+courseRouter.get(
+  '/:courseId',
+  mw.decideToVerify,
+  courseController.getSpecificCourse
+);
 
 /**
  * @swagger
@@ -86,7 +90,12 @@ courseRouter.get('/:courseId', courseController.getSpecificCourse);
  *       404:
  *         description: Course not found
  */
-courseRouter.post('/', mw.courseValidator, courseController.createCourse);
+courseRouter.post(
+  '/',
+  mw.verifyRequest,
+  mw.courseValidator,
+  courseController.createCourse
+);
 
 /**
  * @swagger
@@ -119,6 +128,7 @@ courseRouter.post('/', mw.courseValidator, courseController.createCourse);
  */
 courseRouter.put(
   '/:courseId',
+  mw.verifyRequest,
   mw.courseValidator,
   courseController.updateCourse
 );
@@ -145,7 +155,11 @@ courseRouter.put(
  *       404:
  *         description: Course not found
  */
-courseRouter.delete('/:courseId', courseController.deleteCourse);
+courseRouter.delete(
+  '/:courseId',
+  mw.verifyRequest,
+  courseController.deleteCourse
+);
 
 /**
  * @swagger
@@ -222,9 +236,10 @@ courseRouter.post('/:courseId/classes', courseController.createClass);
  */
 courseRouter.get(
   '/:courseId/enrollments',
+  mw.verifyRequest,
   courseController.getCourseEnrollments
 );
 
-courseRouter.post('/enroll', courseController.enroll);
+courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
 
 export default courseRouter;

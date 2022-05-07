@@ -60,11 +60,11 @@ app.use(
 // Not authorized route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', router.authRouter);
+app.use('/api/courses', router.courseRouter);
 
 // Authorized route
 app.use('/api', middleware.verifyRequest);
 app.use('/api/user', router.userRouter);
-app.use('/api/courses', router.courseRouter);
 app.use('/api/classes', router.classRouter);
 
 app.use((err, req, res, next) => {

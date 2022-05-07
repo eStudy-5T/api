@@ -11,8 +11,8 @@ const courseController = {
       return res.status(400).send('Unknown type query');
     }
     Promise.all([
-      courseService.getCourses(req.user.id, {...req.query}),
-      courseService.getCourseCount(req.user.id, {...req.query})
+      courseService.getCourses(req?.user?.id, {...req.query}),
+      courseService.getCourseCount(req?.user?.id, {...req.query})
     ])
       .then(([courses, count]) => {
         res.status(200).send({courses, count});
