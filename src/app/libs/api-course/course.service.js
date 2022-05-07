@@ -27,8 +27,6 @@ const constructWhere = async (userId, options) => {
         where: {code: categoryFilter.split('-')[1]}
       });
 
-      console.log(category.name);
-
       if (
         category &&
         categoryFilter &&

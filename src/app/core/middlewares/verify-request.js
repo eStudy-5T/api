@@ -15,3 +15,12 @@ export const verifyRequest = (req, res, next) => {
     res.status(401).send('error.unauthorized');
   }
 };
+
+export const decideToVerify = (req, res, next) => {
+  const {type} = req.query;
+  if (['teacher', 'student'].includes(type)) {
+    return verifyRequest(req, res, next);
+  }
+
+  next();
+};
