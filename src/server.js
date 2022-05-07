@@ -31,6 +31,7 @@ var server = http.createServer(app);
  */
 
 server.listen(port, () => {
+  console.log(`Server at ${process.argv[2] || 'development'}`);
   console.log(`API at http://localhost:${port}/api`);
   console.log(`Swagger at http://localhost:${port}/api-docs`);
 });

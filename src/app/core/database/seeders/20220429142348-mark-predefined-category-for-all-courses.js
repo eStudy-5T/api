@@ -24,6 +24,6 @@ module.exports = {
     );
   },
   down: async (queryInterface) => {
-    return queryInterface.query('UPDATE "courses" SET categoryId=NULL');
+    return queryInterface.update('courses', 'categoryId', null);
   }
 };
