@@ -5,6 +5,17 @@ import User from '../../core/database/models/user';
 import Category from '../../core/database/models/category';
 import Grade from '../../core/database/models/grade';
 import Enrollment from '../../core/database/models/enrollment';
+import {google} from 'googleapis';
+
+const clientID =
+  '923429314852-valb33asnb7ula24v5f8cfr7a3btmegn.apps.googleusercontent.com';
+const clientSecret = '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';
+
+const oauth2Client = new google.auth.OAuth2(
+  clientID,
+  clientSecret,
+  'http://localhost:3000'
+);
 
 const constructWhere = async (userId, options) => {
   const {type, searchText, categoryFilter, gradeFilter, rangePrice} =
@@ -198,6 +209,34 @@ const courseService = {
     } catch (err) {
       console.error(err);
       throw 'error.createCourseFail';
+    }
+  },
+
+  createTokens: async (code) => {
+    try {
+      const tokens = await oauth2Client.getToken(code);
+      return tokens;
+    } catch (err) {
+      console.error(err);
+      throw 'error.createTokensFail';
+    }
+  },
+
+  createEvent: async (refreshToken, event) => {
+    try {
+      oauth2Client.setCredentials({refresh_token: refreshToken});
+      const calendar = google.calendar('v3');
+      const response = await calendar.events.insert({
+        auth: oauth2Client,
+        calendarId: 'primary',
+        requestBody: event,
+        conferenceDataVersion: 1
+      });
+
+      return response;
+    } catch (err) {
+      console.error(err);
+      throw 'err.createEventFail';
     }
   },
 
