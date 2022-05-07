@@ -138,6 +138,19 @@ const courseController = {
       });
   },
 
+  createTokens: async (req, res) => {
+    const {code} = req.body;
+
+    courseService
+      .createTokens(code)
+      .then((tokens) => {
+        res.status(200).send(tokens);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
   getCourseEnrollments: (req, res) => {
     const {courseId} = req.params;
 
@@ -177,6 +190,58 @@ const courseController = {
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }
+  },
+
+  createEvent: async (req, res) => {
+    const {summary, description, location, startDateTime, endDateTime} =
+      req.body;
+
+    const attendeesEmails = [
+      {email: 'user1@example.com'},
+      {email: 'user2@example.com'}
+    ]; //attendeesEmails: email addresses of students who enroll in this class;
+
+    const event = {
+      summary: summary,
+      description: description,
+      colorId: '7',
+      location: location,
+      start: {
+        dateTime: new Date(startDateTime)
+      },
+      end: {
+        dateTime: new Date(endDateTime)
+      },
+      attendees: attendeesEmails,
+      reminders: {
+        useDefault: false,
+        overrides: [
+          {method: 'email', minutes: 24 * 60},
+          {method: 'popup', minutes: 10}
+        ]
+      },
+      conferenceData: {
+        createRequest: {
+          conferenceSolutionKey: {
+            type: 'hangoutsMeet'
+          },
+          requestId: 'coding-calendar-demo'
+        }
+      }
+    };
+
+    //refresh token will be save at DB of course.
+    const refreshToken =
+      '1//0gw120ZLIBqPACgYIARAAGBASNwF-L9IrPDvm216HwX_VwI4Z5HTVeEljZf7mtstF7piusobwZhyWyTFPCbEu1rX1mhyS1VnWYwU';
+
+    courseService
+      .createEvent(refreshToken, event)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 

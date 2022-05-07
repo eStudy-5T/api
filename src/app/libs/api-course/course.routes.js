@@ -242,4 +242,32 @@ courseRouter.get(
 
 courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
 
+/**
+ * @swagger
+ * /courses/calendar/create-token:
+ *   post:
+ *     tags: ["Course"]
+ *     summary: create token to create a calendar
+ *     description: Create token to create a calendar
+ *     parameters:
+ *     responses:
+ *       200:
+ *         create token successfull:
+ */
+courseRouter.post('/calendar/create-token', courseController.createTokens);
+
+/**
+ * @swagger
+ * /courses/calendar/create-event:
+ *   post:
+ *     tags: ["Course"]
+ *     summary: create event
+ *     description: Create event
+ *     parameters:
+ *     responses:
+ *       200:
+ *         create event successfull:
+ */
+courseRouter.post('/calendar/create-event', courseController.createEvent);
+
 export default courseRouter;
