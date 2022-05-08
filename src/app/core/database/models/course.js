@@ -29,6 +29,10 @@ const schema = {
       key: 'id'
     }
   },
+  link: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   rating: {
     type: Sequelize.DOUBLE,
     allowNull: false,
