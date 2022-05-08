@@ -155,9 +155,9 @@ const courseController = {
     const {courseId} = req.params;
     const {userId} = req.user.id;
     try {
-      courseService.checkCourseValidity(userId, courseId).then((error) => {
-        if (error) throw error;
-      });
+      const {error} = courseService.checkCourseValidity(userId, courseId);
+      if (error) throw error;
+
       const enrollments = await courseService.getEnrollments(courseId);
       res.status(200).send(enrollments);
     } catch (err) {
