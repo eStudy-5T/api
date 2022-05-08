@@ -2,6 +2,7 @@ import courseService from './course.service.js';
 import classService from '../api-class/class.service';
 import helper from '../../utils/helper';
 import _ from 'lodash';
+import Enrollment from '../../core/database/models/enrollment.js';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -22,21 +23,28 @@ const courseController = {
       });
   },
 
-  getSpecificCourse: (req, res) => {
+  getSpecificCourse: async (req, res) => {
     const {courseId} = req.params;
+    const userId = _.get(req, 'user.id');
 
-    courseService
-      .getCourseById(courseId)
-      .then((course) => {
-        if (!course) {
-          return res.status(404).send('Course not found');
+    try {
+      const course = await courseService.getCourseById(courseId);
+
+      if (!course) {
+        return res.status(404).send('Course not found');
+      }
+
+      const enrollment = await Enrollment.findOne({
+        where: {
+          courseId,
+          userId
         }
-
-        res.status(200).send(course);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
       });
+      course.isEnrolled = enrollment ? true : false;
+      res.status(200).send(course);
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
   },
 
   createCourse: (req, res) => {
