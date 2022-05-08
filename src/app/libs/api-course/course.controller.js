@@ -34,7 +34,7 @@ const courseController = {
       }
 
       const enrollment = userId
-        ? enrollmentServices.getEnrollment(courseId, userId)
+        ? await enrollmentServices.getEnrollment(courseId, userId)
         : null;
       course.isEnrolled = enrollment ? true : false;
       res.status(200).send(course);

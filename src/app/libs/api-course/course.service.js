@@ -188,7 +188,23 @@ const courseService = {
 
   getCourseById: async (courseId) => {
     try {
-      return await Course.findByPk(courseId, {raw: true});
+      return Course.findOne({
+        where: {
+          id: courseId
+        },
+        include: [
+          {
+            model: User,
+            as: 'owner',
+            attributes: ['firstName', 'lastName', 'avatar']
+          },
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['id', 'code', 'name', 'description']
+          }
+        ]
+      });
     } catch (err) {
       console.error(err);
       throw 'error.getCourseFail';
