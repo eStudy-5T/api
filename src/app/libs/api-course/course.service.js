@@ -299,9 +299,9 @@ const courseService = {
 
   getEnrollments: async (courseId) => {
     try {
-      return Enrollment.findAll({
+      return Enrollment.findOne({
         where: {
-          courseId: courseId
+          courseId: 'courseId'
         },
         raw: true
       });
