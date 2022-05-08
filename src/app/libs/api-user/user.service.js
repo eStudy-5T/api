@@ -3,7 +3,6 @@ import User from '../../core/database/models/user';
 import get from 'lodash/get';
 import WorkingExperience from '../../core/database/models/working-experience';
 import Certificate from '../../core/database/models/certificate';
-import Enrollment from '../../core/database/models/enrollment';
 
 const userService = {
   getCurrentUser: async (userId) => {

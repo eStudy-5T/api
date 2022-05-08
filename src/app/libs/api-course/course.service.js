@@ -188,7 +188,7 @@ const courseService = {
 
   getCourseById: async (courseId) => {
     try {
-      return await Course.findByPk(courseId);
+      return await Course.findByPk(courseId, {raw: true});
     } catch (err) {
       console.error(err);
       throw 'error.getCourseFail';
