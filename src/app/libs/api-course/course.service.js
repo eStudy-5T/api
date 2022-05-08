@@ -295,6 +295,20 @@ const courseService = {
       console.error(err);
       throw 'error.enrollCourseFail';
     }
+  },
+
+  getEnrollments: async (courseId) => {
+    try {
+      return Enrollment.findOne({
+        where: {
+          courseId: 'courseId'
+        },
+        raw: true
+      });
+    } catch (err) {
+      console.log(err);
+      throw 'error.getCourseEnrollments';
+    }
   }
 };
 
