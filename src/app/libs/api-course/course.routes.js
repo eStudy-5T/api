@@ -66,6 +66,7 @@ courseRouter.get('/', mw.decideToVerify, courseController.getCourses);
  */
 courseRouter.get(
   '/:courseId',
+  mw.verifyRequest,
   mw.decideToVerify,
   courseController.getSpecificCourse
 );

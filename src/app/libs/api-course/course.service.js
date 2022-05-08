@@ -203,7 +203,9 @@ const courseService = {
             as: 'category',
             attributes: ['id', 'code', 'name', 'description']
           }
-        ]
+        ],
+        raw: true,
+        nest: true
       });
     } catch (err) {
       console.error(err);
