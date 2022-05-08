@@ -151,18 +151,29 @@ const courseController = {
       });
   },
 
-  getCourseEnrollments: async (req, res) => {
+  getCourseEnrollments: (req, res) => {
     const {courseId} = req.params;
-    const {userId} = req.user.id;
-    try {
-      courseService.checkCourseValidity(userId, courseId).then((error) => {
+
+    courseService
+      .checkCourseValidity(req.user.id, courseId)
+      .then((error) => {
         if (error) throw error;
+
+        return classService.getClassesByCourseId(courseId);
+      })
+      .then((classes) => {
+        return classService.getClassEnrollments(
+          courseId,
+          classes.map((c) => c.id)
+        );
+      })
+      .then((enrollments) => {
+        const enrollmentsGroupByClass = _(enrollments).value();
+        res.status(200).send(enrollmentsGroupByClass);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
       });
-      const enrollments = await courseService.getEnrollments(courseId);
-      res.status(200).send(enrollments);
-    } catch (err) {
-      helper.apiHandler.handleErrorResponse(res, err);
-    }
   },
 
   enroll: async (req, res) => {
