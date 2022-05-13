@@ -1,4 +1,5 @@
 import userService from './user.service';
+import courseService from '../api-course/course.service';
 
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
@@ -214,7 +215,26 @@ const userController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  }
+  },
+
+  getEnrolledCourses: (req, res) => {
+    const {type} = req.query;
+    const {userId} = req.params;
+
+    if (![undefined, 'teacher', 'student'].includes(type)) {
+      return res.status(400).send('Unknown type query');
+    }
+    Promise.all([
+      userService.getEnrolledCourses(userId, {...req.query}),
+      userService.getEnrolledCoursesCount(userId, {...req.query})
+    ])
+      .then(([courses, count]) => {
+        res.status(200).send({courses, count});
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
 };
 
 export default userController;

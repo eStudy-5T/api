@@ -51,4 +51,6 @@ userRouter.get('/:userId/get-certificates', userController.getCertificates);
 
 userRouter.post('/:userId/save-certificates', userController.saveCertificates);
 
+userRouter.get('/:userId/enrolled-courses', userController.getEnrolledCourses);
+
 export default userRouter;
