@@ -95,9 +95,11 @@ const constructWhere = async (userId, options) => {
         userId
       }
     });
-  
-    const enrolledCourseIds = enrolledCourses.map(function(course) {return course.courseId});
-    
+
+    const enrolledCourseIds = enrolledCourses.map(function (course) {
+      return course.courseId;
+    });
+
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
     whereSearchPhrase[Op.and].push({
       id: enrolledCourseIds
@@ -289,7 +291,7 @@ const userService = {
       sortBy,
       categoryFilter,
       gradeFilter,
-      rangePrice,
+      rangePrice
     });
 
     try {
@@ -344,7 +346,7 @@ const userService = {
       console.error(err);
       throw '';
     }
-  },
+  }
 };
 
 export default userService;

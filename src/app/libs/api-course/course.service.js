@@ -308,7 +308,16 @@ const courseService = {
 
   enroll: async (courseId, userId) => {
     try {
-      return Enrollment.create({courseId, userId});
+      let enrollment = await Enrollment.findAll({where: {courseId, userId}});
+      if (enrollment.length === 0) {
+        enrollment = await Enrollment.create({courseId, userId});
+        return {enrollment, status: 200, message: 'OK'};
+      } else {
+        return {
+          status: 400,
+          message: 'error.userReEnroll'
+        };
+      }
     } catch (err) {
       console.error(err);
       throw 'error.enrollCourseFail';
