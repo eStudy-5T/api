@@ -322,6 +322,32 @@ const courseService = {
       console.error(err);
       throw 'error.enrollCourseFail';
     }
+  },
+
+  getEnrolledStudents: async (courseId) => {
+    try {
+      return await Enrollment.findAll({
+        where: {
+          courseId
+        },
+        include: {
+          model: User,
+          required: true,
+          attributes: [
+            'id',
+            'email',
+            'firstName',
+            'lastName',
+            'dateOfBirth',
+            'mobilePhone',
+            'nationality'
+          ]
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'error.getEnrolledStudentsFail';
+    }
   }
 };
 
