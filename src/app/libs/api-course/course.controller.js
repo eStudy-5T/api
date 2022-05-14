@@ -1,8 +1,10 @@
 import courseService from './course.service.js';
 import classService from '../api-class/class.service';
 import helper from '../../utils/helper';
-import _ from 'lodash';
+import get from 'lodash/get';
+import isNull from 'lodash/isNull';
 import enrollmentServices from '../api-enrollment/enrollment.service';
+import User from '../../core/database/models/user';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -25,7 +27,7 @@ const courseController = {
 
   getSpecificCourse: async (req, res) => {
     const {courseId} = req.params;
-    const userId = _.get(req, 'user.id');
+    const userId = get(req, 'user.id');
 
     try {
       const course = await courseService.getCourseById(courseId);
@@ -37,6 +39,16 @@ const courseController = {
         ? await enrollmentServices.getEnrollment(courseId, userId)
         : null;
       course.isEnrolled = enrollment ? true : false;
+
+      const owner =
+        course.ownerId === userId
+          ? await User.findOne({
+              where: {id: course.ownerId},
+              raw: true
+            })
+          : null;
+      console.log(owner, course.ownerId, userId);
+      course.isCreator = isNull(owner) ? false : true;
       res.status(200).send(course);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
@@ -172,7 +184,7 @@ const courseController = {
         );
       })
       .then((enrollments) => {
-        const enrollmentsGroupByClass = _(enrollments).value();
+        const enrollmentsGroupByClass = get(enrollments).value();
         res.status(200).send(enrollmentsGroupByClass);
       })
       .catch((err) => {
@@ -181,16 +193,32 @@ const courseController = {
   },
 
   enroll: async (req, res) => {
-    const courseId = _.get(req, 'body.courseId');
-    const ownerId = _.get(req, 'body.ownerId');
-    const userId = _.get(req, 'user.id');
+    const courseId = get(req, 'body.courseId');
+    const ownerId = get(req, 'body.ownerId');
+    const userId = get(req, 'user.id');
 
     try {
       const error = await courseService.checkCourseValidity(ownerId, courseId);
       if (error) throw error;
 
-      const enrollment = await courseService.enroll(courseId, userId);
-      res.status(200).send(enrollment);
+      if (!ownerId) {
+        res.status(400).send('ownerId is missing!');
+      }
+
+      if (userId === ownerId) {
+        res.status(400).send('error.teacherEnrollCourse');
+      }
+
+      const {
+        enrollment = {},
+        status,
+        message
+      } = await courseService.enroll(courseId, userId);
+      if (status === 200) {
+        res.status(200).send(enrollment);
+      } else {
+        res.status(status).send(message);
+      }
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }
