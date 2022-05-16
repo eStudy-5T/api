@@ -242,6 +242,12 @@ courseRouter.get(
 
 courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
 
+courseRouter.get(
+  '/:courseId/enrolled-students',
+  mw.verifyRequest,
+  courseController.getEnrolledStudents
+);
+
 /**
  * @swagger
  * /courses/calendar/create-token:
@@ -252,7 +258,7 @@ courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
  *     parameters:
  *     responses:
  *       200:
- *         create token successfull:
+ *         create token successful:
  */
 courseRouter.post('/calendar/create-token', courseController.createTokens);
 

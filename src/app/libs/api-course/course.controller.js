@@ -224,6 +224,18 @@ const courseController = {
     }
   },
 
+  getEnrolledStudents: async (req, res) => {
+    const {courseId} = req.params;
+
+    try {
+      const enrolledList = await courseService.getEnrolledStudents(courseId);
+      res.status(200).send(enrolledList);
+      console.log(enrolledList);
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
+  },
+
   createEvent: async (req, res) => {
     const {summary, description, location, startDateTime, endDateTime} =
       req.body;
