@@ -61,6 +61,7 @@ app.use(
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', router.authRouter);
 app.use('/api/courses', router.courseRouter);
+app.use('/api/reviews', router.reviewRouter);
 
 // Authorized route
 app.use('/api', middleware.verifyRequest);

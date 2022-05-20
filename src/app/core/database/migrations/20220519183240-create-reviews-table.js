@@ -5,28 +5,41 @@ module.exports = {
     await queryInterface.createTable('reviews', {
       id: {
         primaryKey: true,
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false
+        type: Sequelize.INTEGER,
+        autoIncrement: true
       },
       courseId: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'courses',
+          key: 'id'
+        }
       },
       userId: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false
-      },
-      rating: {
-        type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
-      content: {
+      title: {
         type: Sequelize.STRING,
         allowNull: false
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      rate: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      timestamp: {
+        type: 'TIMESTAMP',
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       createdAt: {
         allowNull: false,
