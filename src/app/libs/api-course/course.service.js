@@ -348,6 +348,19 @@ const courseService = {
       console.error(err);
       throw 'error.getEnrolledStudentsFail';
     }
+  },
+
+  getCreatedCourses: async (ownerId) => {
+    try {
+      return await Course.findAll({
+        where: {
+          ownerId
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'error.getEnrolledStudentsFail';
+    }
   }
 };
 

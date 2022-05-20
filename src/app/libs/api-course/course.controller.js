@@ -286,7 +286,18 @@ const courseController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  }
+  },
+
+  getCreatedCourses: async (req, res) => {
+    const {ownerId} = req.params;
+
+    try {
+      const createdCourses = await courseService.getCreatedCourses(ownerId);
+      res.status(200).send(createdCourses);
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
+  },
 };
 
 export default courseController;

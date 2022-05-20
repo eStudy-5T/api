@@ -240,6 +240,12 @@ courseRouter.get(
   courseController.getCourseEnrollments
 );
 
+courseRouter.get(
+  '/created-courses/:ownerId',
+  mw.verifyRequest,
+  courseController.getCreatedCourses
+);
+
 courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
 
 courseRouter.get(
