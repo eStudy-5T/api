@@ -1,5 +1,4 @@
 import userService from './user.service';
-import courseService from '../api-course/course.service';
 
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
@@ -234,7 +233,7 @@ const userController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
-  },
+  }
 };
 
 export default userController;

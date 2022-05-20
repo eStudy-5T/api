@@ -4,28 +4,48 @@ import sequelize from '../sequelize';
 const schema = {
   id: {
     primaryKey: true,
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
+    type: Sequelize.INTEGER,
+    autoIncrement: true
   },
   courseId: {
     type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: 'courses',
+      key: 'id'
+    }
   },
   userId: {
     type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
-  },
-  rating: {
-    type: Sequelize.INTEGER,
     allowNull: false,
-    defaultValue: 0
+    references: {
+      model: 'users',
+      key: 'id'
+    }
   },
-  content: {
+  title: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  rate: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  createdAt: {
+    allowNull: false,
+    type: Sequelize.DATE
+  },
+  updatedAt: {
+    allowNull: false,
+    type: Sequelize.DATE
+  },
+  deletedAt: {
+    allowNull: true,
+    type: Sequelize.DATE
   }
 };
 
@@ -33,6 +53,6 @@ const options = {
   paranoid: true
 };
 
-const Subject = sequelize.define('subject', schema, options);
+const Review = sequelize.define('review', schema, options);
 
-export default Subject;
+export default Review;
