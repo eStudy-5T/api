@@ -89,6 +89,7 @@ const constructWhere = async (userId, options) => {
         ...where,
         ownerId: userId
       };
+      break;
   }
 
   return where;
