@@ -4,7 +4,7 @@ import passport from 'passport';
 import tokenService from './token.service';
 import emailService from '../../core/mailer/mail.service';
 import mailTemplateName from '../../core/constants/mail-template';
-import helper from '../../utils/helper';
+import senderType from '../../core/constants/sender-type';
 
 const authenticationService = {
   setupVerifyAccountLink: async (userId) => {
@@ -29,6 +29,7 @@ const authenticationService = {
 
       return await emailService.sendMail(
         userInfo.email,
+        senderType.noreply,
         mailTemplateName.confirmAccount.subject,
         mailTemplateName.confirmAccount.path,
         mailData
@@ -153,6 +154,7 @@ const authenticationService = {
 
     return await emailService.sendMail(
       userInfo.email,
+      senderType.noreply,
       mailTemplateName.forgotPassword.subject,
       mailTemplateName.forgotPassword.path,
       mailData

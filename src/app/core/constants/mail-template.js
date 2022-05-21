@@ -1,11 +1,11 @@
 const mailTemplateName = {
   confirmAccount: {
     path: 'confirm-account',
-    subject: 'Confirm Your Account'
+    subject: 'Confirm Your LetMeet Account'
   },
   forgotPassword: {
     path: 'forgot-password',
-    subject: 'Reset Your Password'
+    subject: 'Reset Your LetMeet Password'
   }
 };
 

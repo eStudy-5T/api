@@ -18,8 +18,10 @@ const config = {
     bucketName: process.env.AWS_BUCKET_NAME
   },
   mail: {
-    senderEmail: process.env.SENDER_EMAIL,
-    senderName: process.env.SENDER_NAME
+    senderSupportEmail: process.env.SENDER_SUPPORT_EMAIL,
+    senderSupportName: process.env.SENDER_SUPPORT_NAME,
+    senderNoreplyEmail: process.env.SENDER_NOREPLY_EMAIL,
+    senderNoreplyName: process.env.SENDER_NOREPLY_NAME
   },
   sendGrid: {
     apiKey: process.env.SENDGRID_API_KEY
