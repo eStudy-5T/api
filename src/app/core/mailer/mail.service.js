@@ -19,15 +19,15 @@ const buildMailTemplate = (templateName, params) => {
 };
 
 const emailService = {
-  sendMail: async (to, subject, templateName, params) => {
+  sendMail: async (to, sender, subject, templateName, params) => {
     sgMail.setApiKey(config.sendGrid.apiKey);
     const templateMail = await buildMailTemplate(templateName, params);
 
     const msg = {
       to: to,
       from: {
-        email: config.mail.senderEmail,
-        name: config.mail.senderName
+        email: config.mail[`sender${sender}Email`],
+        name: config.mail[`sender${sender}Name`]
       },
       subject: subject,
       html: templateMail
