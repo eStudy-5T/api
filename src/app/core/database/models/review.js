@@ -23,6 +23,10 @@ const schema = {
       key: 'id'
     }
   },
+  username: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   title: {
     type: Sequelize.STRING,
     allowNull: false

@@ -4,6 +4,7 @@ import get from 'lodash/get';
 
 import Course from '../../core/database/models/course';
 import Review from '../../core/database/models/review';
+import User from '../../core/database/models/user';
 import courseService from '../api-course/course.service';
 
 const reviewService = {
@@ -41,24 +42,35 @@ const reviewService = {
   },
 
   submitCourseReviews: async (userId, courseId, reviewForm) => {
-    const review = await Review.findOne({where: {courseId, userId}});
-    console.log(review);
-    if (!isNil(review)) {
+    try {
+      const review = await Review.findOne({where: {courseId, userId}});
+
+      if (!isNil(review)) {
+        return {
+          status: 400,
+          message: 'error.alreadyReviewed'
+        };
+      }
+
+      const user = User.findOne({where: userId});
+      const username = user.lastName + ' ' + user.firstName;
+      const {title, description, rate, timestamp} = reviewForm;
+
+      return Review.create({
+        userId,
+        username,
+        courseId,
+        title,
+        description,
+        rate,
+        timestamp
+      });
+    } catch (error) {
       return {
         status: 400,
-        message: 'error.alreadyReviewed'
+        message: 'error.userNotFound'
       };
     }
-
-    const {title, description, rate, timestamp} = reviewForm;
-    return Review.create({
-      userId,
-      courseId,
-      title,
-      description,
-      rate,
-      timestamp
-    });
   }
 };
 

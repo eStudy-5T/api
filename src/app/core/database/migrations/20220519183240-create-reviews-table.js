@@ -24,6 +24,10 @@ module.exports = {
           key: 'id'
         }
       },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false
