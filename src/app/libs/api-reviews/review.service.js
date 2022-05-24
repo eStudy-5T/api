@@ -4,8 +4,6 @@ import get from 'lodash/get';
 
 import Course from '../../core/database/models/course';
 import Review from '../../core/database/models/review';
-import User from '../../core/database/models/user';
-import courseService from '../api-course/course.service';
 
 const reviewService = {
   getCourseRate: (reviews = []) => {
@@ -52,9 +50,9 @@ const reviewService = {
         };
       }
 
-      const user = User.findOne({where: userId});
-      const username = user.lastName + ' ' + user.firstName;
-      const {title, description, rate, timestamp} = reviewForm;
+      const {firstName, lastName, title, description, rate, timestamp} =
+        reviewForm;
+      const username = firstName + ' ' + lastName;
 
       return Review.create({
         userId,

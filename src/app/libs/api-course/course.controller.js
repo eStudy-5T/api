@@ -47,7 +47,7 @@ const courseController = {
               raw: true
             })
           : null;
-      console.log(owner, course.ownerId, userId);
+      // console.log(owner, course.ownerId, userId);
       course.isCreator = isNull(owner) ? false : true;
       res.status(200).send(course);
     } catch (err) {
@@ -230,7 +230,7 @@ const courseController = {
     try {
       const enrolledList = await courseService.getEnrolledStudents(courseId);
       res.status(200).send(enrolledList);
-      console.log(enrolledList);
+      // console.log(enrolledList);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }
