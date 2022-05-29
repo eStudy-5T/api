@@ -18,6 +18,7 @@ import middleware from './core/middlewares';
 import dbPostgres from './core/database/sequelize';
 import config from './core/constants/app-config';
 import {swaggerSpec} from './swagger';
+import RedisService from './core/redis/redis.service';
 
 const app = express();
 
@@ -81,6 +82,11 @@ dbPostgres.authenticate().then((err) => {
     console.log('Unable to connect to PostgreSQL.');
     process.exit(1);
   }
+});
+
+new RedisService();
+RedisService.getConnection().on('error', (err) => {
+  console.log('Redis error:', err);
 });
 
 export default app;
