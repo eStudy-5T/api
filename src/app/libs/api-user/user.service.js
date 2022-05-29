@@ -346,6 +346,20 @@ const userService = {
       console.error(err);
       throw '';
     }
+  },
+
+  getStudents: async () => {
+    try {
+      return await User.findAll({
+        where: {
+          isVerifiedToTeach: false,
+          roleId: 1
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw '';
+    }
   }
 };
 

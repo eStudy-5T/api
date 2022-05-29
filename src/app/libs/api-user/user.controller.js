@@ -233,6 +233,40 @@ const userController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  getStudents: (req, res) => {
+    const {userId} = req.params; // use to check if user is admin
+
+    userService
+      .checkUserValidity(userId)
+      .then((error) => {
+        if (error) throw error;
+
+        return userService.getStudents();
+      })
+      .then((students) => {
+        students = students.map((student) => {
+          return {
+            userId: student.id,
+            email: student.email,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            description: student.description,
+            dateOfBirth: student.dateOfBirth,
+            avatar: student.avatar,
+            isVerifiedToTeach: student.isVerifiedToTeach,
+            isVerified: student.isVerified,
+            isDisabled: student.isDisabled,
+            createdAt: student.createdAt
+          };
+        });
+
+        res.status(200).send(students);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 
