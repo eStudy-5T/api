@@ -5,7 +5,7 @@ import config from '../../core/constants/app-config';
 const tokenService = {
   generateAccessToken: (userData) => {
     return jwt.sign(userData, config.jwt.secretAccessKey, {
-      expiresIn: config.jwt.accessTokenExpiration
+      expiresIn: '10s'
     });
   },
 

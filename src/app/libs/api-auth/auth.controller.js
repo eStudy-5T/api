@@ -5,6 +5,7 @@ import helper from '../../utils/helper';
 import config from '../../core/constants/app-config';
 import validators from '../../utils/validators';
 import passport from 'passport';
+import AuthenticationCacheService from '../../core/redis/auth-cache.service';
 
 const authController = {
   authenticate: (req, res, next) => {
@@ -19,7 +20,7 @@ const authController = {
             maxAge: config.cookie.expiration
           })
           .cookie('refresh_token', loginInfo.refreshToken, {
-            path: '/api/auth/refresh-token',
+            path: '/api/auth',
             sameSite: 'strict',
             secure: true,
             httpOnly: true,
@@ -46,23 +47,31 @@ const authController = {
   logout: (req, res) => {
     req.logout();
     req.session.destroy();
-    res
-      .clearCookie('access_token', {
-        sameSite: 'strict',
-        secure: true,
-        httpOnly: true
-      })
-      .clearCookie('refresh_token', {
-        path: '/api/auth/refresh-token',
-        sameSite: 'strict',
-        secure: true,
-        httpOnly: true
-      })
-      .clearCookie('csrf_token', {
-        sameSite: 'strict',
-        secure: true
-      })
-      .end();
+
+    // Blacklist refresh token
+    const refreshToken = req.cookies['refresh_token'];
+    AuthenticationCacheService.blacklistToken(
+      refreshToken,
+      config.jwt.refreshTokenExpiration
+    ).then(() => {
+      res
+        .clearCookie('access_token', {
+          sameSite: 'strict',
+          secure: true,
+          httpOnly: true
+        })
+        .clearCookie('refresh_token', {
+          path: '/api/auth',
+          sameSite: 'strict',
+          secure: true,
+          httpOnly: true
+        })
+        .clearCookie('csrf_token', {
+          sameSite: 'strict',
+          secure: true
+        })
+        .end();
+    });
   },
 
   getCSRFToken: (req, res) => {
@@ -75,36 +84,44 @@ const authController = {
       .end();
   },
 
-  refreshToken: (req, res) => {
-    const refreshToken = req.cookies['refresh_token'];
-    if (!refreshToken) {
+  refreshToken: async (req, res) => {
+    const oldRefreshToken = req.cookies['refresh_token'];
+    if (!oldRefreshToken) {
       return res.status(401).send('error.unauthorized');
     }
 
-    tokenService
-      .extractUserDataFromToken(refreshToken)
-      .then((userData) => {
-        const accessToken = tokenService.generateAccessToken(userData);
-        const refreshToken = tokenService.generateRefreshToken(userData);
-        res
-          .cookie('access_token', accessToken, {
-            sameSite: 'strict',
-            secure: true,
-            httpOnly: true,
-            maxAge: config.cookie.expiration
-          })
-          .cookie('refresh_token', refreshToken, {
-            path: '/api/auth/refresh-token',
-            sameSite: 'strict',
-            secure: true,
-            httpOnly: true,
-            maxAge: config.cookie.expiration
-          })
-          .end();
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
+    try {
+      const isTokenBlacklisted =
+        await AuthenticationCacheService.getTokenBlacklistStatus(
+          oldRefreshToken
+        );
+      if (isTokenBlacklisted) {
+        return res.status(401).send('error.unauthorized');
+      }
+
+      const userData = await tokenService.extractUserDataFromToken(
+        oldRefreshToken
+      );
+      const accessToken = tokenService.generateAccessToken(userData);
+      const refreshToken = tokenService.generateRefreshToken(userData);
+      res
+        .cookie('access_token', accessToken, {
+          sameSite: 'strict',
+          secure: true,
+          httpOnly: true,
+          maxAge: config.cookie.expiration
+        })
+        .cookie('refresh_token', refreshToken, {
+          path: '/api/auth',
+          sameSite: 'strict',
+          secure: true,
+          httpOnly: true,
+          maxAge: config.cookie.expiration
+        })
+        .end();
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
   },
 
   resendVerifyEmail: (req, res) => {

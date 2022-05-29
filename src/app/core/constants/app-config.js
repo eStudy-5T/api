@@ -29,8 +29,8 @@ const config = {
   jwt: {
     secretAccessKey: process.env.JWT_SECRET_KEY_TOKEN,
     secretRefreshKey: process.env.JWT_SECRET_KEY_REFRESH_TOKEN,
-    accessTokenExpiration: '30m',
-    refreshTokenExpiration: '1d'
+    accessTokenExpiration: 3600000,
+    refreshTokenExpiration: 86400000
   },
   cookie: {
     expiration: 86400000 // 1 day
@@ -44,6 +44,11 @@ const config = {
     clientID: process.env.FACEBOOK_CLIENT_ID,
     clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     callbackURL: process.env.FACEBOOK_CALLBACK_URL
+  },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD
   }
 };
 
