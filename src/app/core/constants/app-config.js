@@ -1,3 +1,5 @@
+import appConfigCustom from './app-config.custom';
+
 const config = {
   port: process.env.PORT || 3000,
   portalHost: process.env.APP_PORTAL_HOST_V2,
@@ -49,7 +51,8 @@ const config = {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD
-  }
+  },
+  ...(appConfigCustom || {})
 };
 
 export default config;

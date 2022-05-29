@@ -6,3 +6,4 @@ doc/
 npm-debug.log
 build
 yarn-error.log
+app-config.custom.js
