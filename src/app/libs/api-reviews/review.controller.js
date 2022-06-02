@@ -39,8 +39,8 @@ const reviewController = {
 
     const reviewForm = req.body;
     const {rate = 0, title = '', description = '', timestamp = ''} = reviewForm;
-    if (!isInteger(rate) || rate < 0) {
-      return res.status(400).send('Rate must be a positive number');
+    if (!isInteger(rate) || rate <= 0) {
+      return res.status(400).send('Ratings invalid');
     }
     if (isEmpty(title) || title.trim().length < 8) {
       return res.status(400).send('Title must be longer than 8 letters');

@@ -134,7 +134,8 @@ const userService = {
           isVerifiedToTeach: user.isVerifiedToTeach,
           isVerified: user.isVerified,
           isDisabled: user.isDisabled,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
+          roleId: user.roleId
         };
 
         return data;
