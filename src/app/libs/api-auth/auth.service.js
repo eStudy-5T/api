@@ -61,6 +61,7 @@ const authenticationService = {
             isVerified: get(user, 'dataValues.isVerified'),
             isDisabled: get(user, 'dataValues.isDisabled'),
             createdAt: get(user, 'dataValues.createdAt'),
+            roleId: get(user, 'dataValues.roleId'),
             accessToken,
             refreshToken
           };
