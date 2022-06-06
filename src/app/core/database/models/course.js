@@ -57,6 +57,11 @@ const schema = {
     allowNull: false,
     defaultValue: false
   },
+  isActive: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
   gradeId: {
     type: Sequelize.INTEGER,
     allowNull: false,
