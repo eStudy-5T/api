@@ -1,10 +1,12 @@
 import courseService from './course.service.js';
 import classService from '../api-class/class.service';
+import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import get from 'lodash/get';
 import isNull from 'lodash/isNull';
 import enrollmentServices from '../api-enrollment/enrollment.service';
 import User from '../../core/database/models/user';
+import Course from '../../core/database/models/course.js';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -32,7 +34,14 @@ const courseController = {
     try {
       const course = await courseService.getCourseById(courseId);
       if (!course) {
-        return res.status(404).send('Course not found');
+        return res.status(400).send('Course not found');
+      }
+
+      const isAdmin = await userService.validateUserHaveAdminPermissions(
+        userId
+      );
+      if (!course.isActive && !isAdmin) {
+        return res.status(400).send('This course is not available now!');
       }
 
       const enrollment = userId
@@ -47,7 +56,6 @@ const courseController = {
               raw: true
             })
           : null;
-      // console.log(owner, course.ownerId, userId);
       course.isCreator = isNull(owner) ? false : true;
       res.status(200).send(course);
     } catch (err) {
@@ -209,6 +217,15 @@ const courseController = {
         res.status(400).send('error.teacherEnrollCourse');
       }
 
+      const course = await Course.findByPk(courseId);
+      if (!course) {
+        res.status(400).send('error.courseNotFound');
+      }
+
+      if (!course.isActive) {
+        res.status(400).send('This course is not available now!');
+      }
+
       const {
         enrollment = {},
         status,
@@ -298,6 +315,74 @@ const courseController = {
       helper.apiHandler.handleErrorResponse(res, err);
     }
   },
+
+  activate: async (req, res) => {
+    const {courseId} = req.params;
+    const userId = get(req, 'user.id', '');
+
+    try {
+      const isAdmin = await userService.validateUserHaveAdminPermissions(
+        userId
+      );
+      if (!isAdmin) {
+        res.status(400).send('error.notAdmin');
+      }
+
+      const course = await courseService.getCourseById(courseId);
+      if (!course) {
+        return res.status(400).send('Course not found');
+      }
+
+      if (course.isActive) {
+        return res.status(400).send('Course has been already activated!');
+      }
+
+      const {status = 500, message = 'Internal Error'} =
+        await courseService.modifyAccess(courseId, true, {courseInfo: course});
+
+      if (status === 200) {
+        res.status(200).send('OK');
+      } else {
+        res.status(status).send(message);
+      }
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
+  },
+
+  deactivate: async (req, res) => {
+    const {courseId} = req.params;
+    const userId = get(req, 'user.id', '');
+
+    try {
+      const isAdmin = await userService.validateUserHaveAdminPermissions(
+        userId
+      );
+      if (!isAdmin) {
+        res.status(400).send('error.notAdmin');
+      }
+
+      const course = await courseService.getCourseById(courseId);
+      if (!course) {
+        return res.status(400).send('Course not found');
+      }
+
+      if (!course.isActive) {
+        return res.status(400).send('Course has been already deactivated!');
+      }
+
+      const {status = 500, message = 'Internal Error'} =
+        await courseService.modifyAccess(courseId, false, {courseInfo: course});
+
+      if (status === 200) {
+        res.status(200).send('OK');
+      } else {
+        res.status(status).send(message);
+      }
+    } catch (err) {
+      helper.apiHandler.handleErrorResponse(res, err);
+    }
+  }
 };
 
 export default courseController;

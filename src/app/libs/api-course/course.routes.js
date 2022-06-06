@@ -282,4 +282,38 @@ courseRouter.post('/calendar/create-token', courseController.createTokens);
  */
 courseRouter.post('/calendar/create-event', courseController.createEvent);
 
+/**
+ * @swagger
+ * /courses/:courseId/active:
+ *   post:
+ *     tags: ["Course"]
+ *     summary: Activate a course
+ *     description: Activate a course
+ *     parameters:
+ *     responses:
+ *       200: Activate a course successfully!
+ */
+courseRouter.post(
+  '/:courseId/active',
+  mw.verifyRequest,
+  courseController.activate
+);
+
+/**
+ * @swagger
+ * /courses/:courseId/active:
+ *   post:
+ *     tags: ["Course"]
+ *     summary: Deactivate a course
+ *     description: Deactivate a course
+ *     parameters:
+ *     responses:
+ *       200: Deactivate a course successfully!
+ */
+courseRouter.post(
+  '/:courseId/deactive',
+  mw.verifyRequest,
+  courseController.deactivate
+);
+
 export default courseRouter;

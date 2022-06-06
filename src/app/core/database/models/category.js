@@ -1,8 +1,6 @@
 import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 
-import Course from './course';
-
 const schema = {
   id: {
     primaryKey: true,

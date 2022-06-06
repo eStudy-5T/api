@@ -6,6 +6,12 @@ import Category from '../../core/database/models/category';
 import Grade from '../../core/database/models/grade';
 import Enrollment from '../../core/database/models/enrollment';
 import {google} from 'googleapis';
+import userService from '../api-user/user.service';
+import emailService from '../../core/mailer/mail.service';
+import senderType from '../../core/constants/sender-type';
+import mailTemplateName from '../../core/constants/mail-template';
+import BPromise from 'bluebird';
+import get from 'lodash/get';
 
 const clientID =
   '923429314852-valb33asnb7ula24v5f8cfr7a3btmegn.apps.googleusercontent.com';
@@ -82,6 +88,15 @@ const constructWhere = async (userId, options) => {
     });
   }
 
+  const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
+
+  if (!isAdmin) {
+    if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+    whereSearchPhrase[Op.and].push({
+      isActive: true
+    });
+  }
+
   let where = whereSearchPhrase;
   switch (type) {
     case 'teacher':
@@ -134,7 +149,7 @@ const courseService = {
     });
 
     try {
-      return await Course.findAll({
+      return Course.findAll({
         offset: offset || 0,
         limit: limit || 20,
         where,
@@ -343,7 +358,9 @@ const courseService = {
             'mobilePhone',
             'nationality'
           ]
-        }
+        },
+        raw: true,
+        nest: true
       });
     } catch (err) {
       console.error(err);
@@ -361,6 +378,50 @@ const courseService = {
     } catch (err) {
       console.error(err);
       throw 'error.getEnrolledStudentsFail';
+    }
+  },
+
+  modifyAccess: async (courseId, isActive, options = {}) => {
+    try {
+      await Course.update(
+        {
+          isActive: isActive
+        },
+        {
+          where: {id: courseId}
+        }
+      );
+
+      const template = isActive
+        ? mailTemplateName.courseActivate
+        : mailTemplateName.courseDeactivate;
+      const {courseInfo = {}} = options;
+      console.log(courseInfo);
+      const enrollments = await courseService.getEnrolledStudents(courseId);
+      await BPromise.all(
+        enrollments.map(async (enrollment) => {
+          const user = get(enrollment, 'user', {});
+          const mailData = {
+            fullName: `${user.firstName} ${user.lastName}`,
+            courseTitle: get(courseInfo, 'title', ''),
+            teacherFullName: `${get(courseInfo, 'owner.firstName', '')} ${get(
+              courseInfo,
+              'owner.lastName',
+              ''
+            )}`
+          };
+          await emailService.sendMail(
+            user.email,
+            senderType.support,
+            template.subject,
+            template.path,
+            mailData
+          );
+        })
+      );
+      return {status: 200, message: 'OK'};
+    } catch (err) {
+      return {status: 500, message: err.message};
     }
   }
 };

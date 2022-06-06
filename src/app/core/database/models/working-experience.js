@@ -38,6 +38,10 @@ const options = {
   paranoid: true
 };
 
-const WorkingExperience = sequelize.define('working-experience', schema, options);
+const WorkingExperience = sequelize.define(
+  'working-experience',
+  schema,
+  options
+);
 
 export default WorkingExperience;

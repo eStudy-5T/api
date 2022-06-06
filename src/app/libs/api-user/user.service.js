@@ -1,5 +1,6 @@
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
+import Role from '../../core/database/models/role';
 import get from 'lodash/get';
 import WorkingExperience from '../../core/database/models/working-experience';
 import Certificate from '../../core/database/models/certificate';
@@ -8,6 +9,7 @@ import Course from '../../core/database/models/course';
 import Category from '../../core/database/models/category';
 import Grade from '../../core/database/models/grade';
 import {Op} from 'sequelize';
+import isEmpty from 'lodash/isEmpty';
 
 const constructSort = (sortBy) => {
   switch (sortBy) {
@@ -119,6 +121,34 @@ const constructWhere = async (userId, options) => {
 };
 
 const userService = {
+  validateUserHaveAdminPermissions: async (userId) => {
+    try {
+      const user = await User.findOne({
+        where: {
+          id: userId
+        },
+        include: [
+          {
+            model: Role,
+            as: 'role',
+            require: true
+          }
+        ],
+        raw: true,
+        nest: true
+      });
+
+      if (!isEmpty(user)) {
+        return (
+          get(user, 'role.id', 0) === 2 && get(user, 'role.name') === 'admin'
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  },
+
   getCurrentUser: async (userId) => {
     try {
       const user = await User.findByPk(userId, {raw: true});
@@ -134,7 +164,8 @@ const userService = {
           isVerifiedToTeach: user.isVerifiedToTeach,
           isVerified: user.isVerified,
           isDisabled: user.isDisabled,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
+          isAdmin: await userService.validateUserHaveAdminPermissions(user.id)
         };
 
         return data;
