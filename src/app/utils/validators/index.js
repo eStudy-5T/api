@@ -1,3 +1,3 @@
-import validatePassword from "./password-validator";
+import validatePassword from './password-validator';
 
-export default {validatePassword}
+export default {validatePassword};
