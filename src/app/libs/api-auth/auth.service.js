@@ -46,21 +46,23 @@ const authenticationService = {
         if (info) {
           return reject(info);
         } else {
+          console.log(user);
           delete user.dataValues.password;
-          const userData = user.dataValues;
+          const userData = user.get({plain: true});
           const accessToken = tokenService.generateAccessToken(userData);
           const refreshToken = tokenService.generateRefreshToken(userData);
           const loginInfo = {
-            userId: get(user, 'dataValues.id'),
-            firstName: get(user, 'dataValues.firstName'),
-            lastName: get(user, 'dataValues.lastName'),
-            email: get(user, 'dataValues.email'),
-            dateOfBirth: get(user, 'dataValues.dateOfBirth'),
-            avatar: get(user, 'dataValues.avatar'),
-            isVerifiedToTeach: get(user, 'dataValues.isVerifiedToTeach'),
-            isVerified: get(user, 'dataValues.isVerified'),
-            isDisabled: get(user, 'dataValues.isDisabled'),
-            createdAt: get(user, 'dataValues.createdAt'),
+            userId: get(user, 'id'),
+            firstName: get(user, 'firstName'),
+            lastName: get(user, 'lastName'),
+            email: get(user, 'email'),
+            dateOfBirth: get(user, 'dateOfBirth'),
+            avatar: get(user, 'avatar'),
+            isVerifiedToTeach: get(user, 'isVerifiedToTeach'),
+            isVerified: get(user, 'isVerified'),
+            isDisabled: get(user, 'isDisabled'),
+            createdAt: get(user, 'createdAt'),
+            isAdmin: get(user, 'isAdmin', false),
             accessToken,
             refreshToken
           };

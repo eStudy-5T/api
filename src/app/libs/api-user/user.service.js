@@ -123,6 +123,9 @@ const constructWhere = async (userId, options) => {
 const userService = {
   validateUserHaveAdminPermissions: async (userId) => {
     try {
+      if (!userId) {
+        return false;
+      }
       const user = await User.findOne({
         where: {
           id: userId
@@ -165,7 +168,7 @@ const userService = {
           isVerified: user.isVerified,
           isDisabled: user.isDisabled,
           createdAt: user.createdAt,
-          isAdmin: await userService.validateUserHaveAdminPermissions(user.id)
+          isAdmin: await userService.validateUserHaveAdminPermissions(userId)
         };
 
         return data;

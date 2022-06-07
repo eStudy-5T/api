@@ -359,7 +359,7 @@ const courseController = {
         userId
       );
       if (!isAdmin) {
-        res.status(400).send('error.notAdmin');
+        return res.status(400).send('error.notAdmin');
       }
 
       const course = await courseService.getCourseById(courseId);
@@ -375,9 +375,9 @@ const courseController = {
         await courseService.modifyAccess(courseId, false, {courseInfo: course});
 
       if (status === 200) {
-        res.status(200).send('OK');
+        return res.status(200).send('OK');
       } else {
-        res.status(status).send(message);
+        return res.status(status).send(message);
       }
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);

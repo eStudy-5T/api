@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import passport from 'passport';
 import User from '../../core/database/models/user';
 import {Strategy as LocalStrategy} from 'passport-local';
+import userService from '../../libs/api-user/user.service';
 
 passport.serializeUser(function (user, done) {
   done(null, user.id);
@@ -21,24 +22,33 @@ passport.use(
       passwordField: 'password',
       passReqToCallback: true
     },
-    function (req, email, password, done) {
-      User.findOne({where: {email: email}}).then((user, err) => {
-        if (err) return done(err);
+    async function (req, email, password, done) {
+      try {
+        const user = await User.findOne({where: {email: email}});
 
-        if (!user || !user.password)
+        if (!user || !user.password) {
           return done(null, false, {
             status: 400,
             message: 'error.userNotFound'
           });
+        }
 
-        if (!user.comparePassword(password) || !password)
+        if (!user.comparePassword(password) || !password) {
           return done(null, false, {
             status: 400,
             message: 'error.incorrectPassword'
           });
+        }
 
+        const isAdmin = await userService.validateUserHaveAdminPermissions(
+          user.id
+        );
+        user.isAdmin = isAdmin;
         return done(null, user);
-      });
+      } catch (err) {
+        console.log(err);
+        return done(err);
+      }
     }
   )
 );
