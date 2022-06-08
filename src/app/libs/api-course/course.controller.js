@@ -247,7 +247,6 @@ const courseController = {
     try {
       const enrolledList = await courseService.getEnrolledStudents(courseId);
       res.status(200).send(enrolledList);
-      // console.log(enrolledList);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }

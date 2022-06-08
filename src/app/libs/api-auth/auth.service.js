@@ -46,7 +46,6 @@ const authenticationService = {
         if (info) {
           return reject(info);
         } else {
-          console.log(user);
           delete user.dataValues.password;
           const userData = user.get({plain: true});
           const accessToken = tokenService.generateAccessToken(userData);

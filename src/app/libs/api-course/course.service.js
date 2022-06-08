@@ -396,7 +396,6 @@ const courseService = {
         ? mailTemplateName.courseActivate
         : mailTemplateName.courseDeactivate;
       const {courseInfo = {}} = options;
-      console.log(courseInfo);
       const enrollments = await courseService.getEnrolledStudents(courseId);
       await BPromise.all(
         enrollments.map(async (enrollment) => {
