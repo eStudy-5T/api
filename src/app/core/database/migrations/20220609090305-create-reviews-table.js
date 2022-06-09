@@ -2,64 +2,49 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('classes', {
+    await queryInterface.createTable('reviews', {
       id: {
         primaryKey: true,
         type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false
+        autoIncrement: true
       },
       courseId: {
         type: Sequelize.UUID,
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'courses',
           key: 'id'
         }
       },
-      maxSlots: {
-        type: Sequelize.INTEGER,
+      userId: {
+        type: Sequelize.UUID,
         allowNull: false,
-        defaultValue: 0
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
-      sessionCompletedCount: {
-        type: Sequelize.INTEGER,
+      username: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      link: {
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      description: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      startDate: {
-        type: Sequelize.DATE,
+      rate: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
-      endDate: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      schedule: {
-        type: Sequelize.JSON,
-        allowNull: true,
-        defaultValue: []
-      },
-      timezone: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: 'Asia/Hanoi'
-      },
-      isAvailableToJoin: {
-        type: Sequelize.BOOLEAN,
+      timestamp: {
+        type: 'TIMESTAMP',
         allowNull: false,
-        defaultValue: false
-      },
-      remainingSlots: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      duration: {
-        type: Sequelize.INTEGER,
-        allowNull: true
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       createdAt: {
         allowNull: false,
@@ -77,6 +62,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('classes');
+    await queryInterface.dropTable('reviews');
   }
 };

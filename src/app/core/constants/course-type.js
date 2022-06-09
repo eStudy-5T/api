@@ -1,0 +1,6 @@
+const COURSE_TYPE = {
+  RUNNING: 'RUNNING',
+  MARKETING: 'MARKETING'
+};
+
+export default COURSE_TYPE;

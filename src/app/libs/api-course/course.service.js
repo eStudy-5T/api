@@ -1,9 +1,7 @@
 import {Op} from 'sequelize';
 import Course from '../../core/database/models/course';
-import Class from '../../core/database/models/class';
 import User from '../../core/database/models/user';
 import Category from '../../core/database/models/category';
-import Grade from '../../core/database/models/grade';
 import Enrollment from '../../core/database/models/enrollment';
 import {google} from 'googleapis';
 import userService from '../api-user/user.service';
@@ -24,7 +22,7 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 const constructWhere = async (userId, options) => {
-  const {type, searchText, categoryFilter, gradeFilter, rangePrice} =
+  const {type, searchText, gradeFilter, categoryFilter, rangePrice} =
     options || {};
   const whereSearchPhrase = !searchText
     ? {}
@@ -37,6 +35,26 @@ const constructWhere = async (userId, options) => {
           }
         ]
       };
+
+  if (gradeFilter) {
+    try {
+      const target =
+        gradeFilter.split('-')[1] === 'primary'
+          ? [1, 5]
+          : gradeFilter.split('-')[1] === 'secondary'
+          ? [6, 9]
+          : gradeFilter.split('-')[1] === 'high'
+          ? [10, 12]
+          : [13, 13];
+
+      if (gradeFilter && gradeFilter.split('-')[1] !== 'all') {
+        if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+        whereSearchPhrase[Op.and].push({grade: {[Op.between]: target}});
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 
   if (categoryFilter) {
     try {
@@ -51,30 +69,6 @@ const constructWhere = async (userId, options) => {
       ) {
         if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
         whereSearchPhrase[Op.and].push({categoryId: {[Op.eq]: category.id}});
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  }
-
-  if (gradeFilter) {
-    try {
-      const target =
-        gradeFilter.split('-')[1] === 'primary'
-          ? [1, 5]
-          : gradeFilter.split('-')[1] === 'secondary'
-          ? [6, 9]
-          : gradeFilter.split('-')[1] === 'high'
-          ? [10, 12]
-          : [13, 13];
-
-      const grade = await Grade.findOne({
-        where: {id: {[Op.between]: target}}
-      });
-
-      if (grade && gradeFilter && gradeFilter.split('-')[1] !== 'all') {
-        if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
-        whereSearchPhrase[Op.and].push({gradeId: {[Op.between]: target}});
       }
     } catch (err) {
       console.log(err.message);
@@ -143,8 +137,8 @@ const courseService = {
       type,
       searchText,
       sortBy,
-      categoryFilter,
       gradeFilter,
+      categoryFilter,
       rangePrice
     });
 
@@ -189,8 +183,8 @@ const courseService = {
       type,
       searchText,
       sortBy,
-      categoryFilter,
       gradeFilter,
+      categoryFilter,
       rangePrice
     });
 
@@ -232,12 +226,6 @@ const courseService = {
   createCourse: async (courseData, classes) => {
     try {
       const createdCourse = await Course.create(courseData);
-
-      if (classes?.length) {
-        await Class.bulkCreate(
-          classes.map((c) => ({...c, courseId: createdCourse.id}))
-        );
-      }
 
       return createdCourse;
     } catch (err) {

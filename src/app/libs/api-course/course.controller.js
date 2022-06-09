@@ -1,5 +1,4 @@
 import courseService from './course.service.js';
-import classService from '../api-class/class.service';
 import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import get from 'lodash/get';
@@ -67,9 +66,7 @@ const courseController = {
     const {type, grade, classes} = req.body;
     const courseData = {
       ...req.body,
-      ownerId: req.user.id,
-      typeId: type,
-      gradeId: grade
+      ownerId: req.user.id
     };
 
     courseService
@@ -84,12 +81,7 @@ const courseController = {
 
   updateCourse: (req, res) => {
     const {courseId} = req.params;
-    const {type, grade} = req.body;
-    const courseData = {
-      ...req.body,
-      typeId: type,
-      gradeId: grade
-    };
+    const courseData = req.body;
 
     courseService
       .checkCourseValidity(req.user.id, courseId)
@@ -124,44 +116,6 @@ const courseController = {
       });
   },
 
-  getClasses: (req, res) => {
-    const {courseId} = req.params;
-
-    courseService
-      .getCourseById(courseId)
-      .then((course) => {
-        if (!course) {
-          return res.sendStatus(404);
-        }
-
-        return classService.getClassesByCourseId(courseId);
-      })
-      .then((classes) => {
-        res.status(200).send(classes);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
-
-  createClass: (req, res) => {
-    const {courseId} = req.params;
-
-    courseService
-      .checkCourseValidity(req.user.id, courseId)
-      .then((error) => {
-        if (error) throw error;
-
-        return classService.createClass(courseId, req.body);
-      })
-      .then((createdClass) => {
-        res.status(201).send(createdClass);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
-
   createTokens: async (req, res) => {
     const {code} = req.body;
 
@@ -169,31 +123,6 @@ const courseController = {
       .createTokens(code)
       .then((tokens) => {
         res.status(200).send(tokens);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
-
-  getCourseEnrollments: (req, res) => {
-    const {courseId} = req.params;
-
-    courseService
-      .checkCourseValidity(req.user.id, courseId)
-      .then((error) => {
-        if (error) throw error;
-
-        return classService.getClassesByCourseId(courseId);
-      })
-      .then((classes) => {
-        return classService.getClassEnrollments(
-          courseId,
-          classes.map((c) => c.id)
-        );
-      })
-      .then((enrollments) => {
-        const enrollmentsGroupByClass = get(enrollments).value();
-        res.status(200).send(enrollmentsGroupByClass);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);

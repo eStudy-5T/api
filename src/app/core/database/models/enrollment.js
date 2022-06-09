@@ -8,7 +8,6 @@ const schema = {
   userId: {
     primaryKey: true,
     type: Sequelize.UUID,
-    allowNull: false,
     references: {
       model: 'users',
       key: 'id'
@@ -17,7 +16,6 @@ const schema = {
   courseId: {
     primaryKey: true,
     type: Sequelize.UUID,
-    allowNull: false,
     references: {
       model: 'courses',
       key: 'id'
@@ -31,7 +29,7 @@ const options = {
 
 const Enrollment = sequelize.define('enrollment', schema, options);
 
-Enrollment.belongsTo(User, {constraint: false});
-Enrollment.belongsTo(Course, {constraint: false});
+Enrollment.belongsTo(User, {through: Enrollment});
+Enrollment.belongsTo(Course, {through: Enrollment});
 
 export default Enrollment;

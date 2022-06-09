@@ -2,31 +2,25 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('enrollments', {
-      userId: {
+    await queryInterface.createTable('subjects', {
+      id: {
         primaryKey: true,
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
+        type: Sequelize.INTEGER,
+        autoIncrement: true
       },
-      courseId: {
-        primaryKey: true,
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'courses',
-          key: 'id'
-        }
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      classId: {
-        primaryKey: true,
+      description: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'classes',
+          model: 'categories',
           key: 'id'
         }
       },
@@ -46,6 +40,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('enrollments');
+    await queryInterface.dropTable('subjects');
   }
 };

@@ -1,8 +1,7 @@
 import Joi from 'joi';
 import courseService from '../../libs/api-course/course.service';
-import CourseType from '../../core/database/models/course-type';
-import Grade from '../../core/database/models/grade';
 import appHelper from '../../utils/helper';
+import COURSE_TYPE from '../constants/course-type';
 
 const titleValidationSchema = Joi.object({
   title: Joi.string().required().min(10).max(100)
@@ -37,20 +36,11 @@ const courseValidationSchema = Joi.object({
   type: Joi.number()
     .required()
     .external((value) => {
-      return new Promise((resolve, reject) => {
-        CourseType.findByPk(value)
-          .then((courseType) => {
-            if (courseType) {
-              return resolve(value);
-            }
+      if (COURSE_TYPE[value]) {
+        return value;
+      }
 
-            reject(new Error('The provided course "type" does not exist.'));
-          })
-          .catch((err) => {
-            console.error(err);
-            reject(new Error('Internal server error'));
-          });
-      });
+      throw new Error('The provided course "type" does not exist.');
     }),
   description: Joi.string().allow('').max(255),
   rating: Joi.number().min(0).max(5),
@@ -58,20 +48,11 @@ const courseValidationSchema = Joi.object({
   outline: Joi.string().min(0).max(255),
   isOpened: Joi.boolean(),
   grade: Joi.number().external((value) => {
-    return new Promise((resolve, reject) => {
-      Grade.findByPk(value)
-        .then((grade) => {
-          if (grade) {
-            return resolve(value);
-          }
+    if (Array.from({length: 13}, (_, i) => i + 1).includes(value)) {
+      return value;
+    }
 
-          reject(new Error('The provided "grade" does not exist.'));
-        })
-        .catch((err) => {
-          console.error(err);
-          reject(new Error('Internal server error'));
-        });
-    });
+    throw new Error('The provided "grade" does not exist.');
   })
 })
   .concat(titleValidationSchema)

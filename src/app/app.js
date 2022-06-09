@@ -67,7 +67,6 @@ app.use('/api/reviews', router.reviewRouter);
 // Authorized route
 app.use('/api', middleware.verifyRequest);
 app.use('/api/user', router.userRouter);
-app.use('/api/classes', router.classRouter);
 
 app.use((err, req, res, next) => {
   if (err.code !== 'EBADCSRFTOKEN') {
