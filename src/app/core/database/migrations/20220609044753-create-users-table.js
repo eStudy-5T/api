@@ -1,6 +1,6 @@
 'use strict';
 
-const {default: ROLE} = require('../../constants/role');
+const ROLE = require('../../constants/role');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
