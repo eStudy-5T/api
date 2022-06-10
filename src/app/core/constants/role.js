@@ -3,4 +3,4 @@ const ROLE = {
   CLIENT: 'CLIENT'
 };
 
-module.exports.default = ROLE;
+module.exports = ROLE;
