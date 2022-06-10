@@ -2,29 +2,35 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('degrees', {
+    await queryInterface.createTable('working-experiences', {
       id: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        autoIncrement: true
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false
       },
-      name: {
+      userId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      location: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      description: {
+      position: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      url: {
-        type: Sequelize.STRING,
+      startDate: {
+        type: Sequelize.DATE,
         allowNull: false
       },
-      receiveAt: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      expiredAt: {
+      endDate: {
         type: Sequelize.DATE,
         allowNull: false
       },
@@ -44,6 +50,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('degrees');
+    await queryInterface.dropTable('working-experiences');
   }
 };

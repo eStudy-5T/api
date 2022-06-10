@@ -2,22 +2,32 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('categories', {
+    await queryInterface.createTable('certificates', {
       id: {
         primaryKey: true,
-        type: Sequelize.INTEGER,
-        autoIncrement: true
-      },
-      code: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         allowNull: false
+      },
+      userId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      description: {
+      level: {
         type: Sequelize.STRING,
+        allowNull: false
+      },
+      issuedDate: {
+        type: Sequelize.DATE,
         allowNull: false
       },
       createdAt: {
@@ -33,19 +43,9 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-
-    await queryInterface.addColumn('courses', 'categoryId', {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'categories',
-        key: 'id'
-      }
-    });
   },
 
   down: async (queryInterface) => {
-    await queryInterface.removeColumn('courses', 'categoryId');
-    await queryInterface.dropTable('categories');
+    await queryInterface.dropTable('certificates');
   }
 };

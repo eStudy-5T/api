@@ -1,15 +1,14 @@
 import awsUploadService from '../../core/aws/file-upload.service';
 import User from '../../core/database/models/user';
-import Role from '../../core/database/models/role';
 import get from 'lodash/get';
 import WorkingExperience from '../../core/database/models/working-experience';
 import Certificate from '../../core/database/models/certificate';
 import Enrollment from '../../core/database/models/enrollment';
 import Course from '../../core/database/models/course';
 import Category from '../../core/database/models/category';
-import Grade from '../../core/database/models/grade';
 import {Op} from 'sequelize';
 import isEmpty from 'lodash/isEmpty';
+import ROLE from '../../core/constants/role';
 
 const constructSort = (sortBy) => {
   switch (sortBy) {
@@ -27,7 +26,7 @@ const constructSort = (sortBy) => {
 };
 
 const constructWhere = async (userId, options) => {
-  const {type, searchText, categoryFilter, gradeFilter, rangePrice} =
+  const {type, searchText, gradeFilter, categoryFilter, rangePrice} =
     options || {};
   const whereSearchPhrase = !searchText
     ? {}
@@ -40,6 +39,26 @@ const constructWhere = async (userId, options) => {
           }
         ]
       };
+
+  if (gradeFilter) {
+    try {
+      const target =
+        gradeFilter.split('-')[1] === 'primary'
+          ? [1, 5]
+          : gradeFilter.split('-')[1] === 'secondary'
+          ? [6, 9]
+          : gradeFilter.split('-')[1] === 'high'
+          ? [10, 12]
+          : [13, 13];
+
+      if (gradeFilter && gradeFilter.split('-')[1] !== 'all') {
+        if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+        whereSearchPhrase[Op.and].push({grade: {[Op.between]: target}});
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 
   if (categoryFilter) {
     try {
@@ -54,30 +73,6 @@ const constructWhere = async (userId, options) => {
       ) {
         if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
         whereSearchPhrase[Op.and].push({categoryId: {[Op.eq]: category.id}});
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  }
-
-  if (gradeFilter) {
-    try {
-      const target =
-        gradeFilter.split('-')[1] === 'primary'
-          ? [1, 5]
-          : gradeFilter.split('-')[1] === 'secondary'
-          ? [6, 9]
-          : gradeFilter.split('-')[1] === 'high'
-          ? [10, 12]
-          : [13, 13];
-
-      const grade = await Grade.findOne({
-        where: {id: {[Op.between]: target}}
-      });
-
-      if (grade && gradeFilter && gradeFilter.split('-')[1] !== 'all') {
-        if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
-        whereSearchPhrase[Op.and].push({gradeId: {[Op.between]: target}});
       }
     } catch (err) {
       console.log(err.message);
@@ -129,22 +124,11 @@ const userService = {
       const user = await User.findOne({
         where: {
           id: userId
-        },
-        include: [
-          {
-            model: Role,
-            as: 'role',
-            require: true
-          }
-        ],
-        raw: true,
-        nest: true
+        }
       });
 
       if (!isEmpty(user)) {
-        return (
-          get(user, 'role.id', 0) === 2 && get(user, 'role.name') === 'admin'
-        );
+        return user.role === ROLE.ADMIN;
       }
     } catch (err) {
       console.log(err);
@@ -323,8 +307,8 @@ const userService = {
       type,
       searchText,
       sortBy,
-      categoryFilter,
       gradeFilter,
+      categoryFilter,
       rangePrice
     });
 
@@ -369,8 +353,8 @@ const userService = {
       type,
       searchText,
       sortBy,
-      categoryFilter,
       gradeFilter,
+      categoryFilter,
       rangePrice
     });
 
@@ -387,7 +371,7 @@ const userService = {
       return await User.findAll({
         where: {
           isVerifiedToTeach: false,
-          roleId: 1
+          role: 1
         }
       });
     } catch (err) {

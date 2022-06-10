@@ -1,5 +1,7 @@
 'use strict';
 
+const {default: ROLE} = require('../../constants/role');
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('users', {
@@ -9,102 +11,75 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false
       },
+      socialId: {
+        type: Sequelize.STRING,
+        unique: true
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false
       },
       password: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING
       },
-      roleId: {
-        type: Sequelize.INTEGER,
+      role: {
+        type: Sequelize.STRING,
         allowNull: false,
-        references: {
-          model: 'roles',
-          key: 'id'
-        },
-        defaultValue: 1
+        defaultValue: ROLE.CLIENT
       },
       firstName: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       lastName: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       dateOfBirth: {
-        type: Sequelize.DATE,
-        allowNull: true
+        type: Sequelize.DATE
       },
       nationality: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       avatar: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       description: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        defaultValue: ''
+        type: Sequelize.TEXT
       },
       mobilePhone: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
-      gradeId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'grades',
-          key: 'id'
-        }
-      },
-      degreeId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'degrees',
-          key: 'id'
-        }
+      // Giá trị sẽ là 1, 2, 3... tương ứng với lớp 1 lớp 2 lớp 3
+      grade: {
+        type: Sequelize.INTEGER
       },
       identityNumber: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      subjects: {
-        type: Sequelize.JSONB,
-        allowNull: true
+        type: Sequelize.STRING
       },
       userToken: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       tokenExpired: {
-        type: Sequelize.DATE,
-        allowNull: true
+        type: Sequelize.DATE
       },
       resetPasswordToken: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
       },
       resetPasswordExpired: {
-        type: Sequelize.DATE,
-        allowNull: true
+        type: Sequelize.DATE
       },
+      // Tài khoản có được xác thực (qua email)
       isVerified: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
       },
+      // Tài khoản có bị khoá
       isDisabled: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
       },
+      // Tài khoản có được xác thực trở thành người dạy
       isVerifiedToTeach: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

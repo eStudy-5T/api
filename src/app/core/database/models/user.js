@@ -2,16 +2,13 @@ import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
 import bcrypt from 'bcrypt';
 
-import Role from './role';
-import Degree from './degree';
-import Grade from './grade';
+import ROLE from '../../constants/role';
 
 const schema = {
   id: {
     primaryKey: true,
     type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4,
-    allowNull: false
+    defaultValue: Sequelize.UUIDV4
   },
   socialId: {
     type: Sequelize.STRING,
@@ -24,83 +21,50 @@ const schema = {
   password: {
     type: Sequelize.STRING
   },
-  roleId: {
-    type: Sequelize.INTEGER,
+  role: {
+    type: Sequelize.STRING,
     allowNull: false,
-    references: {
-      model: 'roles',
-      key: 'id'
-    },
-    defaultValue: 1
+    defaultValue: ROLE.CLIENT
   },
   firstName: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   lastName: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   dateOfBirth: {
-    type: Sequelize.DATE,
-    allowNull: true
+    type: Sequelize.DATE
   },
   nationality: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   avatar: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   description: {
-    type: Sequelize.STRING,
-    allowNull: true,
-    defaultValue: ''
+    type: Sequelize.STRING
   },
   mobilePhone: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
-  gradeId: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'grades',
-      key: 'id'
-    }
-  },
-  degreeId: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'degrees',
-      key: 'id'
-    }
+  // Giá trị sẽ là 1, 2, 3... tương ứng với lớp 1 lớp 2 lớp 3
+  grade: {
+    type: Sequelize.INTEGER
   },
   identityNumber: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
-  subjects: {
-    type: Sequelize.JSONB,
-    allowNull: true
+    type: Sequelize.STRING
   },
   userToken: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   tokenExpired: {
-    type: Sequelize.DATE,
-    allowNull: true
+    type: Sequelize.DATE
   },
   resetPasswordToken: {
-    type: Sequelize.STRING,
-    allowNull: true
+    type: Sequelize.STRING
   },
   resetPasswordExpired: {
-    type: Sequelize.DATE,
-    allowNull: true
+    type: Sequelize.DATE
   },
   // Tài khoản có được xác thực (qua email)
   isVerified: {
@@ -127,10 +91,6 @@ const options = {
 };
 
 const User = sequelize.define('user', schema, options);
-
-User.belongsTo(Role, {constraint: false});
-User.belongsTo(Grade, {constraint: false});
-User.belongsTo(Degree, {constraint: false});
 
 User.beforeSave((user) => {
   if (user.changed('password')) {

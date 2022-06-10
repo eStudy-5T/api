@@ -2,32 +2,24 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('certificates', {
-      id: {
+    await queryInterface.createTable('enrollments', {
+      userId: {
         primaryKey: true,
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false
-      },
-      userId: {
-        type: Sequelize.UUID,
-        allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'users',
           key: 'id'
         }
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      level: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      issuedDate: {
-        type: Sequelize.DATE,
-        allowNull: false
+      courseId: {
+        primaryKey: true,
+        type: Sequelize.UUID,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'courses',
+          key: 'id'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -45,6 +37,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('certificates');
+    await queryInterface.dropTable('enrollments');
   }
 };
