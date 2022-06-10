@@ -18,6 +18,8 @@ const userController = {
       .then((userInfo) => {
         if (userInfo) {
           res.json(userInfo);
+        } else {
+          res.status(404).json('User not found');
         }
       })
       .catch((err) => {

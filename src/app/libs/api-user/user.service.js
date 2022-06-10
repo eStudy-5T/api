@@ -156,6 +156,8 @@ const userService = {
         };
 
         return data;
+      } else {
+        return null;
       }
     } catch (err) {
       console.log(err);
