@@ -94,6 +94,9 @@ const schema = {
   endDate: {
     type: Sequelize.DATE
   },
+  enrollmentDeadline: {
+    type: Sequelize.DATE
+  },
   scheduleType: {
     type: Sequelize.STRING
   },
