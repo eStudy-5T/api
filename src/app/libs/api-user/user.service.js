@@ -152,7 +152,11 @@ const userService = {
           isVerified: user.isVerified,
           isDisabled: user.isDisabled,
           createdAt: user.createdAt,
-          isAdmin: await userService.validateUserHaveAdminPermissions(userId)
+          isAdmin: await userService.validateUserHaveAdminPermissions(userId),
+          mobilePhone: user.mobilePhone,
+          nationality: user.nationality,
+          identityNumber: user.identityNumber,
+          grade: user.grade
         };
 
         return data;
