@@ -310,6 +310,28 @@ const courseController = {
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }
+  },
+
+  getCategories: async (req, res) => {
+    courseService
+      .getCategories()
+      .then((categories) => {
+        res.status(200).send(categories);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  getSubjects: async (req, res) => {
+    courseService
+      .getSubjects()
+      .then((subjects) => {
+        res.status(200).send(subjects);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 
