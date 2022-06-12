@@ -44,6 +44,10 @@ const courseRouter = express.Router();
  */
 courseRouter.get('/', mw.decideToVerify, courseController.getCourses);
 
+courseRouter.get('/categories', courseController.getCategories);
+
+courseRouter.get('/subjects', courseController.getSubjects);
+
 /**
  * @swagger
  * /courses/{courseId}:

@@ -2,6 +2,7 @@ import {Op} from 'sequelize';
 import Course from '../../core/database/models/course';
 import User from '../../core/database/models/user';
 import Category from '../../core/database/models/category';
+import Subject from '../../core/database/models/subject';
 import Enrollment from '../../core/database/models/enrollment';
 import {google} from 'googleapis';
 import userService from '../api-user/user.service';
@@ -410,6 +411,14 @@ const courseService = {
     } catch (err) {
       return {status: 500, message: err.message};
     }
+  },
+
+  getCategories: async () => {
+    return Category.findAll({});
+  },
+
+  getSubjects: async () => {
+    return Subject.findAll({});
   }
 };
 
