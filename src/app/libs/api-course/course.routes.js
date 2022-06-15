@@ -97,7 +97,7 @@ courseRouter.get(
 courseRouter.post(
   '/',
   mw.verifyRequest,
-  mw.courseValidator,
+  // mw.courseValidator,
   courseController.createCourse
 );
 

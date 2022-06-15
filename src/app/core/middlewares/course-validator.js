@@ -33,7 +33,7 @@ const titleValidationSchema = Joi.object({
   .unknown();
 
 const courseValidationSchema = Joi.object({
-  type: Joi.number()
+  type: Joi.string()
     .required()
     .external((value) => {
       if (COURSE_TYPE[value]) {
