@@ -63,7 +63,6 @@ const courseController = {
   },
 
   createCourse: (req, res) => {
-    console.log('req.body', req.body);
     const courseData = {
       ...req.body,
       ownerId: req.user.id
