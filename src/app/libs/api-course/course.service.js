@@ -232,7 +232,7 @@ const courseService = {
     }
   },
 
-  createCourse: async (courseData, classes) => {
+  createCourse: async (courseData) => {
     try {
       const createdCourse = await Course.create(courseData);
 

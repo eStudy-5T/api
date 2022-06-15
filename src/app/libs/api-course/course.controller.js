@@ -63,14 +63,14 @@ const courseController = {
   },
 
   createCourse: (req, res) => {
-    const {type, grade, classes} = req.body;
+    console.log('req.body', req.body);
     const courseData = {
       ...req.body,
       ownerId: req.user.id
     };
 
     courseService
-      .createCourse(courseData, classes)
+      .createCourse(courseData)
       .then((createdCourse) => {
         res.status(201).send(createdCourse);
       })
