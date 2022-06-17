@@ -81,7 +81,7 @@ const authController = {
         secure: true,
         maxAge: config.cookie.expiration
       })
-      .end();
+      .send();
   },
 
   refreshToken: async (req, res) => {
