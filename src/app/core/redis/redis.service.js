@@ -12,15 +12,20 @@ class RedisService {
   }
 
   static getConnection() {
+    if (!config.redis.isEnabled) {
+      return null;
+    }
+
     if (!this.client) {
-      this.client = config.redis
-        ? createClient({
-            socket: {
-              host: config.redis.host,
-              port: config.redis.port
-            }
-          })
-        : createClient();
+      this.client =
+        config.redis?.host && config.redis?.port
+          ? createClient({
+              socket: {
+                host: config.redis.host,
+                port: config.redis.port
+              }
+            })
+          : createClient();
     }
 
     return this.client;
@@ -33,7 +38,7 @@ class RedisService {
     return this.client
       .connect()
       .then(() => {
-        return config.redis
+        return config.redis?.password
           ? this.client.auth({
               password: config.redis.password
             })

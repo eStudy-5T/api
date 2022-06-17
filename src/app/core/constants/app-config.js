@@ -1,5 +1,3 @@
-import appConfigCustom from './app-config.custom';
-
 const config = {
   port: process.env.PORT || 3000,
   portalHost: process.env.APP_PORTAL_HOST_V2,
@@ -48,11 +46,17 @@ const config = {
     callbackURL: process.env.FACEBOOK_CALLBACK_URL
   },
   redis: {
+    isEnabled: process.env.REDIS_IS_ENABLED || false,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD
-  },
-  ...(appConfigCustom || {})
+  }
 };
+
+try {
+  require('./app-config.custom')(config);
+} catch (err) {
+  console.log('Skipping custom config');
+}
 
 export default config;
