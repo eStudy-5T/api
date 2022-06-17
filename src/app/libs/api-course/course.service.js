@@ -11,16 +11,16 @@ import senderType from '../../core/constants/sender-type';
 import mailTemplateName from '../../core/constants/mail-template';
 import BPromise from 'bluebird';
 import get from 'lodash/get';
-
-const clientID =
-  '923429314852-valb33asnb7ula24v5f8cfr7a3btmegn.apps.googleusercontent.com';
-const clientSecret = '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';
+import config from '../../core/constants/app-config';
 
 const oauth2Client = new google.auth.OAuth2(
-  clientID,
-  clientSecret,
-  process.env.APP_PORTAL_HOST_V2
+  config.google.clientID,
+  config.google.clientSecret,
+  'https://developers.google.com/oauthplayground'
 );
+oauth2Client.setCredentials({
+  refresh_token: config.google.calendarRefreshToken
+});
 
 const constructWhere = async (userId, options) => {
   const {type, searchText, gradeFilter, categoryFilter, rangePrice} =
@@ -85,7 +85,7 @@ const constructWhere = async (userId, options) => {
 
   const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
 
-  if (!isAdmin) {
+  if (!isAdmin && type !== 'teacher') {
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
     whereSearchPhrase[Op.and].push({
       isActive: true
@@ -120,6 +120,23 @@ const constructSort = (sortBy) => {
   }
 };
 
+const courseInclude = [
+  {
+    model: User,
+    as: 'owner',
+    attributes: ['firstName', 'lastName', 'avatar']
+  },
+  {
+    model: Category,
+    as: 'category',
+    attributes: ['id', 'code', 'name', 'description']
+  },
+  {
+    model: Subject,
+    as: 'subject'
+  }
+];
+
 const courseService = {
   getCourses: async (userId, options) => {
     const {
@@ -149,22 +166,7 @@ const courseService = {
         limit: limit || 20,
         where,
         order: [constructSort(sortBy)],
-        include: [
-          {
-            model: User,
-            as: 'owner',
-            attributes: ['firstName', 'lastName', 'avatar']
-          },
-          {
-            model: Category,
-            as: 'category',
-            attributes: ['id', 'code', 'name', 'description']
-          },
-          {
-            model: Subject,
-            as: 'subject'
-          }
-        ]
+        include: courseInclude
       });
     } catch (err) {
       console.error(err);
@@ -207,22 +209,23 @@ const courseService = {
         where: {
           id: courseId
         },
-        include: [
-          {
-            model: User,
-            as: 'owner',
-            attributes: ['firstName', 'lastName', 'avatar']
-          },
-          {
-            model: Category,
-            as: 'category',
-            attributes: ['id', 'code', 'name', 'description']
-          },
-          {
-            model: Subject,
-            as: 'subject'
-          }
-        ],
+        include: courseInclude,
+        raw: true,
+        nest: true
+      });
+    } catch (err) {
+      console.error(err);
+      throw 'error.getCourseFail';
+    }
+  },
+
+  getCourseBySlug: async (slug) => {
+    try {
+      return Course.findOne({
+        where: {
+          slug
+        },
+        include: courseInclude,
         raw: true,
         nest: true
       });
@@ -243,31 +246,48 @@ const courseService = {
     }
   },
 
-  createTokens: async (code) => {
+  createEvent: async (event, maxAttendees) => {
     try {
-      const tokens = await oauth2Client.getToken(code);
-      return tokens;
-    } catch (err) {
-      console.error(err);
-      throw 'error.createTokensFail';
-    }
-  },
-
-  createEvent: async (refreshToken, event) => {
-    try {
-      oauth2Client.setCredentials({refresh_token: refreshToken});
       const calendar = google.calendar('v3');
       const response = await calendar.events.insert({
         auth: oauth2Client,
         calendarId: 'primary',
         requestBody: event,
-        conferenceDataVersion: 1
+        conferenceDataVersion: 1,
+        maxAttendees
       });
 
-      return response;
+      return response?.data;
     } catch (err) {
       console.error(err);
-      throw 'err.createEventFail';
+      throw 'err.generateMeetLinkFail';
+    }
+  },
+
+  updateAttendeeList: async (eventId, attendees) => {
+    try {
+      const calendar = google.calendar('v3');
+      const event = await calendar.events.get({
+        auth: oauth2Client,
+        calendarId: 'primary',
+        eventId
+      });
+
+      if (!event) {
+        return null;
+      }
+
+      const response = await calendar.events.patch({
+        auth: oauth2Client,
+        calendarId: 'primary',
+        eventId,
+        requestBody: {attendees, status: 'confirmed'}
+      });
+
+      return response?.data;
+    } catch (err) {
+      console.error(err);
+      throw 'error.enrollCourseFail';
     }
   },
 
@@ -321,19 +341,18 @@ const courseService = {
 
   enroll: async (courseId, userId) => {
     try {
-      let enrollment = await Enrollment.findAll({where: {courseId, userId}});
-      if (enrollment.length === 0) {
-        enrollment = await Enrollment.create({courseId, userId});
-        return {enrollment, status: 200, message: 'OK'};
-      } else {
-        return {
+      let enrollment = await Enrollment.findOne({where: {courseId, userId}});
+      if (enrollment) {
+        throw {
           status: 400,
           message: 'error.userReEnroll'
         };
       }
+
+      return await Enrollment.create({courseId, userId});
     } catch (err) {
       console.error(err);
-      throw 'error.enrollCourseFail';
+      throw err?.status && err?.message ? err : 'error.enrollCourseFail';
     }
   },
 

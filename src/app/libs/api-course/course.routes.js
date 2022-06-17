@@ -74,6 +74,12 @@ courseRouter.get(
   courseController.getSpecificCourse
 );
 
+courseRouter.get(
+  '/slug/:slug',
+  mw.decideToVerify,
+  courseController.getSpecificCourse
+);
+
 /**
  * @swagger
  * /courses:
@@ -171,7 +177,11 @@ courseRouter.get(
   courseController.getCreatedCourses
 );
 
-courseRouter.post('/enroll', mw.verifyRequest, courseController.enroll);
+courseRouter.post(
+  '/:courseId/enroll',
+  mw.verifyRequest,
+  courseController.enroll
+);
 
 courseRouter.get(
   '/:courseId/enrolled-students',
@@ -179,33 +189,11 @@ courseRouter.get(
   courseController.getEnrolledStudents
 );
 
-/**
- * @swagger
- * /courses/calendar/create-token:
- *   post:
- *     tags: ["Course"]
- *     summary: create token to create a calendar
- *     description: Create token to create a calendar
- *     parameters:
- *     responses:
- *       200:
- *         create token successful:
- */
-courseRouter.post('/calendar/create-token', courseController.createTokens);
-
-/**
- * @swagger
- * /courses/calendar/create-event:
- *   post:
- *     tags: ["Course"]
- *     summary: create event
- *     description: Create event
- *     parameters:
- *     responses:
- *       200:
- *         create event successfull:
- */
-courseRouter.post('/calendar/create-event', courseController.createEvent);
+courseRouter.post(
+  '/:courseId/generate-meet-link',
+  mw.verifyRequest,
+  courseController.generateMeetLink
+);
 
 /**
  * @swagger
