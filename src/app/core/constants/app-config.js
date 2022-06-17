@@ -38,7 +38,8 @@ const config = {
   google: {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    calendarRefreshToken: process.env.GOOGLE_CALENDAR_REFRESH_TOKEN
   },
   facebook: {
     clientID: process.env.FACEBOOK_CLIENT_ID,

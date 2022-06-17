@@ -17,7 +17,7 @@ export const verifyRequest = (req, res, next) => {
 };
 
 export const decideToVerify = (req, res, next) => {
-  const {verified = false} = req.query;
+  const {verified = 'false'} = req.query;
 
   if (verified === 'true') {
     return verifyRequest(req, res, next);

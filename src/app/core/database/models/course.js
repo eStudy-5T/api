@@ -26,6 +26,9 @@ const schema = {
       key: 'id'
     }
   },
+  eventId: {
+    type: Sequelize.STRING
+  },
   link: {
     type: Sequelize.STRING
   },
