@@ -19,7 +19,7 @@ const clientSecret = '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';
 const oauth2Client = new google.auth.OAuth2(
   clientID,
   clientSecret,
-  'http://localhost:3000'
+  process.env.APP_PORTAL_HOST_V2
 );
 
 const constructWhere = async (userId, options) => {
