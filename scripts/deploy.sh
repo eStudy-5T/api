@@ -1,2 +1,2 @@
 docker build . -t api
-docker run -d -p 9000:9000 --name api api
+docker run -d -p 9001:6789 --name api api
