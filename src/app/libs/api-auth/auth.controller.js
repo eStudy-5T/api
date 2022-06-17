@@ -77,7 +77,7 @@ const authController = {
   getCSRFToken: (req, res) => {
     res
       .cookie('csrf_token', req.csrfToken(), {
-        sameSite: 'strict',
+        // sameSite: 'strict',
         secure: true,
         maxAge: config.cookie.expiration
       })
