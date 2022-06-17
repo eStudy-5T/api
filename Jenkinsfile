@@ -35,6 +35,6 @@ pipeline {
     }
   }
   environment {
-    REACT_APP_API_HOST = 'https://api.letmeet.xyz'
+    APP_PORTAL_HOST_V2 = 'https://letmeet.xyz'
   }
 }
