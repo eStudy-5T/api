@@ -83,9 +83,13 @@ dbPostgres.authenticate().then((err) => {
   }
 });
 
-new RedisService();
-RedisService.getConnection().on('error', (err) => {
-  console.log('Redis error:', err);
-});
+try {
+  new RedisService();
+  RedisService.getConnection().on('error', (err) => {
+    console.log('Redis error:', err);
+  });
+} catch (_err) {
+  console.log('Redis is disabled');
+}
 
 export default app;
