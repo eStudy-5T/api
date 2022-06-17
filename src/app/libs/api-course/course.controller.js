@@ -2,10 +2,10 @@ import courseService from './course.service.js';
 import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import get from 'lodash/get';
-import isNull from 'lodash/isNull';
-import enrollmentServices from '../api-enrollment/enrollment.service';
+import enrollmentService from '../api-enrollment/enrollment.service';
 import User from '../../core/database/models/user';
 import Course from '../../core/database/models/course.js';
+import tokenService from '../api-auth/token.service.js';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -27,26 +27,23 @@ const courseController = {
   },
 
   getSpecificCourse: async (req, res) => {
-    const {courseId} = req.params;
+    const {courseId, slug} = req.params;
     const userId = get(req, 'user.id');
 
     try {
-      const course = await courseService.getCourseById(courseId);
+      let course;
+      switch (true) {
+        case Boolean(courseId):
+          course = await courseService.getCourseById(courseId);
+          break;
+
+        case Boolean(slug):
+          course = await courseService.getCourseBySlug(slug);
+          break;
+      }
       if (!course) {
         return res.status(400).send('Course not found');
       }
-
-      const isAdmin = await userService.validateUserHaveAdminPermissions(
-        userId
-      );
-      if (!course.isActive && !isAdmin) {
-        return res.status(400).send('This course is not available now!');
-      }
-
-      const enrollment = userId
-        ? await enrollmentServices.getEnrollment(courseId, userId)
-        : null;
-      course.isEnrolled = enrollment ? true : false;
 
       const owner =
         course.ownerId === userId
@@ -55,7 +52,24 @@ const courseController = {
               raw: true
             })
           : null;
-      course.isCreator = isNull(owner) ? false : true;
+
+      if (!owner) {
+        const isAdmin = await userService.validateUserHaveAdminPermissions(
+          userId
+        );
+        if (!course.isActive && !isAdmin) {
+          return res.status(400).send('This course is not available now!');
+        }
+      }
+
+      if (courseId) {
+        const enrollment = userId
+          ? await enrollmentService.getSpecificEnrollment(courseId, userId)
+          : null;
+        course.isEnrolled = Boolean(enrollment);
+      }
+
+      course.isCreator = Boolean(owner);
       res.status(200).send(course);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
@@ -115,55 +129,35 @@ const courseController = {
       });
   },
 
-  createTokens: async (req, res) => {
-    const {code} = req.body;
-
-    courseService
-      .createTokens(code)
-      .then((tokens) => {
-        res.status(200).send(tokens);
-      })
-      .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
-      });
-  },
-
   enroll: async (req, res) => {
-    const courseId = get(req, 'body.courseId');
-    const ownerId = get(req, 'body.ownerId');
+    const {courseId} = req.params;
     const userId = get(req, 'user.id');
 
     try {
-      const error = await courseService.checkCourseValidity(ownerId, courseId);
-      if (error) throw error;
-
-      if (!ownerId) {
-        res.status(400).send('ownerId is missing!');
-      }
-
-      if (userId === ownerId) {
-        res.status(400).send('error.teacherEnrollCourse');
-      }
-
       const course = await Course.findByPk(courseId);
       if (!course) {
-        res.status(400).send('error.courseNotFound');
+        return res.status(400).send('error.courseNotFound');
       }
 
-      if (!course.isActive) {
-        res.status(400).send('This course is not available now!');
+      if (userId === course.ownerId) {
+        return res.status(400).send('error.teacherEnrollCourse');
       }
 
-      const {
-        enrollment = {},
-        status,
-        message
-      } = await courseService.enroll(courseId, userId);
-      if (status === 200) {
-        res.status(200).send(enrollment);
-      } else {
-        res.status(status).send(message);
+      // if (!course.isActive) {
+      //   return res.status(400).send('This course is not available now!');
+      // }
+
+      const enrollment = await courseService.enroll(courseId, userId);
+
+      const enrollments = await enrollmentService.getEnrollments(courseId);
+      if (course.eventId) {
+        await courseService.updateAttendeeList(
+          course.eventId,
+          enrollments.map((e) => ({email: e.email}))
+        );
       }
+
+      res.status(200).send(enrollment);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
     }
@@ -180,52 +174,74 @@ const courseController = {
     }
   },
 
-  createEvent: async (req, res) => {
-    const {summary, description, location, startDateTime, endDateTime} =
-      req.body;
+  generateMeetLink: async (req, res) => {
+    const {courseId} = req.params;
 
-    const attendeesEmails = [
-      {email: 'user1@example.com'},
-      {email: 'user2@example.com'}
-    ]; //attendeesEmails: email addresses of students who enroll in this class;
-
-    const event = {
-      summary: summary,
-      description: description,
-      colorId: '7',
-      location: location,
-      start: {
-        dateTime: new Date(startDateTime)
-      },
-      end: {
-        dateTime: new Date(endDateTime)
-      },
-      attendees: attendeesEmails,
-      reminders: {
-        useDefault: false,
-        overrides: [
-          {method: 'email', minutes: 24 * 60},
-          {method: 'popup', minutes: 10}
-        ]
-      },
-      conferenceData: {
-        createRequest: {
-          conferenceSolutionKey: {
-            type: 'hangoutsMeet'
-          },
-          requestId: 'coding-calendar-demo'
-        }
-      }
-    };
-
-    //refresh token will be save at DB of course.
-    const refreshToken =
-      '1//0gw120ZLIBqPACgYIARAAGBASNwF-L9IrPDvm216HwX_VwI4Z5HTVeEljZf7mtstF7piusobwZhyWyTFPCbEu1rX1mhyS1VnWYwU';
+    let tempCourse;
+    let attendeesEmails = []; //attendeesEmails: email addresses of students who enroll in this class;
 
     courseService
-      .createEvent(refreshToken, event)
-      .then((response) => {
-        res.status(200).send(response);
+      .checkCourseValidity(req.user.id, courseId)
+      .then((err) => {
+        if (err) {
+          throw err;
+        }
+
+        return courseService.getCourseById(courseId);
+      })
+      .then((course) => {
+        if (course.link && course.eventId) {
+          res.status(400).send('error.alreadyGeneratedMeetLink');
+        }
+        tempCourse = course;
+
+        return enrollmentService.getEnrollments(courseId);
+      })
+      .then((enrollments) => {
+        attendeesEmails = enrollments.map((e) => ({
+          email: e.email
+        }));
+
+        return tokenService.generateCryptoToken();
+      })
+      .then((randomizedString) => {
+        const event = {
+          summary: tempCourse.title,
+          colorId: '7',
+          start: {
+            dateTime: new Date(tempCourse.startDate)
+          },
+          end: {
+            dateTime: new Date(tempCourse.endDate)
+          },
+          attendees: attendeesEmails,
+          reminders: {
+            useDefault: false,
+            overrides: [
+              {method: 'email', minutes: 24 * 60},
+              {method: 'popup', minutes: 10}
+            ]
+          },
+          conferenceData: {
+            createRequest: {
+              conferenceSolutionKey: {
+                type: 'hangoutsMeet'
+              },
+              requestId: randomizedString
+            }
+          }
+        };
+
+        return courseService.createEvent(
+          event,
+          tempCourse.maxStudentNumber + 2
+        );
+      })
+      .then(({id: eventId, hangoutLink: link}) => {
+        return courseService.updateCourse(courseId, {eventId, link});
+      })
+      .then((updatedCourse) => {
+        res.status(200).send(updatedCourse);
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);

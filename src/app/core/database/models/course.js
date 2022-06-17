@@ -26,6 +26,9 @@ const schema = {
       key: 'id'
     }
   },
+  eventId: {
+    type: Sequelize.STRING
+  },
   link: {
     type: Sequelize.STRING
   },
@@ -35,7 +38,7 @@ const schema = {
     defaultValue: 0.0
   },
   currency: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
   },
   price: {
     type: Sequelize.DECIMAL(12, 2),
