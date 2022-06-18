@@ -83,6 +83,11 @@ const schema = {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  isSubmitted: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 };
 
