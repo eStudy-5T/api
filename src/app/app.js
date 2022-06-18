@@ -30,7 +30,6 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  console.log(process.env.APP_PORTAL_HOST_V2)
   res.setHeader('Last-Modified', new Date().toUTCString());
   res.header('Access-Control-Allow-Origin', process.env.APP_PORTAL_HOST_V2);
   res.header('Access-Control-Allow-Credentials', true);
@@ -54,8 +53,7 @@ app.use(passport.session());
 app.disable('x-powered-by');
 app.use(
   csurf({
-    cookie: {httpOnly: true, secure: true, sameSite: 'strict'
-    }
+    cookie: {httpOnly: true, secure: true, sameSite: 'strict'}
   })
 );
 
