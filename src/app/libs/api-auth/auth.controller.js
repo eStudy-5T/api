@@ -75,13 +75,15 @@ const authController = {
   },
 
   getCSRFToken: (req, res) => {
-    res
-      .cookie('csrf_token', req.csrfToken(), {
-        sameSite: 'strict',
-        secure: true,
-        maxAge: config.cookie.expiration
-      })
-      .end();
+    let cookieOption = {
+      sameSite: 'strict',
+      secure: true,
+      maxAge: config.cookie.expiration
+    };
+    if (process.env.APP_PORTAL_HOST_V2 !== 'http://localhost:3000') {
+      cookieOption['domain'] = process.env.APP_PORTAL_HOST_V2.split('//')[1];
+    }
+    res.cookie('csrf_token', req.csrfToken(), cookieOption).send();
   },
 
   refreshToken: async (req, res) => {
