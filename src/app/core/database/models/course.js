@@ -116,6 +116,11 @@ const schema = {
   // [{startTime: TIME, endTime: TIME, dayOfWeek: STRING}]
   schedules: {
     type: Sequelize.JSONB
+  },
+  isSubmitted: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 };
 
