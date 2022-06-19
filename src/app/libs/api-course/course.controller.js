@@ -4,8 +4,8 @@ import helper from '../../utils/helper';
 import get from 'lodash/get';
 import enrollmentService from '../api-enrollment/enrollment.service';
 import User from '../../core/database/models/user';
-import Course from '../../core/database/models/course.js';
 import tokenService from '../api-auth/token.service.js';
+import {validate as uuidValidate} from 'uuid';
 
 const courseController = {
   getCourses: (req, res) => {
@@ -134,18 +134,19 @@ const courseController = {
     const userId = get(req, 'user.id');
 
     try {
-      const course = await Course.findByPk(courseId);
+      const course = await courseService.getCourseById(courseId);
       if (!course) {
         return res.status(400).send('error.courseNotFound');
       }
-
+      if (course.price !== 0) {
+        return res.status(400).send('This course is not free!');
+      }
       if (userId === course.ownerId) {
         return res.status(400).send('error.teacherEnrollCourse');
       }
-
-      // if (!course.isActive) {
-      //   return res.status(400).send('This course is not available now!');
-      // }
+      if (!course.isActive) {
+        return res.status(400).send('This course is not available now!');
+      }
 
       const enrollment = await courseService.enroll(courseId, userId);
 
@@ -160,6 +161,113 @@ const courseController = {
       res.status(200).send(enrollment);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);
+    }
+  },
+
+  checkout: (req, res) => {
+    const {courseId} = req.params;
+    const {createDate, locale} = req.query;
+    const userId = req.user.id;
+    let tempCourse;
+
+    courseService
+      .getCourseById(courseId)
+      .then((course) => {
+        if (!course) {
+          throw {status: 400, message: 'error.courseNotFound'};
+        }
+        if (course.ownerId === userId) {
+          throw {status: 400, message: 'error.teacherEnrollCourse'};
+        }
+        if (!course.isActive) {
+          throw {status: 400, message: 'This course is not available now!'};
+        }
+
+        tempCourse = course;
+        return enrollmentService.getSpecificEnrollment(courseId, userId);
+      })
+      .then((enrollment) => {
+        if (enrollment) {
+          throw {status: 400, message: 'error.userReEnroll'};
+        }
+
+        return userService.getCurrentUser(userId);
+      })
+      .then((user) => {
+        const checkoutUrl = helper.vnPay.generateCheckoutUrl({
+          price: Number(tempCourse.price),
+          createDate,
+          ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+          locale,
+          currency: tempCourse.currency,
+          studentName: `${user.firstName} ${user.lastName}`,
+          courseName: tempCourse.title,
+          courseId,
+          studentId: userId
+        });
+
+        res.status(200).send({checkoutUrl});
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  enrollThroughVnPay: async (req, res) => {
+    const queries = req.query;
+    const [courseId, userId] = queries['vnp_TxnRef']?.split('_') || [];
+    const secureHash = queries['vnp_SecureHash'];
+    const responseCode = queries['vnp_ResponseCode'];
+
+    delete queries['vnp_SecureHash'];
+    delete queries['vnp_SecureHashType'];
+
+    const signed = helper.vnPay.generateChecksum(queries, true);
+    if (secureHash !== signed) {
+      return res.status(200).send({RspCode: '97', Message: 'Invalid Checksum'});
+    }
+    if (responseCode === '99') {
+      return res.status(200).send({RspCode: '00', Message: 'Confirm Success'});
+    }
+
+    try {
+      const course =
+        uuidValidate(courseId) && (await courseService.getCourseById(courseId));
+      const user =
+        uuidValidate(courseId) && (await userService.getCurrentUser(userId));
+
+      if (!course || !user) {
+        return res
+          .status(200)
+          .send({RspCode: '01', Message: 'Order Not Found'});
+      }
+      if (Number(queries['vnp_Amount']) !== Number(course.price) * 100) {
+        return res.status(200).send({RspCode: '04', Message: 'Invalid amount'});
+      }
+
+      const enrollment = await enrollmentService.getSpecificEnrollment(
+        courseId,
+        userId
+      );
+      if (enrollment) {
+        return res
+          .status(200)
+          .send({RspCode: '02', Message: 'Order already confirmed'});
+      }
+
+      await courseService.enroll(courseId, userId);
+      const enrollments = await enrollmentService.getEnrollments(courseId);
+      if (course.eventId) {
+        await courseService.updateAttendeeList(
+          course.eventId,
+          enrollments.map((e) => ({email: e.email}))
+        );
+      }
+
+      res.status(200).send({RspCode: '00', Message: 'Confirm Success'});
+    } catch (err) {
+      console.log('err:', err);
+      res.status(200).send({RspCode: '99', Message: 'Internal Server Error'});
     }
   },
 
@@ -178,7 +286,7 @@ const courseController = {
     const {courseId} = req.params;
 
     let tempCourse;
-    let attendeesEmails = []; //attendeesEmails: email addresses of students who enroll in this class;
+    let attendeesEmails = []; //attendeesEmails: email addresses of students who enroll in this course;
 
     courseService
       .checkCourseValidity(req.user.id, courseId)

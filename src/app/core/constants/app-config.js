@@ -51,6 +51,12 @@ const config = {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD
+  },
+  vnpay: {
+    tmnCode: process.env.VNPAY_TMN_CODE,
+    hashSecret: process.env.VNPAY_HASH_SECRET,
+    url: process.env.VNPAY_URL,
+    returnBaseURL: process.env.VNPAY_RETURN_BASE_URL
   }
 };
 
