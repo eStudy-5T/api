@@ -48,6 +48,8 @@ courseRouter.get('/categories', courseController.getCategories);
 
 courseRouter.get('/subjects', courseController.getSubjects);
 
+courseRouter.get('/enroll-through-vnpay', courseController.enrollThroughVnPay);
+
 /**
  * @swagger
  * /courses/{courseId}:
@@ -181,6 +183,12 @@ courseRouter.post(
   '/:courseId/enroll',
   mw.verifyRequest,
   courseController.enroll
+);
+
+courseRouter.post(
+  '/:courseId/checkout',
+  mw.verifyRequest,
+  courseController.checkout
 );
 
 courseRouter.get(
