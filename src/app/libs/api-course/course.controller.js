@@ -138,7 +138,7 @@ const courseController = {
       if (!course) {
         return res.status(400).send('error.courseNotFound');
       }
-      if (course.price !== 0) {
+      if (Number(course.price) !== 0) {
         return res.status(400).send('This course is not free!');
       }
       if (userId === course.ownerId) {
@@ -150,9 +150,12 @@ const courseController = {
 
       const enrollment = await courseService.enroll(courseId, userId);
 
-      const enrollments = await enrollmentService.getEnrollments(courseId);
-      if (course.eventId) {
+      const credentials = await userService.getGoogleTokens(course.ownerId);
+      if (credentials && course.eventId) {
+        const enrollments = await enrollmentService.getEnrollments(courseId);
         await courseService.updateAttendeeList(
+          course.ownerId,
+          credentials,
           course.eventId,
           enrollments.map((e) => ({email: e.email}))
         );
@@ -256,9 +259,13 @@ const courseController = {
       }
 
       await courseService.enroll(courseId, userId);
-      const enrollments = await enrollmentService.getEnrollments(courseId);
-      if (course.eventId) {
+
+      const credentials = await userService.getGoogleTokens(course.ownerId);
+      if (credentials && course.eventId) {
+        const enrollments = await enrollmentService.getEnrollments(courseId);
         await courseService.updateAttendeeList(
+          course.ownerId,
+          credentials,
           course.eventId,
           enrollments.map((e) => ({email: e.email}))
         );
@@ -286,10 +293,19 @@ const courseController = {
     const {courseId} = req.params;
 
     let tempCourse;
+    let credentials;
     let attendeesEmails = []; //attendeesEmails: email addresses of students who enroll in this course;
 
-    courseService
-      .checkCourseValidity(req.user.id, courseId)
+    userService
+      .getGoogleTokens(req.user.id)
+      .then((googleTokens) => {
+        if (!googleTokens) {
+          return res.status(500).send('error.googleCredentialsExpired');
+        }
+
+        credentials = googleTokens;
+        return courseService.checkCourseValidity(req.user.id, courseId);
+      })
       .then((err) => {
         if (err) {
           throw err;
@@ -341,6 +357,8 @@ const courseController = {
         };
 
         return courseService.createEvent(
+          req.user.id,
+          credentials,
           event,
           tempCourse.maxStudentNumber + 2
         );
@@ -350,6 +368,53 @@ const courseController = {
       })
       .then((updatedCourse) => {
         res.status(200).send(updatedCourse);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
+  },
+
+  refreshAttendeeList: (req, res) => {
+    const {courseId} = req.params;
+
+    let tempCourse;
+    let credentials;
+    userService
+      .getGoogleTokens(req.user.id)
+      .then((googleTokens) => {
+        if (!googleTokens) {
+          return res.status(500).send('error.googleCredentialsExpired');
+        }
+
+        credentials = googleTokens;
+        return courseService.checkCourseValidity(req.user.id, courseId);
+      })
+      .then((err) => {
+        if (err) {
+          throw err;
+        }
+
+        return courseService.getCourseById(courseId);
+      })
+      .then((course) => {
+        tempCourse = course;
+
+        return enrollmentService.getEnrollments(courseId);
+      })
+      .then((enrollments) => {
+        const attendeesEmails = enrollments.map((e) => ({
+          email: e.email
+        }));
+
+        return courseService.updateAttendeeList(
+          req.user.id,
+          credentials,
+          tempCourse.eventId,
+          attendeesEmails
+        );
+      })
+      .then(() => {
+        res.status(200).send();
       })
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);

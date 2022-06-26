@@ -5,6 +5,7 @@ import tokenService from './token.service';
 import emailService from '../../core/mailer/mail.service';
 import mailTemplateName from '../../core/constants/mail-template';
 import senderType from '../../core/constants/sender-type';
+import oauth2Client from '../../core/google/oauth-client';
 
 const authenticationService = {
   setupVerifyAccountLink: async (userId) => {
@@ -246,6 +247,27 @@ const authenticationService = {
         return resolve(loginInfo);
       })(req, res, next);
     });
+  },
+
+  generateGoogleRefreshToken: async (userId, code) => {
+    const {tokens} = await oauth2Client.getToken(code);
+    const result = await User.update(
+      {
+        googleTokens: tokens
+      },
+      {
+        where: {
+          id: userId
+        },
+        returning: true,
+        raw: true
+      }
+    );
+
+    // eslint-disable-next-line
+    const [affectedRowNum, rows] = result || [];
+    const [updatedUser] = rows || [];
+    return updatedUser;
   }
 };
 

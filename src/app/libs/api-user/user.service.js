@@ -156,7 +156,8 @@ const userService = {
           mobilePhone: user.mobilePhone,
           nationality: user.nationality,
           identityNumber: user.identityNumber,
-          grade: user.grade
+          grade: user.grade,
+          doesGoogleGrantAccess: Boolean(user.googleTokens)
         };
 
         return data;
@@ -201,10 +202,14 @@ const userService = {
         where: {
           id: userId
         },
-        returning: true
+        returning: true,
+        raw: true
       });
 
-      return result[1];
+      // eslint-disable-next-line
+      const [affectedRowNum, rows] = result || [];
+      const [updatedUser] = rows || [];
+      return updatedUser;
     } catch (err) {
       console.error(err);
       throw 'error.updateUserFail';
@@ -383,6 +388,16 @@ const userService = {
     } catch (err) {
       console.error(err);
       throw '';
+    }
+  },
+
+  getGoogleTokens: async (userId) => {
+    try {
+      const user = await User.findByPk(userId);
+      return user.googleTokens;
+    } catch (err) {
+      console.err(err);
+      return null;
     }
   }
 };

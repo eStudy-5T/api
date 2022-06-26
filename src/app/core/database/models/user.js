@@ -88,6 +88,9 @@ const schema = {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  googleTokens: {
+    type: Sequelize.JSON
   }
 };
 

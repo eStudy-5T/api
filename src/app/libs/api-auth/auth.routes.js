@@ -66,6 +66,12 @@ authRouter.get('/google', authController.authGoogle);
 
 authRouter.get('/google/callback', authController.authGoogleCallback);
 
+authRouter.post(
+  '/google/generate-refresh-token',
+  verifyRequest,
+  authController.generateGoogleRefreshToken
+);
+
 authRouter.get('/facebook', authController.authFacebook);
 
 authRouter.get('/facebook/callback', authController.authFacebookCallback);

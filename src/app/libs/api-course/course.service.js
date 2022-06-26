@@ -11,16 +11,7 @@ import senderType from '../../core/constants/sender-type';
 import mailTemplateName from '../../core/constants/mail-template';
 import BPromise from 'bluebird';
 import get from 'lodash/get';
-import config from '../../core/constants/app-config';
-
-const oauth2Client = new google.auth.OAuth2(
-  config.google.clientID,
-  config.google.clientSecret,
-  'https://developers.google.com/oauthplayground'
-);
-oauth2Client.setCredentials({
-  refresh_token: config.google.calendarRefreshToken
-});
+import oauth2Client from '../../core/google/oauth-client';
 
 const constructWhere = async (userId, options) => {
   const {type, searchText, gradeFilter, categoryFilter, rangePrice} =
@@ -246,8 +237,9 @@ const courseService = {
     }
   },
 
-  createEvent: async (event, maxAttendees) => {
+  createEvent: async (userId, credentials, event, maxAttendees) => {
     try {
+      oauth2Client.setCredentials(credentials);
       const calendar = google.calendar('v3');
       const response = await calendar.events.insert({
         auth: oauth2Client,
@@ -259,13 +251,15 @@ const courseService = {
 
       return response?.data;
     } catch (err) {
+      await User.update({googleTokens: null}, {where: {id: userId}});
       console.error(err);
       throw 'err.generateMeetLinkFail';
     }
   },
 
-  updateAttendeeList: async (eventId, attendees) => {
+  updateAttendeeList: async (userId, credentials, eventId, attendees) => {
     try {
+      oauth2Client.setCredentials(credentials);
       const calendar = google.calendar('v3');
       const event = await calendar.events.get({
         auth: oauth2Client,
@@ -286,8 +280,11 @@ const courseService = {
 
       return response?.data;
     } catch (err) {
+      // The error is most likely due to the user has revoke the access to Google Calendar
+      // We can safely ignore it and prompt the teacher to refresh the attendee list
+      await User.update({googleTokens: null}, {where: {id: userId}});
       console.error(err);
-      throw 'error.enrollCourseFail';
+      return null;
     }
   },
 
