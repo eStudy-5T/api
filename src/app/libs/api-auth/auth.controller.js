@@ -268,6 +268,19 @@ const authController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  generateGoogleRefreshToken: (req, res) => {
+    authenticationService
+      .generateGoogleRefreshToken(req.user.id, req.body.code)
+      .then((updatedUser) => {
+        res.status(200).send({
+          doesGoogleGrantAccess: Boolean(updatedUser.googleTokens)
+        });
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 

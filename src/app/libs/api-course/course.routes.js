@@ -203,6 +203,12 @@ courseRouter.post(
   courseController.generateMeetLink
 );
 
+courseRouter.post(
+  '/:courseId/refresh-attendee-list',
+  mw.verifyRequest,
+  courseController.refreshAttendeeList
+);
+
 /**
  * @swagger
  * /courses/:courseId/active:
