@@ -14,6 +14,7 @@ const courseController = {
     if (![undefined, 'teacher', 'student'].includes(type)) {
       return res.status(400).send('Unknown type query');
     }
+
     Promise.all([
       courseService.getCourses(userId, {...req.query}),
       courseService.getCourseCount(userId, {...req.query})
@@ -70,6 +71,7 @@ const courseController = {
       }
 
       course.isCreator = Boolean(owner);
+
       res.status(200).send(course);
     } catch (err) {
       helper.apiHandler.handleErrorResponse(res, err);

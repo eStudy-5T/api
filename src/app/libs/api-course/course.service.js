@@ -1,5 +1,6 @@
-import {Op} from 'sequelize';
+import {Op, Sequelize} from 'sequelize';
 import Course from '../../core/database/models/course';
+import Favorite from '../../core/database/models/favorite';
 import User from '../../core/database/models/user';
 import Category from '../../core/database/models/category';
 import Subject from '../../core/database/models/subject';
@@ -12,10 +13,17 @@ import mailTemplateName from '../../core/constants/mail-template';
 import BPromise from 'bluebird';
 import get from 'lodash/get';
 import oauth2Client from '../../core/google/oauth-client';
+import assign from 'lodash/assign';
 
 const constructWhere = async (userId, options) => {
-  const {type, searchText, gradeFilter, categoryFilter, rangePrice} =
-    options || {};
+  const {
+    type,
+    searchText,
+    gradeFilter,
+    categoryFilter,
+    rangePrice,
+    isFavorite
+  } = options || {};
   const whereSearchPhrase = !searchText
     ? {}
     : {
@@ -72,6 +80,27 @@ const constructWhere = async (userId, options) => {
     whereSearchPhrase[Op.and].push({
       price: {[Op.between]: [0, rangePrice * 1000]}
     });
+  }
+
+  if (isFavorite) {
+    try {
+      const favoriteCourseIds = await Favorite.findAll({
+        where: userId,
+        attributes: ['courseId'],
+        raw: true
+      });
+
+      console.log(favoriteCourseIds)
+
+      if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+      whereSearchPhrase[Op.and].push({
+        id: {
+          [Sequelize.Op.in]: favoriteCourseIds
+        }
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
   }
 
   const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
@@ -139,7 +168,8 @@ const courseService = {
       sortBy = 'sortby-none',
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
-      rangePrice = -1
+      rangePrice = -1,
+      isFavorite = true
     } = options || {};
     const where = await constructWhere(userId, {
       searchPhrase,
@@ -148,17 +178,34 @@ const courseService = {
       sortBy,
       gradeFilter,
       categoryFilter,
-      rangePrice
+      rangePrice,
+      isFavorite
     });
 
     try {
-      return Course.findAll({
+      const courses = await Course.findAll({
         offset: offset || 0,
         limit: limit || 20,
         where,
         order: [constructSort(sortBy)],
-        include: courseInclude
+        include: courseInclude,
+        raw: true
       });
+
+      const favoriteCourseIds = await Favorite.findAll({
+        where: userId
+      });
+
+      console.log(11111111111111111111111111111111111)
+      console.log(favoriteCourseIds)
+
+      const result = courses.map((course) => {
+        return assign(course, {
+          isFavorite: favoriteCourseIds.includes(course.id)
+        });
+      });
+      console.log(result);
+      return result;
     } catch (err) {
       console.error(err);
       throw 'error.getCourseFail';
@@ -173,7 +220,8 @@ const courseService = {
       sortBy = 'sortby-none',
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
-      rangePrice = -1
+      rangePrice = -1,
+      isFavorite = true
     } = options || {};
 
     const where = await constructWhere(userId, {
@@ -183,7 +231,8 @@ const courseService = {
       sortBy,
       gradeFilter,
       categoryFilter,
-      rangePrice
+      rangePrice,
+      isFavorite
     });
 
     try {
