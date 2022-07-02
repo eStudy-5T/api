@@ -67,10 +67,6 @@ const userController = {
       !validators.validatePassword(newPassword) ||
       !validators.validatePassword(confirmPassword)
     ) {
-      console.log(
-        !validators.validatePassword(newPassword),
-        !validators.validatePassword(confirmPassword)
-      );
       return res
         .status(400)
         .json(

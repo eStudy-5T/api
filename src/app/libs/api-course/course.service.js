@@ -85,12 +85,10 @@ const constructWhere = async (userId, options) => {
   if (isFavorite) {
     try {
       const favoriteCourseIds = await Favorite.findAll({
-        where: userId,
+        where: {userId},
         attributes: ['courseId'],
         raw: true
       });
-
-      console.log(favoriteCourseIds)
 
       if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
       whereSearchPhrase[Op.and].push({
@@ -169,7 +167,7 @@ const courseService = {
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
       rangePrice = -1,
-      isFavorite = true
+      isFavorite = false
     } = options || {};
     const where = await constructWhere(userId, {
       searchPhrase,
@@ -189,22 +187,23 @@ const courseService = {
         where,
         order: [constructSort(sortBy)],
         include: courseInclude,
-        raw: true
+        raw: true,
+        nest: true
       });
 
       const favoriteCourseIds = await Favorite.findAll({
-        where: userId
+        where: {userId},
+        attributes: ['courseId']
       });
 
-      console.log(11111111111111111111111111111111111)
-      console.log(favoriteCourseIds)
+      console.log(favoriteCourseIds);
 
       const result = courses.map((course) => {
         return assign(course, {
           isFavorite: favoriteCourseIds.includes(course.id)
         });
       });
-      console.log(result);
+
       return result;
     } catch (err) {
       console.error(err);
@@ -221,7 +220,7 @@ const courseService = {
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
       rangePrice = -1,
-      isFavorite = true
+      isFavorite = false
     } = options || {};
 
     const where = await constructWhere(userId, {
