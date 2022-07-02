@@ -13,6 +13,7 @@ module.exports = {
   production: {
     url: process.env.DATABASE_URL,
     dialect: 'postgres',
+    seederStorage: 'sequelize',
     dialectOptions: {
       ssl: {
         require: true,
