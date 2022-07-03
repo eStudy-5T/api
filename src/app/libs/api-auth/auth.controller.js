@@ -162,8 +162,17 @@ const authController = {
 
   forgotPassword: (req, res) => {
     const {email} = req.body;
-    authenticationService
-      .forgotPassword(email)
+
+    userService
+      .getCurrentUser(null, {email})
+      .then((user) => {
+        if (user.isLoggedinWithSocialAccount) {
+          throw {status: 400, message: 'error.passwordSocialLogin'};
+        }
+
+        return authenticationService.forgotPassword(email);
+      })
+
       .then(() => {
         res.status(204).end();
       })
@@ -179,8 +188,20 @@ const authController = {
       return res.status(400).send('error.invalidPassword');
     }
 
-    authenticationService
-      .resetPassword(email, resetPasswordToken, newPassword)
+    userService
+      .getCurrentUser(null, {email})
+      .then((user) => {
+        if (user.isLoggedinWithSocialAccount) {
+          throw {status: 400, message: 'error.passwordSocialLogin'};
+        }
+
+        return authenticationService.resetPassword(
+          email,
+          resetPasswordToken,
+          newPassword
+        );
+      })
+
       .then(() => {
         res.status(204).end();
       })
@@ -190,11 +211,11 @@ const authController = {
   },
 
   authGoogle: (req, res, next) => {
-    passport.authenticate('google', {scope: ['profile', 'email']})(
-      req,
-      res,
-      next
-    );
+    passport.authenticate('google', {
+      scope: ['profile', 'email', 'https://www.googleapis.com/auth/calendar'],
+      accessType: 'offline',
+      prompt: 'consent'
+    })(req, res, next);
   },
 
   authGoogleCallback: (req, res, next) => {
@@ -226,7 +247,13 @@ const authController = {
           .redirect(url);
       })
       .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
+        console.error(err);
+        const url = new URL(`${config.portalHost}/login`);
+        url.searchParams.append(
+          'message',
+          err?.message || 'Internal Server Error'
+        );
+        res.redirect(url);
       });
   },
 
@@ -266,7 +293,13 @@ const authController = {
           .redirect(url);
       })
       .catch((err) => {
-        helper.apiHandler.handleErrorResponse(res, err);
+        console.error(err);
+        const url = new URL(`${config.portalHost}/login`);
+        url.searchParams.append(
+          'message',
+          err?.message || 'Internal Server Error'
+        );
+        res.redirect(url);
       });
   },
 

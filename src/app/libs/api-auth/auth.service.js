@@ -189,7 +189,7 @@ const authenticationService = {
         if (err) {
           return reject(err);
         }
-        if (info?.length) {
+        if (info && Object.keys(info)?.length) {
           return reject(info);
         }
 
@@ -222,7 +222,7 @@ const authenticationService = {
         if (err) {
           return reject(err);
         }
-        if (info?.length) {
+        if (info && Object.keys(info)?.length) {
           return reject(info);
         }
 

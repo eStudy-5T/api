@@ -136,9 +136,11 @@ const userService = {
     }
   },
 
-  getCurrentUser: async (userId) => {
+  getCurrentUser: async (userId, where = null) => {
     try {
-      const user = await User.findByPk(userId, {raw: true});
+      const user = userId
+        ? await User.findByPk(userId, {raw: true})
+        : await User.findOne({where}, {raw: true});
       if (user) {
         const data = {
           userId: user.id,
@@ -157,7 +159,8 @@ const userService = {
           nationality: user.nationality,
           identityNumber: user.identityNumber,
           grade: user.grade,
-          doesGoogleGrantAccess: Boolean(user.googleTokens)
+          doesGoogleGrantAccess: Boolean(user.googleTokens),
+          isLoggedinWithSocialAccount: Boolean(user.socialId)
         };
 
         return data;
