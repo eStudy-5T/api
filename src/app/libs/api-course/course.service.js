@@ -58,6 +58,7 @@ const constructWhere = async (userId, options) => {
 
   if (categoryFilter) {
     try {
+      console.log('fuck', categoryFilter);
       const category = await Category.findOne({
         where: {code: categoryFilter.split('-')[1]}
       });
@@ -74,6 +75,7 @@ const constructWhere = async (userId, options) => {
       console.log(err.message);
     }
   }
+  console.log('huh', JSON.stringify(whereSearchPhrase, null, 2));
 
   if (rangePrice > -1) {
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
@@ -84,11 +86,12 @@ const constructWhere = async (userId, options) => {
 
   if (isFavorite) {
     try {
-      const favoriteCourseIds = await Favorite.findAll({
+      const favoriteCourses = await Favorite.findAll({
         where: {userId},
         attributes: ['courseId'],
         raw: true
       });
+      const favoriteCourseIds = favoriteCourses.map((f) => f.courseId);
 
       if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
       whereSearchPhrase[Op.and].push({
@@ -101,13 +104,14 @@ const constructWhere = async (userId, options) => {
     }
   }
 
-  const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
-
-  if (!isAdmin && type !== 'teacher') {
-    if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
-    whereSearchPhrase[Op.and].push({
-      isActive: true
-    });
+  if (userId) {
+    const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
+    if (!isAdmin && type !== 'teacher') {
+      if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+      whereSearchPhrase[Op.and].push({
+        isActive: true
+      });
+    }
   }
 
   let where = whereSearchPhrase;
@@ -169,19 +173,20 @@ const courseService = {
       rangePrice = -1,
       isFavorite = false
     } = options || {};
-    const where = await constructWhere(userId, {
-      searchPhrase,
-      type,
-      searchText,
-      sortBy,
-      gradeFilter,
-      categoryFilter,
-      rangePrice,
-      isFavorite
-    });
 
     try {
-      const courses = await Course.findAll({
+      const where = await constructWhere(userId, {
+        searchPhrase,
+        type,
+        searchText,
+        sortBy,
+        gradeFilter,
+        categoryFilter,
+        rangePrice,
+        isFavorite
+      });
+
+      return await Course.findAll({
         offset: offset || 0,
         limit: limit || 20,
         where,
@@ -190,21 +195,6 @@ const courseService = {
         raw: true,
         nest: true
       });
-
-      const favoriteCourseIds = await Favorite.findAll({
-        where: {userId},
-        attributes: ['courseId']
-      });
-
-      console.log(favoriteCourseIds);
-
-      const result = courses.map((course) => {
-        return assign(course, {
-          isFavorite: favoriteCourseIds.includes(course.id)
-        });
-      });
-
-      return result;
     } catch (err) {
       console.error(err);
       throw 'error.getCourseFail';
@@ -223,18 +213,18 @@ const courseService = {
       isFavorite = false
     } = options || {};
 
-    const where = await constructWhere(userId, {
-      searchPhrase,
-      type,
-      searchText,
-      sortBy,
-      gradeFilter,
-      categoryFilter,
-      rangePrice,
-      isFavorite
-    });
-
     try {
+      const where = await constructWhere(userId, {
+        searchPhrase,
+        type,
+        searchText,
+        sortBy,
+        gradeFilter,
+        categoryFilter,
+        rangePrice,
+        isFavorite
+      });
+
       return await Course.count({where});
     } catch (err) {
       console.error(err);
@@ -244,7 +234,7 @@ const courseService = {
 
   getCourseById: async (courseId) => {
     try {
-      return Course.findOne({
+      return await Course.findOne({
         where: {
           id: courseId
         },
@@ -260,7 +250,7 @@ const courseService = {
 
   getCourseBySlug: async (slug) => {
     try {
-      return Course.findOne({
+      return await Course.findOne({
         where: {
           slug
         },

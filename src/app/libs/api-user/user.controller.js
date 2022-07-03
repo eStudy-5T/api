@@ -89,7 +89,7 @@ const userController = {
     // Check currentPassword is match with DB
     const user = await User.findOne({where: {id: userId}});
     if (user && user.socialId) {
-      return res.status(400).send('error.');
+      return res.status(400).send('error.passwordSocialLogin');
     }
 
     if (isNil(user) || !user.comparePassword(currentPassword)) {

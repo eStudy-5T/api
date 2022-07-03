@@ -22,7 +22,7 @@ passport.use(
         if (existingUserEmail) {
           return done(null, null, {
             status: 400,
-            message: 'Email has been taken'
+            message: 'error.takenEmail'
           });
         }
         // if user exists return the user
@@ -41,7 +41,12 @@ passport.use(
           email: profile.email,
           firstName: profile.given_name,
           lastName: profile.family_name,
-          isVerified: true
+          isVerified: true,
+          avatar: profile?.picture || null,
+          googleTokens: {
+            access_token: accessToken,
+            refresh_token: refreshToken
+          }
         });
         await newUser.save();
         return done(null, newUser);

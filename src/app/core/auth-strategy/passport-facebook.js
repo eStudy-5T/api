@@ -9,7 +9,13 @@ passport.use(
       clientID: config.facebook.clientID,
       clientSecret: config.facebook.clientSecret,
       callbackURL: config.facebook.callbackURL,
-      profileFields: ['id', 'first_name', 'last_name', 'email']
+      profileFields: [
+        'id',
+        'first_name',
+        'last_name',
+        'email',
+        'picture.type(large)'
+      ]
     },
     async (accessToken, refreshToken, {_json: profile}, done) => {
       try {
@@ -23,7 +29,7 @@ passport.use(
         if (existingUserEmail) {
           return done(null, null, {
             status: 400,
-            message: 'Email has been taken'
+            message: 'error.takenEmail'
           });
         }
 
@@ -43,7 +49,8 @@ passport.use(
           email: profile.email,
           firstName: profile.first_name,
           lastName: profile.last_name,
-          isVerified: true
+          isVerified: true,
+          avatar: profile?.picture?.data?.url || null
         });
         await newUser.save();
         return done(null, newUser);
