@@ -1,6 +1,6 @@
 import isInteger from 'lodash/isInteger';
 import isEmpty from 'lodash/isEmpty';
-
+import courseService from '../api-course/course.service';
 import reviewService from '../api-reviews/review.service';
 
 const uuidRegexExp =
@@ -28,6 +28,10 @@ const reviewController = {
       rating: reviewService.getCourseRate(reviews),
       data: reviews
     };
+    if (result.rating > 0)
+      await courseService.updateCourse(courseId, {
+        rating: result.rating
+      });
     return res.status(201).send(result);
   },
 

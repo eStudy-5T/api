@@ -522,6 +522,20 @@ const courseController = {
       .catch((err) => {
         helper.apiHandler.handleErrorResponse(res, err);
       });
+  },
+
+  toggleFavorite: async (req, res) => {
+    const {courseId} = req.params;
+    const userId = get(req, 'user.id');
+
+    courseService
+      .toggleFavorite(userId, courseId)
+      .then((subjects) => {
+        res.status(200).send(subjects);
+      })
+      .catch((err) => {
+        helper.apiHandler.handleErrorResponse(res, err);
+      });
   }
 };
 

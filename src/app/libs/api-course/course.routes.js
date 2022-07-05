@@ -209,6 +209,12 @@ courseRouter.post(
   courseController.refreshAttendeeList
 );
 
+courseRouter.post(
+  '/:courseId/toggle-favorite',
+  mw.verifyRequest,
+  courseController.toggleFavorite
+);
+
 /**
  * @swagger
  * /courses/:courseId/active:
@@ -242,5 +248,8 @@ courseRouter.post(
   mw.verifyRequest,
   courseController.deactivate
 );
+
+
+
 
 export default courseRouter;
