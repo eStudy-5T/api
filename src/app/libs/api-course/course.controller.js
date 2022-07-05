@@ -275,7 +275,6 @@ const courseController = {
 
       res.status(200).send({RspCode: '00', Message: 'Confirm Success'});
     } catch (err) {
-      console.log('err:', err);
       res.status(200).send({RspCode: '99', Message: 'Internal Server Error'});
     }
   },

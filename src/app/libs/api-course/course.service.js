@@ -58,7 +58,6 @@ const constructWhere = async (userId, options) => {
 
   if (categoryFilter) {
     try {
-      console.log('fuck', categoryFilter);
       const category = await Category.findOne({
         where: {code: categoryFilter.split('-')[1]}
       });
@@ -75,7 +74,6 @@ const constructWhere = async (userId, options) => {
       console.log(err.message);
     }
   }
-  console.log('huh', JSON.stringify(whereSearchPhrase, null, 2));
 
   if (rangePrice > -1) {
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
