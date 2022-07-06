@@ -175,7 +175,7 @@ courseRouter.delete(
 
 courseRouter.get(
   '/created-courses/:ownerId',
-  mw.verifyRequest,
+  // mw.verifyRequest,
   courseController.getCreatedCourses
 );
 
