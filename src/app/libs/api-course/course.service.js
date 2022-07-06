@@ -7,6 +7,7 @@ import Subject from '../../core/database/models/subject';
 import Enrollment from '../../core/database/models/enrollment';
 import {google} from 'googleapis';
 import userService from '../api-user/user.service';
+import reviewService from '../api-reviews/review.service';
 import emailService from '../../core/mailer/mail.service';
 import senderType from '../../core/constants/sender-type';
 import mailTemplateName from '../../core/constants/mail-template';
@@ -58,7 +59,6 @@ const constructWhere = async (userId, options) => {
 
   if (categoryFilter) {
     try {
-      console.log('fuck', categoryFilter);
       const category = await Category.findOne({
         where: {code: categoryFilter.split('-')[1]}
       });
@@ -75,7 +75,6 @@ const constructWhere = async (userId, options) => {
       console.log(err.message);
     }
   }
-  console.log('huh', JSON.stringify(whereSearchPhrase, null, 2));
 
   if (rangePrice > -1) {
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
@@ -426,11 +425,39 @@ const courseService = {
 
   getCreatedCourses: async (ownerId) => {
     try {
-      return await Course.findAll({
+      const courses = await Course.findAll({
         where: {
           ownerId
-        }
+        },
+        raw: true
       });
+
+      const courseEnrollments = await BPromise.all(
+        courses.map(async (course) => {
+          return courseService.getEnrolledStudents(course.id);
+        })
+      );
+
+      const courseReviews = await BPromise.all(
+        courses.map(async (course) => {
+          const reviews = await reviewService.getCourseReviews(course.id);
+          return {
+            reviews,
+            totalRate: reviewService.getCourseRate(reviews)
+          };
+        })
+      );
+
+      const results = courses.map((course, index) => {
+        return assign(
+          course,
+          {students: courseEnrollments[index].length},
+          {reviews: courseReviews[index].reviews},
+          {rating: courseReviews[index].totalRate}
+        );
+      });
+
+      return results;
     } catch (err) {
       console.error(err);
       throw 'error.getEnrolledStudentsFail';
