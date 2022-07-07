@@ -41,7 +41,7 @@ const schema = {
     type: Sequelize.JSONB
   },
   classGeneralInformation: {
-    type: Sequelize.TEXTủa
+    type: Sequelize.TEXT
   },
   classPlan: {
     type: Sequelize.TEXT
