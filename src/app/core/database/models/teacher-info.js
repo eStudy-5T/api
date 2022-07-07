@@ -41,13 +41,23 @@ const schema = {
     type: Sequelize.JSONB
   },
   classGeneralInformation: {
-    type: Sequelize.TEXT
+    type: Sequelize.TEXTủa
   },
   classPlan: {
     type: Sequelize.TEXT
   },
   sampleTeaching: {
     type: Sequelize.STRING
+  },
+  profileStatus: {
+    type: Sequelize.STRING
+  },
+  commentForAdmin: {
+    type: Sequelize.TEXT
+  },
+  version: {
+    type: Sequelize.INTEGER,
+    defaultValue: false
   }
 };
 
