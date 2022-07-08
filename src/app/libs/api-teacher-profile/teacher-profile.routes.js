@@ -4,4 +4,10 @@ import mw from '../../core/middlewares';
 
 const teacherInfoRouter = express.Router();
 
+teacherInfoRouter.post(
+  '/upload',
+  mw.verifyRequest,
+  teacherProfileController.uploadProfile
+);
+
 export default teacherInfoRouter;
