@@ -4,6 +4,7 @@ import get from 'lodash/get';
 
 import Course from '../../core/database/models/course';
 import Review from '../../core/database/models/review';
+import User from '../../core/database/models/user';
 
 const reviewService = {
   getCourseRate: (reviews = []) => {
@@ -33,7 +34,16 @@ const reviewService = {
 
     const reviews = Review.findAll({
       where: {courseId},
-      raw: true
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'avatar', 'firstName', 'lastName'],
+          require: true
+        }
+      ],
+      raw: true,
+      nest: true
     });
 
     return reviews;

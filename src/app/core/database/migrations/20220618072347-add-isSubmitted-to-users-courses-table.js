@@ -15,7 +15,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.removeColumn('users', 'isSubmitted');
     await queryInterface.removeColumn('courses', 'isSubmitted');
   }

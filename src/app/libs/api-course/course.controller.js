@@ -42,19 +42,14 @@ const courseController = {
           course = await courseService.getCourseBySlug(slug);
           break;
       }
+
       if (!course) {
         return res.status(400).send('Course not found');
       }
 
-      const owner =
-        course.ownerId === userId
-          ? await User.findOne({
-              where: {id: course.ownerId},
-              raw: true
-            })
-          : null;
+      const ownerId = get(course, 'owner.id');
 
-      if (!owner) {
+      if (userId !== ownerId) {
         const isAdmin = await userService.validateUserHaveAdminPermissions(
           userId
         );
@@ -70,7 +65,7 @@ const courseController = {
         course.isEnrolled = Boolean(enrollment);
       }
 
-      course.isCreator = Boolean(owner);
+      course.isCreator = userId === ownerId;
 
       res.status(200).send(course);
     } catch (err) {

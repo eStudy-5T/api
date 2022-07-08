@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 import sequelize from '../sequelize';
+import User from './user';
 
 const schema = {
   id: {
@@ -58,5 +59,7 @@ const options = {
 };
 
 const Review = sequelize.define('review', schema, options);
+
+Review.belongsTo(User, {as: 'user', constraint: false});
 
 export default Review;

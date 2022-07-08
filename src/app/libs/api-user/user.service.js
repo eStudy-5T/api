@@ -130,6 +130,7 @@ const userService = {
       if (!isEmpty(user)) {
         return user.role === ROLE.ADMIN;
       }
+      return false;
     } catch (err) {
       console.log(err);
       throw new Error(err);

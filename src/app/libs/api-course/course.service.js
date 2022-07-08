@@ -15,6 +15,7 @@ import BPromise from 'bluebird';
 import get from 'lodash/get';
 import oauth2Client from '../../core/google/oauth-client';
 import isNil from 'lodash/isNil';
+import assign from 'lodash/assign';
 
 const constructWhere = async (userId, options) => {
   const {
@@ -108,14 +109,12 @@ const constructWhere = async (userId, options) => {
     }
   }
 
-  if (userId) {
-    const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
-    if (!isAdmin && type !== 'teacher') {
-      if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
-      whereSearchPhrase[Op.and].push({
-        isActive: true
-      });
-    }
+  const isAdmin = await userService.validateUserHaveAdminPermissions(userId);
+  if (!isAdmin && type !== 'teacher') {
+    if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
+    whereSearchPhrase[Op.and].push({
+      isActive: true
+    });
   }
 
   let where = whereSearchPhrase;
@@ -150,7 +149,7 @@ const courseInclude = [
   {
     model: User,
     as: 'owner',
-    attributes: ['firstName', 'lastName', 'avatar']
+    attributes: ['id', 'firstName', 'lastName', 'avatar']
   },
   {
     model: Category,
