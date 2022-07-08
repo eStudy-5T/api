@@ -3,7 +3,6 @@ import userService from '../api-user/user.service';
 import helper from '../../utils/helper';
 import get from 'lodash/get';
 import enrollmentService from '../api-enrollment/enrollment.service';
-import User from '../../core/database/models/user';
 import tokenService from '../api-auth/token.service.js';
 import {validate as uuidValidate} from 'uuid';
 

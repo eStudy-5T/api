@@ -18,7 +18,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.removeColumn('teacher-infos', 'profileStatus');
     await queryInterface.removeColumn('teacher-infos', 'commentForAdmin');
     await queryInterface.removeColumn('teacher-infos', 'version');

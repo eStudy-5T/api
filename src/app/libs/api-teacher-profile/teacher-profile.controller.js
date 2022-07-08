@@ -1,4 +1,3 @@
-import {validate as uuidValidate} from 'uuid';
 import helper from '../../utils/helper';
 import teacherProfileService from './teacher-profile.service';
 

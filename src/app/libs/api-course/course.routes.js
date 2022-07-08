@@ -249,7 +249,4 @@ courseRouter.post(
   courseController.deactivate
 );
 
-
-
-
 export default courseRouter;
