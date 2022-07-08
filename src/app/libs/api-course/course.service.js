@@ -14,7 +14,7 @@ import mailTemplateName from '../../core/constants/mail-template';
 import BPromise from 'bluebird';
 import get from 'lodash/get';
 import oauth2Client from '../../core/google/oauth-client';
-import assign from 'lodash/assign';
+import isNil from 'lodash/isNil';
 
 const constructWhere = async (userId, options) => {
   const {
@@ -83,7 +83,7 @@ const constructWhere = async (userId, options) => {
     });
   }
 
-  if (isFavorite) {
+  if (isFavorite === 'true') {
     try {
       const favoriteCourses = await Favorite.findAll({
         where: {userId},
@@ -92,10 +92,15 @@ const constructWhere = async (userId, options) => {
       });
       const favoriteCourseIds = favoriteCourses.map((f) => f.courseId);
 
+      const favoriteCourseIdsArray = [];
+      favoriteCourseIds.map((favoriteCourseIds) => {
+        favoriteCourseIdsArray.push(favoriteCourseIds.courseId);
+      });
+
       if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
       whereSearchPhrase[Op.and].push({
         id: {
-          [Sequelize.Op.in]: favoriteCourseIds
+          [Sequelize.Op.in]: favoriteCourseIdsArray
         }
       });
     } catch (err) {
@@ -508,6 +513,30 @@ const courseService = {
 
   getSubjects: async () => {
     return Subject.findAll({});
+  },
+
+  toggleFavorite: async (userId, courseId) => {
+    const favorite = await Favorite.findOne({
+      where: {
+        userId,
+        courseId
+      }
+    });
+
+    if (isNil(favorite)) {
+      await Favorite.create({
+        userId,
+        courseId
+      });
+    } else {
+      await Favorite.destroy({
+        where: {
+          userId,
+          courseId
+        },
+        force: true
+      });
+    }
   }
 };
 
