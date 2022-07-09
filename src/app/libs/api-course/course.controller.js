@@ -18,7 +18,16 @@ const courseController = {
       courseService.getCourses(userId, req.query),
       courseService.getCourseCount(userId, req.query)
     ])
-      .then(([courses, count]) => {
+      .then(async ([courses, count]) => {
+        const favoriteIds = await courseService.getFavoriteCourseIds(userId);
+        favoriteIds &&
+          courses.map((course, index) => {
+            let isFavorite = false;
+            const foundId = favoriteIds.find((id) => id === course.id)
+            isFavorite = !isNil(foundId)
+            isFavorite && favoriteIds.splice(index, 1);
+            course.isFavorite = isFavorite;
+          });
         res.status(200).send({courses, count});
       })
       .catch((err) => {
