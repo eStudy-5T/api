@@ -24,7 +24,7 @@ const constructWhere = async (userId, options) => {
     gradeFilter,
     categoryFilter,
     rangePrice,
-    isFavorite
+    showFavorite
   } = options || {};
   const whereSearchPhrase = !searchText
     ? {}
@@ -84,20 +84,9 @@ const constructWhere = async (userId, options) => {
     });
   }
 
-  if (isFavorite === 'true') {
+  if (showFavorite === 'true') {
     try {
-      const favoriteCourses = await Favorite.findAll({
-        where: {userId},
-        attributes: ['courseId'],
-        raw: true
-      });
-      const favoriteCourseIds = favoriteCourses.map((f) => f.courseId);
-
-      const favoriteCourseIdsArray = [];
-      favoriteCourseIds.map((favoriteCourseIds) => {
-        favoriteCourseIdsArray.push(favoriteCourseIds.courseId);
-      });
-
+      const favoriteCourseIdsArray = await getFavoriteCourseIdsOfUserId(userId);
       if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
       whereSearchPhrase[Op.and].push({
         id: {
@@ -128,6 +117,16 @@ const constructWhere = async (userId, options) => {
   }
 
   return where;
+};
+
+const getFavoriteCourseIdsOfUserId = async (userId) => {
+  const favoriteCourses = await Favorite.findAll({
+    where: {userId},
+    attributes: ['courseId'],
+    raw: true
+  });
+
+  return favoriteCourses.map((favorite) => favorite.courseId);
 };
 
 const constructSort = (sortBy) => {
@@ -174,7 +173,7 @@ const courseService = {
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
       rangePrice = -1,
-      isFavorite = false
+      showFavorite = false
     } = options || {};
 
     try {
@@ -186,7 +185,7 @@ const courseService = {
         gradeFilter,
         categoryFilter,
         rangePrice,
-        isFavorite
+        showFavorite
       });
 
       return await Course.findAll({
@@ -204,6 +203,12 @@ const courseService = {
     }
   },
 
+  getFavoriteCourseIds: async (userId) => {
+    const favoriteCourses = await getFavoriteCourseIdsOfUserId(userId);
+    if (favoriteCourses.length !== 0) return favoriteCourses;
+    else return null;
+  },
+
   getCourseCount: async (userId, options) => {
     const {
       q: searchPhrase,
@@ -213,7 +218,7 @@ const courseService = {
       categoryFilter = 'category-all',
       gradeFilter = 'grade-all',
       rangePrice = -1,
-      isFavorite = false
+      showFavorite = false
     } = options || {};
 
     try {
@@ -225,7 +230,7 @@ const courseService = {
         gradeFilter,
         categoryFilter,
         rangePrice,
-        isFavorite
+        showFavorite
       });
 
       return await Course.count({where});
