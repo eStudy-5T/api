@@ -23,12 +23,8 @@ const courseController = {
         favoriteIds &&
           courses.map((course, index) => {
             let isFavorite = false;
-            favoriteIds.forEach((id) => {
-              if (course.id === id) {
-                isFavorite = true;
-                return;
-              }
-            });
+            const foundId = favoriteIds.find((id) => id === course.id)
+            isFavorite = !isNil(foundId)
             isFavorite && favoriteIds.splice(index, 1);
             course.isFavorite = isFavorite;
           });
