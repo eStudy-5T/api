@@ -82,7 +82,7 @@ const constructWhere = async (userId, options) => {
   if (rangePrice > -1) {
     if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
     whereSearchPhrase[Op.and].push({
-      price: {[Op.between]: [0, rangePrice * 1000]}
+      price: {[Op.between]: [0, rangePrice]}
     });
   }
 
