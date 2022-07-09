@@ -4,6 +4,7 @@ import helper from '../../utils/helper';
 import get from 'lodash/get';
 import enrollmentService from '../api-enrollment/enrollment.service';
 import tokenService from '../api-auth/token.service.js';
+import isNil from 'lodash/isNil';
 import {validate as uuidValidate} from 'uuid';
 
 const courseController = {
