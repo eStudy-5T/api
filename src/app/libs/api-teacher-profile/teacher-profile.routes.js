@@ -10,4 +10,28 @@ teacherInfoRouter.post(
   teacherProfileController.uploadProfile
 );
 
+teacherInfoRouter.get(
+  '/:userId',
+  mw.verifyRequest,
+  teacherProfileController.getProfileById
+);
+
+teacherInfoRouter.get(
+  '/checking',
+  mw.verifyRequest,
+  teacherProfileController.fetchAllCheckingProfile
+);
+
+teacherInfoRouter.put(
+  '/:profileId/accepted',
+  mw.verifyRequest,
+  teacherProfileController.acceptProfile
+);
+
+teacherInfoRouter.put(
+  '/:profileId/rejected',
+  mw.verifyRequest,
+  teacherProfileController.rejectProfile
+);
+
 export default teacherInfoRouter;

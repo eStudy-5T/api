@@ -14,6 +14,10 @@ const mailTemplateName = {
   courseDeactivate: {
     path: 'course-deactivate',
     subject: 'Your enrolled course has been deactivated'
+  },
+  profileSubmitted: {
+    path: 'profile-submitted',
+    subject: 'You have submitted your profile to become LetMeet Teacher'
   }
 };
 
