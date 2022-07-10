@@ -42,7 +42,7 @@ const courseRouter = express.Router();
  *       400:
  *         description: Unknown 'type' query
  */
-courseRouter.get('/', mw.decideToVerify, courseController.getCourses);
+courseRouter.get('/', courseController.getCourses);
 
 courseRouter.get('/categories', courseController.getCategories);
 

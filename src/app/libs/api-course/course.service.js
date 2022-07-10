@@ -84,7 +84,7 @@ const constructWhere = async (userId, options) => {
     });
   }
 
-  if (showFavorite === 'true') {
+  if (showFavorite === 'true' && userId) {
     try {
       const favoriteCourseIdsArray = await getFavoriteCourseIdsOfUserId(userId);
       if (!whereSearchPhrase[Op.and]) whereSearchPhrase[Op.and] = [];
@@ -120,6 +120,10 @@ const constructWhere = async (userId, options) => {
 };
 
 const getFavoriteCourseIdsOfUserId = async (userId) => {
+  if (!userId) {
+    return [];
+  }
+
   const favoriteCourses = await Favorite.findAll({
     where: {userId},
     attributes: ['courseId'],
