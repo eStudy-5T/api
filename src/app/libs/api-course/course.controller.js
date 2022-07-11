@@ -4,7 +4,6 @@ import helper from '../../utils/helper';
 import get from 'lodash/get';
 import enrollmentService from '../api-enrollment/enrollment.service';
 import tokenService from '../api-auth/token.service.js';
-import isNil from 'lodash/isNil';
 import {validate as uuidValidate} from 'uuid';
 
 const courseController = {
@@ -22,11 +21,11 @@ const courseController = {
       .then(async ([courses, count]) => {
         const favoriteIds = await courseService.getFavoriteCourseIds(userId);
         favoriteIds &&
-          courses.map((course, index) => {
+          courses.map((course) => {
             let isFavorite = false;
-            const foundId = favoriteIds.find((id) => id === course.id)
-            isFavorite = !isNil(foundId)
-            isFavorite && favoriteIds.splice(index, 1);
+            const foundIndex = favoriteIds.findIndex((id) => id === course.id);
+            if (foundIndex !== -1) isFavorite = true;
+            isFavorite && favoriteIds.splice(foundIndex, 1);
             course.isFavorite = isFavorite;
           });
         res.status(200).send({courses, count});
