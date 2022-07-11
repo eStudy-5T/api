@@ -22,15 +22,18 @@ const teacherProfileService = {
   uploadProfile: async (data, files, userId) => {
     try {
       const isSampleYoutubeLink = !!data.sampleTeaching;
-      let avatarLink = await teacherProfileService.uploadFile(
-        files.teacherAvatar,
-        'avatar',
-        userId
-      );
+      let avatarLink;
+      if (files && files.teacherAvatar) {
+        avatarLink = await teacherProfileService.uploadFile(
+          files.teacherAvatar,
+          'avatar',
+          userId
+        );
+      }
 
       // if not youtubelink send file to AWS
       let sampleTeachingLink;
-      if (!isSampleYoutubeLink) {
+      if (!isSampleYoutubeLink && files && files.sampleTeaching) {
         sampleTeachingLink = await teacherProfileService.uploadFile(
           files.sampleTeaching,
           'sample-teach',
@@ -40,17 +43,29 @@ const teacherProfileService = {
         sampleTeachingLink = data.sampleTeaching;
       }
 
-      data.teacherAvatar = avatarLink;
+      if (avatarLink) {
+        data.teacherAvatar = avatarLink;
+      }
       data.sampleTeaching = sampleTeachingLink;
       data.experiences = JSON.parse(data.experiences);
+      const existedProfile = await teacherProfileService.getProfile(userId);
       // Create or update profile
       const profile = {
         ...data,
         userId,
-        version: 1,
+        version: existedProfile ? existedProfile.version + 1 : 1,
         profileStatus: PROFILE_STATUS.CHECKING
       };
-      const createOrUpdateStatus = await TeacherInfo.create(profile);
+      let createOrUpdateStatus;
+      if (existedProfile) {
+        createOrUpdateStatus = await TeacherInfo.update(profile, {
+          where: {
+            id: existedProfile.id
+          }
+        });
+      } else {
+        createOrUpdateStatus = await TeacherInfo.create(profile);
+      }
       // Send Notice Mail
       const user = await userService.getCurrentUser(userId);
       teacherProfileService.sendConfirmMailAfterSubmit(user);
@@ -117,6 +132,21 @@ const teacherProfileService = {
           }
         }
       );
+      if (status === PROFILE_STATUS.ACCEPTED) {
+        const profile = await TeacherInfo.findOne({
+          where: {
+            id: profileId
+          },
+          returning: true,
+          raw: true
+        });
+        const user = await userService.getCurrentUser(profile.userId);
+        const updateTeachPermission = await userService.update(user.id, {
+          isVerifiedToTeach: true
+        });
+
+        return updateTeachPermission;
+      }
       return updateResult;
     } catch (err) {
       throw new Error(err);

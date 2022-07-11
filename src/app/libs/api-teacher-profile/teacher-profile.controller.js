@@ -44,7 +44,7 @@ const teacherProfileController = {
     const {profileId} = req.params;
 
     teacherProfileService
-      .updateStatusProfile(profileId, PROFILE_STATUS.ACEPTED)
+      .updateStatusProfile(profileId, PROFILE_STATUS.ACCEPTED)
       .then((result) => {
         res.json(result);
       })
