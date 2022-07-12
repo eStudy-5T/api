@@ -100,13 +100,14 @@ const courseController = {
   updateCourse: (req, res) => {
     const {courseId} = req.params;
     const courseData = req.body;
+    const courseFiles = req.files;
 
     courseService
       .checkCourseValidity(req.user.id, courseId)
       .then((error) => {
         if (error) throw error;
 
-        return courseService.updateCourse(courseId, courseData);
+        return courseService.updateCourse(courseId, courseFiles, courseData);
       })
       .then((updatedCourse) => {
         res.status(200).send(updatedCourse);

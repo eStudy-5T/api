@@ -121,6 +121,15 @@ const schema = {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  courseThumbnailImage: {
+    type: Sequelize.STRING
+  },
+  courseThumbnailVideo: {
+    type: Sequelize.STRING
+  },
+  whatStudentsGets: {
+    type: Sequelize.TEXT
   }
 };
 

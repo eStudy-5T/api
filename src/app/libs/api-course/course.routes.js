@@ -138,12 +138,7 @@ courseRouter.post(
  *       404:
  *         description: Course not found
  */
-courseRouter.put(
-  '/:courseId',
-  mw.verifyRequest,
-  mw.courseValidator,
-  courseController.updateCourse
-);
+courseRouter.put('/:courseId', mw.verifyRequest, courseController.updateCourse);
 
 /**
  * @swagger

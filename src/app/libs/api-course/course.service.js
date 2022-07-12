@@ -16,6 +16,7 @@ import get from 'lodash/get';
 import oauth2Client from '../../core/google/oauth-client';
 import isNil from 'lodash/isNil';
 import assign from 'lodash/assign';
+import awsUploadService from '../../core/aws/file-upload.service';
 
 const constructWhere = async (userId, options) => {
   const {
@@ -357,8 +358,57 @@ const courseService = {
     }
   },
 
-  updateCourse: async (courseId, courseData) => {
+  uploadFile: async (file, path, courseId) => {
     try {
+      const relativePath = `course/${courseId}/${path}`;
+      const result = await awsUploadService.uploadFile(file, relativePath);
+      const avatarLink = get(result, 'Location');
+      return avatarLink;
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+
+  updateCourse: async (courseId, courseFiles, courseData) => {
+    try {
+      console.log('courseData', courseData);
+      console.log('courseFiles', courseFiles);
+
+      for (let field in courseData) {
+        if (/daysOfWeek|tags|schedules/.test(field)) {
+          courseData[field] = JSON.parse(courseData[field]);
+        }
+
+        if (
+          /grade|categoryId|subjectId|maxStudentNumber|lessonNumberPerWeek/.test(
+            field
+          ) &&
+          courseData[field]
+        ) {
+          courseData[field] = Number(courseData[field]);
+        }
+
+        if (field === 'lessonNumberPerWeek' && courseData[field] !== 'null') {
+          courseData[field] = 0;
+        }
+      }
+
+      if (courseFiles && courseFiles.courseThumbnailImage) {
+        courseData.courseThumbnailImage = await courseService.uploadFile(
+          courseFiles.courseThumbnailImage,
+          'thumbnail',
+          courseId
+        );
+      }
+
+      if (courseFiles && courseFiles.courseThumbnailVideo) {
+        courseData.courseThumbnailVideo = await courseService.uploadFile(
+          courseFiles.courseThumbnailVideo,
+          'thumbnail',
+          courseId
+        );
+      }
+
       const result = await Course.update(courseData, {
         where: {
           id: courseId
