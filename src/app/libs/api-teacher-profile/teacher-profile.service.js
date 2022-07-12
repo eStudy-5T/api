@@ -66,6 +66,8 @@ const teacherProfileService = {
       } else {
         createOrUpdateStatus = await TeacherInfo.create(profile);
       }
+      // Update user has submitted a teacher profile
+      await userService.update(userId, {isSubmitted: true});
       // Send Notice Mail
       const user = await userService.getCurrentUser(userId);
       teacherProfileService.sendConfirmMailAfterSubmit(user);

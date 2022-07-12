@@ -161,7 +161,8 @@ const userService = {
           identityNumber: user.identityNumber,
           grade: user.grade,
           doesGoogleGrantAccess: Boolean(user.googleTokens),
-          isLoggedinWithSocialAccount: Boolean(user.socialId)
+          isLoggedinWithSocialAccount: Boolean(user.socialId),
+          isSubmitted: user.isSubmitted
         };
 
         return data;
