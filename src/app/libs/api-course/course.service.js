@@ -371,9 +371,6 @@ const courseService = {
 
   updateCourse: async (courseId, courseFiles, courseData) => {
     try {
-      console.log('courseData', courseData);
-      console.log('courseFiles', courseFiles);
-
       for (let field in courseData) {
         if (/daysOfWeek|tags|schedules/.test(field)) {
           courseData[field] = JSON.parse(courseData[field]);
@@ -388,9 +385,17 @@ const courseService = {
           courseData[field] = Number(courseData[field]);
         }
 
-        if (field === 'lessonNumberPerWeek' && courseData[field] !== 'null') {
-          courseData[field] = 0;
+        if (field === 'lessonNumberPerWeek') {
+          if (courseData[field] === 'null' || !courseData[field]) {
+            courseData[field] = 0;
+          } else {
+            courseData[field] = Number(courseData[field]);
+          }
         }
+      }
+
+      if (!courseData.whatStudentsGets) {
+        courseData.whatStudentsGets = null;
       }
 
       if (courseFiles && courseFiles.courseThumbnailImage) {
