@@ -394,7 +394,7 @@ const courseService = {
         }
       }
 
-      if (!courseData.whatStudentsGets) {
+      if (courseData && !courseData.whatStudentsGets) {
         courseData.whatStudentsGets = null;
       }
 
